@@ -1,0 +1,32 @@
+{
+    "FixedFileInfo": {
+        "FileVersion": {
+            "Major": 2,
+            "Minor": 0,
+            "Patch": 0,
+            "Build": 0
+        },
+        "ProductVersion": {
+            "Major": 2,
+            "Minor": 0,
+            "Patch": 0,
+            "Build": 0
+        }
+    },
+    "StringFileInfo": {
+        "Comments": "",
+        "CompanyName": "",
+        "FileDescription": "",
+        "FileVersion": "",
+        "InternalName": "",
+        "LegalCopyright": "",
+        "LegalTrademarks": "",
+        "OriginalFilename": "",
+        "PrivateBuild": "",
+        "ProductName": "",
+        "ProductVersion": "v2.0.0.0",
+        "SpecialBuild": ""
+    },
+    "IconPath": "D:/BOTS/Go/src/Pokecatcher/infos/icons.ico",
+    "ManifestPath": ""
+}
