@@ -38,15 +38,18 @@ var RefreshingMovesChannelID string
 var RefreshingList bool
 var RefreshingListChannelID string
 
-var SpamState bool
-var SpamChannel chan (int)
-
 var SelectedPokemon SelectedPoke
 
 var wgPokeSpawn sync.WaitGroup
 
 //ServerWhitelist : map[guildID]State, meaning it will catch if State is true
 var ServerWhitelist map[string]bool
+
+// Spammer Variables
+var SpamInterval int
+var SpamMessage string
+var SpamState bool
+var SpamChannel chan (int)
 
 func check(e error) {
 	if e != nil {

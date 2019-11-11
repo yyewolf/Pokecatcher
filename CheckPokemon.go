@@ -44,6 +44,14 @@ func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string) {
 	wgPokeSpawn.Done()
 }
 
+func FakeTalk(s *discordgo.Session, ChannelID string, Letters int) {
+	//Fakes user typing
+	for start := time.Now(); time.Since(start) <  time.Duration(Config.Delay) * time.Millisecond; {
+		_ = s.ChannelTyping(ChannelID)
+		time.Sleep(time.Duration(Config.Delay/Letters) * time.Millisecond)
+	}
+}
+
 func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if the person is allowed
 	if !Config.IsAllowedToUse {
@@ -79,12 +87,23 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Notif_PokeSpawn(Spawned_Pokemon_Name, Guild_Spawn.Name, Command_To_Catch, Channel_Spawn.Name, Channel_Spawn.ID)
 	color.HiBlue("Command : " + Command_To_Catch + " " + Spawned_Pokemon_Name)
 	if Config.AutoCatching && ServerWhitelist[msg.GuildID] {
+		//Closes spammer
+		if SpamState {
+			SpamChannel <- 1
+		}
+		FakeTalk(s, msg.ChannelID, len(Command_To_Catch+" "+strings.ToLower(Spawned_Pokemon_Name)))
 		time.Sleep(time.Duration(Config.Delay) * time.Millisecond)
 		color.Blue("Tried to catch your : " + Spawned_Pokemon_Name)
+
+		Command_To_Catch = strings.ReplaceAll(Command_To_Catch, "а", "a")
 		_, err := s.ChannelMessageSend(msg.ChannelID, Command_To_Catch+" "+strings.ToLower(Spawned_Pokemon_Name))
 		if err != nil {
 			Notif_CatchingErr(Spawned_Pokemon_Name, Guild_Spawn.Name, Channel_Spawn.Name)
 			return
+		}
+		//Restart spammer
+		if SpamState {
+			go SpamFunc(DiscordSession, Config.ChannelID, SpamInterval, SpamMessage)
 		}
 	}
 }

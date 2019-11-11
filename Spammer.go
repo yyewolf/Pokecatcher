@@ -8,6 +8,8 @@ import (
 )
 
 func SpamFunc(Session *discordgo.Session, ChannelID string, interval int, message string) {
+	SpamInterval = interval
+	SpamMessage = message
 	for {
 		select {
 		case <-SpamChannel:
