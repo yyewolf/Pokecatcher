@@ -25,7 +25,7 @@ func ImageToSHA256(URL string) string {
 	check(err)
 	h := sha256.New()
 	h.Write(image)
-	//Encodes the image
+	//Encodes the image to sha256 (database is sha256)
 	sha256_hash := hex.EncodeToString(h.Sum(nil))
 	return sha256_hash
 }
@@ -46,7 +46,7 @@ func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string) {
 
 func FakeTalk(s *discordgo.Session, ChannelID string, Letters int) {
 	//Fakes user typing
-	for start := time.Now(); time.Since(start) <  time.Duration(Config.Delay) * time.Millisecond; {
+	for start := time.Now(); time.Since(start) < time.Duration(Config.Delay)*time.Millisecond; {
 		_ = s.ChannelTyping(ChannelID)
 		time.Sleep(time.Duration(Config.Delay/Letters) * time.Millisecond)
 	}
@@ -144,7 +144,7 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Pokemon
 	PokemonName := reg.ReplaceAllString(strings.Replace(strings.Split(strings.Split(msg.Content, "level ")[1], "! Added")[0], " ", "", 1), "")
 	PokemonLevel := strings.Split(strings.Split(msg.Content, "level ")[1], " "+PokemonName)[0]
-	
+
 	if len(Pokemon_List) != 0 {
 		PokemonNumber := Pokemon_List["realmax"].(string)
 
