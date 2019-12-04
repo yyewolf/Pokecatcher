@@ -83,7 +83,7 @@ func UpdateToken(Request Receive_Request) {
 	Config.Token = Request.Token
 	SaveConfig()
 	color.White("Restart the bot to apply your changes now. The bot may not work properly from now on.")
-	//Not sur if it's true, don't have time to test it though.
+	//Not sure if it's true, don't have time to test it though.
 }
 
 func UpdateServerWhitelist(Request Receive_Request) {
