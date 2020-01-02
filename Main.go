@@ -78,7 +78,8 @@ func OpenBrowser(url string) {
 }
 
 func Useful_Variables() {
-	LoadConfig() // Will load config.json file into the program.
+	StartLogger() //Will log crashes if it happens.
+	LoadConfig()  // Will load config.json file into the program.
 	color.Yellow("Your config file has been successfully imported !")
 	Hashes_Database = make(map[string]string) //Where the hashes will be stored.
 	LoadHashes()                              // Put the hashes into the map.
@@ -107,7 +108,6 @@ func main() {
 	dg.AddHandler(CheckForCommand)
 	err = dg.Open()
 	check(err)
-
 	// Wait here until CTRL-C or other term signal is received.
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)

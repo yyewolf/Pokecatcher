@@ -142,11 +142,11 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//99 Pokemon
 	//99Pokemon
 	//Pokemon
-	PokemonName := reg.ReplaceAllString(strings.Replace(strings.Split(strings.Split(msg.Content, "level ")[1], "! Added")[0], " ", "", 1), "")
+	PokemonName := reg.ReplaceAllString(strings.ReplaceAll(strings.Split(strings.Split(msg.Content, "level ")[1], "! Added")[0], " ", ""), "")
 	PokemonLevel := strings.Split(strings.Split(msg.Content, "level ")[1], " "+PokemonName)[0]
 
 	if len(Pokemon_List) != 0 {
-		PokemonNumber := Pokemon_List["realmax"].(string)
+		PokemonNumber := fmt.Sprintf("%.0f", Pokemon_List["realmax"].(float64))
 
 		Pokemon_List[PokemonNumber] = Pokemon{
 			Name:      PokemonName,
@@ -156,9 +156,12 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		}
 
 		Pokemon_List["names"] = Pokemon_List["names"].(string) + PokemonName + ","
-		Pokemon_List["realmax"] = Pokemon_List["realmax"].(int) + 1
-		Pokemon_List["array"] = Pokemon_List["array"].(int) + 1
+		Pokemon_List["realmax"] = Pokemon_List["realmax"].(float64) + 1
+		Pokemon_List["array"] = Pokemon_List["array"].(float64) + 1
 	}
+
+	SavePokemonList()
+	Websocket_SendPokemonList()
 
 	Guild_Spawn, err := s.Guild(msg.GuildID)
 	check(err)
