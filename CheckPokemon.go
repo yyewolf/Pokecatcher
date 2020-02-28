@@ -22,7 +22,9 @@ func ImageToSHA256(URL string) string {
 	defer response.Body.Close()
 	//Closes the web page when it's done
 	image, err := ioutil.ReadAll(response.Body)
-	check(err)
+	if err != nil {
+		return "nothing"
+	}
 	h := sha256.New()
 	h.Write(image)
 	//Encodes the image to sha256 (database is sha256)
@@ -66,6 +68,9 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if len(msg.Embeds) == 0 {
 		return
 	}
+	if msg.Embeds[0].Image == nil {
+		return
+	}
 	//Check if it's a pokemon spawn
 	if !strings.Contains(msg.Embeds[0].Title, "A wild") {
 		return
@@ -75,18 +80,25 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if _, ok := Hashes_Database[ImageHash]; !ok {
 		return
 	}
+	if !ServerWhitelist[msg.GuildID] {
+		return
+	}
 	Spawned_Pokemon_Name := Hashes_Database[ImageHash]
 	Guild_Spawn, err := s.Guild(msg.GuildID)
-	check(err)
+	if err != nil {
+		return
+	}
 	Channel_Spawn, err := s.Channel(msg.ChannelID)
-	check(err)
+	if err != nil {
+		return
+	}
 	//Logs info into the console and sends a notification to the website.
 	LogPokemonSpawn(Spawned_Pokemon_Name, Guild_Spawn.Name, Channel_Spawn.Name)
 	//Gets the command from the message : "Guess the pokemon and type p!catch <pokémon> to catch it !"
 	Command_To_Catch := strings.Split(strings.Split(msg.Embeds[0].Description, "type ")[1], " <po")[0]
 	Notif_PokeSpawn(Spawned_Pokemon_Name, Guild_Spawn.Name, Command_To_Catch, Channel_Spawn.Name, Channel_Spawn.ID)
 	color.HiBlue("Command : " + Command_To_Catch + " " + Spawned_Pokemon_Name)
-	if Config.AutoCatching && ServerWhitelist[msg.GuildID] {
+	if Config.AutoCatching {
 		//Closes spammer
 		if SpamState {
 			SpamChannel <- 1
@@ -158,15 +170,18 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Pokemon_List["names"] = Pokemon_List["names"].(string) + PokemonName + ","
 		Pokemon_List["realmax"] = Pokemon_List["realmax"].(float64) + 1
 		Pokemon_List["array"] = Pokemon_List["array"].(float64) + 1
+		SavePokemonList()
+		Websocket_SendPokemonList()
 	}
 
-	SavePokemonList()
-	Websocket_SendPokemonList()
-
 	Guild_Spawn, err := s.Guild(msg.GuildID)
-	check(err)
+	if err != nil {
+		return
+	}
 	Channel_Spawn, err := s.Channel(msg.ChannelID)
-	check(err)
+	if err != nil {
+		return
+	}
 	color.HiBlue("You caught a " + PokemonName + " !")
 	Notif_PokeCaught(PokemonName, Guild_Spawn.Name, Channel_Spawn.Name)
 }
