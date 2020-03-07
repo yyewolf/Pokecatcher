@@ -1,21 +1,20 @@
 package main
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"regexp"
 	"strings"
 	"time"
+	"github.com/nfnt/resize"
+	"log"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/fatih/color"
 )
 
-func ImageToSHA256(URL string) string {
+func ImageToString(URL string) string {
 	response, e := http.Get(URL)
 	//response => image
 	check(e)
@@ -25,14 +24,10 @@ func ImageToSHA256(URL string) string {
 	if err != nil {
 		return "nothing"
 	}
-	h := sha256.New()
-	h.Write(image)
-	//Encodes the image to sha256 (database is sha256)
-	sha256_hash := hex.EncodeToString(h.Sum(nil))
-	return sha256_hash
+	return string(image)
 }
 
-func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string) {
+func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string, Accuracy float64) {
 	wgPokeSpawn.Wait()
 	wgPokeSpawn.Add(1)
 	fmt.Println("")
@@ -41,7 +36,7 @@ func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string) {
 	PrintBlue := color.New(color.FgHiBlue).PrintfFunc()
 	PrintGreen("A ")
 	PrintBlue(PokemonName)
-	PrintGreen(" has spawned on : \nGuild Name : " + GuildName + "\nChannel Name : #" + ChannelName + ".")
+	PrintGreen(" has spawned on : \nGuild Name : " + GuildName + "\nChannel Name : #" + ChannelName + ".\nAccuracy : %f%%", Accuracy)
 	fmt.Println("")
 	wgPokeSpawn.Done()
 }
@@ -75,15 +70,38 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !strings.Contains(msg.Embeds[0].Title, "A wild") {
 		return
 	}
-	ImageURL := msg.Embeds[0].Image.URL
-	ImageHash := ImageToSHA256(ImageURL)
-	if _, ok := Hashes_Database[ImageHash]; !ok {
-		return
-	}
 	if !ServerWhitelist[msg.GuildID] {
 		return
 	}
-	Spawned_Pokemon_Name := Hashes_Database[ImageHash]
+	ImageURL := msg.Embeds[0].Image.URL
+	ImageString := ImageToString(ImageURL)
+	Spawned_Pokemon_Name := ""
+	ImageDecoded, err := loadImg(ImageString)
+	if err != nil {
+		return
+	}
+	ImageResized := resize.Resize(64, 64, ImageDecoded, resize.Bicubic)
+	List := box.List()
+	Accuracy := 0.0
+	
+	
+	for i := range List{
+		if strings.Contains(List[i], "img"){
+			Name := strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), ".png", "")
+			ScanImage := DecodedImages[Name]
+			Accuracy = CompareIMG(ScanImage, ImageResized)
+			if Accuracy < 0.1 {
+				Spawned_Pokemon_Name = Name
+				break
+			}
+		}
+	}
+	
+	Accuracy = 100.0 - Accuracy
+	
+	if Spawned_Pokemon_Name == "" {
+		return
+	}
 	Guild_Spawn, err := s.Guild(msg.GuildID)
 	if err != nil {
 		return
@@ -93,7 +111,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Logs info into the console and sends a notification to the website.
-	LogPokemonSpawn(Spawned_Pokemon_Name, Guild_Spawn.Name, Channel_Spawn.Name)
+	LogPokemonSpawn(Spawned_Pokemon_Name, Guild_Spawn.Name, Channel_Spawn.Name, Accuracy)
 	//Gets the command from the message : "Guess the pokemon and type p!catch <pokémon> to catch it !"
 	Command_To_Catch := strings.Split(strings.Split(msg.Embeds[0].Description, "type ")[1], " <po")[0]
 	Notif_PokeSpawn(Spawned_Pokemon_Name, Guild_Spawn.Name, Command_To_Catch, Channel_Spawn.Name, Channel_Spawn.ID)
