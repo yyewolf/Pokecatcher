@@ -3,6 +3,7 @@ package main
 import (
 	"strconv"
 	"time"
+	"fmt"
 
 	"github.com/fatih/color"
 )
@@ -19,6 +20,9 @@ func RefreshPokemonList(Request Receive_Request) {
 	if Config.ChannelID != "" {
 		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixBot+"list")
 		if err != nil {
+			if Config.Debug {
+				fmt.Println(err)
+			}
 			color.Red("Couldn't send the message to start the reading of the list. (Try to register a new channel ?)")
 		}
 	} else {
@@ -34,6 +38,9 @@ func RefreshPokemonMovesList(Request Receive_Request) {
 	if Config.ChannelID != "" {
 		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"moves")
 		if err != nil {
+			if Config.Debug {
+				fmt.Println(err)
+			}
 			color.Red("Couldn't send the message to start the reading of the list. (Try to register a new channel ?)")
 		} else {
 			RefreshingMoves = true
@@ -157,6 +164,9 @@ func Release(Request Receive_Request) {
 			RemovePokemonFromList(Request)
 		}
 	} else {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		color.Red("Couldn't release your pokemon, check that you've registered a channel and try again.")
 	}
 }
@@ -274,6 +284,9 @@ func SelectPokemon(Request Receive_Request) {
 
 	_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"select "+PokemonNumber) //Type insertion because it is an interface{} type
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		color.Red("There was a problem when trying to select the pokemon, try with another one maybe ?")
 	} else {
 		SelectedPokemon.Number, _ = strconv.Atoi(PokemonNumber) //Type insertion (again) because it is an interface{} type

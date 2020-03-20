@@ -25,6 +25,7 @@ type ConfigStruct struct {
 	WebPort        int    `json:"Port_For_Webserver"`
 	PrefixPokecord string `json:"Pokecord_Prefix_On_Your_Server"`
 	PrefixBot      string `json:"Prefix_For_This_Bot"`
+	Debug          bool   `json:"Debug"`
 	IsAllowedToUse bool   `json:"-"`
 }
 
@@ -38,6 +39,7 @@ func NoConfig() {
 		WebPort:        3000,
 		PrefixPokecord: "p!",
 		PrefixBot:      "p^",
+		Debug:          false,
 	}
 	path, _ := filepath.Abs("./saves/config.json")
 	file, _ := json.MarshalIndent(DefaultConfig, "", " ")

@@ -1,6 +1,7 @@
 package main
 
 import "encoding/json"
+import "fmt"
 
 func Websocket_SendMoveList(PokemonName string, PokemonMoves string, LearnChannelID string) {
 	// Message in websocket :
@@ -13,6 +14,9 @@ func Websocket_SendMoveList(PokemonName string, PokemonMoves string, LearnChanne
 		LearnChannelID: LearnChannelID,
 	})
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		return
 	}
 	Websocket_Broadcast(string(Message))
@@ -27,6 +31,9 @@ func Websocket_SendPokemonList() {
 		PokemonList: Pokemon_List,
 	})
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		return
 	}
 	Websocket_Broadcast(string(Message))
@@ -42,6 +49,9 @@ func Websocket_RemovedFromList(Number int) {
 		PokemonNumber: Number,
 	})
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		return
 	}
 	Websocket_Broadcast(string(Message))
@@ -57,6 +67,9 @@ func Websocket_Selected(PokemonName string, Number int) {
 		PokemonNumber: Number,
 	})
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		return
 	}
 	Websocket_Broadcast(string(Message))

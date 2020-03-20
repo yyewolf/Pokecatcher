@@ -22,6 +22,9 @@ func ImageToString(URL string) string {
 	//Closes the web page when it's done
 	image, err := ioutil.ReadAll(response.Body)
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		return "nothing"
 	}
 	return string(image)
@@ -78,6 +81,9 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Spawned_Pokemon_Name := ""
 	ImageDecoded, err := loadImg(ImageString)
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		return
 	}
 	ImageResized := resize.Resize(64, 64, ImageDecoded, resize.Bicubic)
@@ -104,10 +110,16 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 	Guild_Spawn, err := s.Guild(msg.GuildID)
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		return
 	}
 	Channel_Spawn, err := s.Channel(msg.ChannelID)
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		return
 	}
 	//Logs info into the console and sends a notification to the website.
@@ -128,6 +140,9 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Command_To_Catch = strings.ReplaceAll(Command_To_Catch, "а", "a")
 		_, err := s.ChannelMessageSend(msg.ChannelID, Command_To_Catch+" "+strings.ToLower(Spawned_Pokemon_Name))
 		if err != nil {
+			if Config.Debug {
+				fmt.Println(err)
+			}
 			Notif_CatchingErr(Spawned_Pokemon_Name, Guild_Spawn.Name, Channel_Spawn.Name)
 			return
 		}
@@ -194,10 +209,16 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	Guild_Spawn, err := s.Guild(msg.GuildID)
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		return
 	}
 	Channel_Spawn, err := s.Channel(msg.ChannelID)
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		return
 	}
 	color.HiBlue("You caught a " + PokemonName + " !")

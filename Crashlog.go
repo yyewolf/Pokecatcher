@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -18,10 +16,12 @@ func StartLogger() {
 	Path, _ := filepath.Abs("./crash/" + Name + ".txt")
 	logFile, err := os.OpenFile(Path, os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		panic(err)
 	}
-	mw := io.MultiWriter(os.Stdout, logFile)
-	log.SetOutput(mw)
+	os.Stderr = logFile
 
 	//File where everything is recorded
 }

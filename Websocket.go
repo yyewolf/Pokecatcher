@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"fmt"
 )
 
 type Send_Request struct {
@@ -57,6 +58,9 @@ func Websocket_Broadcast(msg string) {
 	for i := range Connections {
 		err := Connections[i].WriteMessage(1, []byte(msg))
 		if err != nil {
+			if Config.Debug {
+				fmt.Println(err)
+			}
 			Connections = append(Connections[:i], Connections[i+1:]...)
 			//Removes the connection if it's unable to send a message.
 		}
@@ -70,6 +74,9 @@ func Websocket_Connection(w http.ResponseWriter, r *http.Request) {
 	}
 	conn, err := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		return
 	}
 	conn.SetCloseHandler(func(code int, text string) error {
@@ -87,6 +94,9 @@ func Websocket_Connection(w http.ResponseWriter, r *http.Request) {
 		rec := Receive_Request{}
 		err := conn.ReadJSON(&rec)
 		if err != nil {
+			if Config.Debug {
+				fmt.Println(err)
+			}
 			return
 		}
 		if _, ok := Websocket_Receive_Functions[rec.Action]; !ok {

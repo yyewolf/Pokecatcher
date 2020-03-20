@@ -50,9 +50,14 @@ var SpamMessage string
 var SpamState bool
 var SpamChannel chan (int)
 
+// Readyness
+var Ready bool
+
 func check(e error) {
 	if e != nil {
-		fmt.Println(e)
+		if Config.Debug {
+			fmt.Println(e)
+		}
 		return
 	}
 }
@@ -76,6 +81,14 @@ func OpenBrowser(url string) {
 
 }
 
+func GuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
+	if !Ready {
+		Ready = true
+		color.Green("The bot is ready to be used !")
+	}
+	return
+}
+
 func Useful_Variables() {
 	StartLogger() //Will log crashes if it happens.
 	LoadConfig()  // Will load config.json file into the program.
@@ -95,6 +108,9 @@ func main() {
 
 	dg, err := discordgo.New(Config.Token)
 	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
 		color.Red("Cannot connect to discord, check your token !")
 	}
 	color.Yellow("The website is being hosted you can connect to it on : http://localhost:" + strconv.Itoa(Config.WebPort))
@@ -102,6 +118,7 @@ func main() {
 	dg.AddHandler(CheckForPokemon)
 	dg.AddHandler(SuccessfulCatch)
 	dg.AddHandler(CheckForCommand)
+	dg.AddHandler(GuildCreate)
 	err = dg.Open()
 	check(err)
 	// Wait here until CTRL-C or other term signal is received.

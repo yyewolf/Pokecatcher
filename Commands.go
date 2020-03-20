@@ -30,7 +30,13 @@ func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	if strings.HasPrefix(msg.Content, Config.PrefixBot+"register") {
 		Config.ChannelID = msg.ChannelID
-		Channel_Registered, _ := s.Channel(msg.ChannelID)
+		Channel_Registered, err := s.Channel(msg.ChannelID)
+		if err != nil {
+			if Config.Debug {
+				fmt.Println(err)
+			}
+			return
+		}
 		color.Yellow("Successfully registered channel : #" + Channel_Registered.Name)
 	}
 
