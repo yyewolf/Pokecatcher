@@ -289,6 +289,18 @@
 			};
 		};
 		
+		function aliaschange(){
+			aliases = document.getElementById("aliases").checked;
+			ws.send('{"action":"aliases","state":'+aliases+'}');
+			if(aliases){
+				NotifTitle = 'I will now catch every pokemons with aliases !';
+				notify('info', NotifTitle);
+			}else{
+				NotifTitle = 'I won\'t catch pokemons with aliases !';
+				notify('info', NotifTitle);
+			};
+		};
+		
 		function refresh(){
 			ws.send('{"action":"refresh"}');
 			notify('info', 'Refreshing your pokemon list...');
@@ -450,6 +462,13 @@
                         <label>
                             <form id="formnoduplicate">
                                 <input onchange="duplichange();" type="checkbox" id="duplicate"> <span class="label-text">Duplicate</span>
+                            </form>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <label>
+                            <form id="formaliases">
+                                <input onchange="aliaschange();" type="checkbox" id="aliases"> <span class="label-text">Aliases</span>
                             </form>
                         </label>
                     </div>
@@ -618,6 +637,11 @@
             if (typeof duplicate !== 'undefined') {
                 if (duplicate == true) {
                     document.getElementById("duplicate").checked = true;
+                };
+            };
+            if (typeof aliases !== 'undefined') {
+                if (aliases == true) {
+                    document.getElementById("aliases").checked = true;
                 };
             };
             if (typeof farmer !== 'undefined') {

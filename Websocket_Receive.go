@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"time"
-	"fmt"
 
 	"github.com/fatih/color"
 )
@@ -140,7 +140,17 @@ func DuplicatesOnOff(Request Receive_Request) {
 	// Request.State
 
 	Config.Duplicate = Request.State
-	color.Yellow("Catching duplicates : " + strconv.FormatBool(Config.AutoCatching))
+	SaveConfig()
+	color.Yellow("Catching duplicates : " + strconv.FormatBool(Config.Duplicate))
+}
+
+func AliasesOnOff(Request Receive_Request) {
+	// Active requests variables :
+	// Request.State
+
+	Config.Aliases = Request.State
+	SaveConfig()
+	color.Yellow("Catching pokemons with aliases : " + strconv.FormatBool(Config.Aliases))
 }
 
 //////////////////////////////////////////////
@@ -299,6 +309,7 @@ func Websocket_Receive_AllFunctions() {
 	// Directly translated from the old code.
 	Websocket_Receive_Functions["aca"] = AutoCatcherOnOff
 	Websocket_Receive_Functions["duplicate"] = DuplicatesOnOff
+	Websocket_Receive_Functions["aliases"] = AliasesOnOff
 	Websocket_Receive_Functions["refresh"] = RefreshPokemonList
 	Websocket_Receive_Functions["refreshmoves"] = RefreshPokemonMovesList
 	Websocket_Receive_Functions["release"] = Release

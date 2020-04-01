@@ -21,6 +21,7 @@ type ConfigStruct struct {
 	ChannelID      string `json:"Channel_Registered_ID"`
 	Delay          int    `json:"Delay_For_Spammer"`
 	Duplicate      bool   `json:"Do_I_Catch_Duplicate"`
+	Aliases        bool   `json:"Do_I_Catch_With_Aliases"`
 	AutoCatching   bool   `json:"-"`
 	WebPort        int    `json:"Port_For_Webserver"`
 	PrefixPokecord string `json:"Pokecord_Prefix_On_Your_Server"`
@@ -36,6 +37,7 @@ func NoConfig() {
 		ChannelID:      "Put a channel ID here",
 		Delay:          3000,
 		Duplicate:      true,
+		Aliases:        true,
 		WebPort:        3000,
 		PrefixPokecord: "p!",
 		PrefixBot:      "p^",
@@ -58,6 +60,23 @@ func LoadConfig() {
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 	json.Unmarshal(byteValue, &Config)
 	//Loads config.json into Config var
+}
+
+func NoAliases() {
+	color.Red("Pokemon's aliases are missing, this might result in a blacklist !")
+}
+
+func LoadAliases() {
+	path, _ := filepath.Abs("./saves/aliases.json")
+	jsonFile, err := os.Open(path)
+	if err != nil {
+		NoConfig()
+		return
+	}
+	defer jsonFile.Close()
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+	json.Unmarshal(byteValue, &Aliases)
+	//Loads aliases.json into Aliases var
 }
 
 func SaveConfig() {

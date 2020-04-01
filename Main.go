@@ -25,6 +25,7 @@ var upgrader = websocket.Upgrader{
 }
 
 var Config ConfigStruct
+var Aliases map[string][]string
 var Pokemon_List map[string]interface{}
 var Connections []*websocket.Conn
 var Websocket_Receive_Functions map[string]func(request Receive_Request)
@@ -92,6 +93,7 @@ func GuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
 func Useful_Variables() {
 	StartLogger() //Will log crashes if it happens.
 	LoadConfig()  // Will load config.json file into the program.
+	LoadAliases() // Will load aliases.json file.
 	color.Yellow("Your config file has been successfully imported !")
 	Pokemon_List = make(map[string]interface{}) //Where the Pokemon List of the user will be stored.
 	LoadPokemonList()                           // Will load the Users Pokémons list.

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+
 	"github.com/fatih/color"
 
 	"github.com/gobuffalo/packr"
@@ -21,9 +22,9 @@ type Prefixes struct {
 func Host_Website() {
 	box = packr.NewBox("./www")
 	color.Yellow("Pokemon's decoding started!")
-	DecodeKnown()  // Will decode every resized pokemon images for comparisions.
+	DecodeKnown() // Will decode every resized pokemon images for comparisions.
 	color.Yellow("Pokemon's decoding done !")
-	
+
 	http.HandleFunc("/ws", Websocket_Connection)
 	http.HandleFunc("/", Website_Handler)
 	http.Handle("/img/", http.FileServer(box))
@@ -72,6 +73,7 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 		add += "<script> var textchannel = '" + Config.ChannelID + "';</script>\n"
 		add += "<script> var autocatcher = " + strconv.FormatBool(Config.AutoCatching) + "</script>\n"
 		add += "<script> var duplicate = " + strconv.FormatBool(Config.Duplicate) + "</script>\n"
+		add += "<script> var aliases = " + strconv.FormatBool(Config.Aliases) + "</script>\n"
 		add += "<script> var prefixes = " + string(SendPrefix) + "</script>\n"
 		add += "<script> var farmer = {}</script>\n"
 		if Pokemon_List["array"] != nil {
