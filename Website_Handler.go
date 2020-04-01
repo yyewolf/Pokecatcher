@@ -27,7 +27,7 @@ func Host_Website() {
 	http.HandleFunc("/ws", Websocket_Connection)
 	http.HandleFunc("/", Website_Handler)
 	http.Handle("/img/", http.FileServer(box))
-	http.ListenAndServe(":3000", nil)
+	http.ListenAndServe(":"+strconv.Itoa(Config.WebPort), nil)
 }
 
 func Find_Servers() (string, string) {

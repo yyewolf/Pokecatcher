@@ -9,7 +9,7 @@ import (
 	"time"
 	"github.com/nfnt/resize"
 	"log"
-
+	"math/rand"
 	"github.com/bwmarrin/discordgo"
 	"github.com/fatih/color"
 )
@@ -97,7 +97,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			ScanImage := DecodedImages[Name]
 			Accuracy = CompareIMG(ScanImage, ImageResized)
 			if Accuracy < 0.1 {
-				Spawned_Pokemon_Name = Name
+				Spawned_Pokemon_Name = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
 				break
 			}
 		}
@@ -134,7 +134,11 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			SpamChannel <- 1
 		}
 		FakeTalk(s, msg.ChannelID, len(Command_To_Catch+" "+strings.ToLower(Spawned_Pokemon_Name)))
-		time.Sleep(time.Duration(Config.Delay) * time.Millisecond)
+		
+		rand.Seed(time.Now().UnixNano())
+		RandomNess := rand.Intn(250) - rand.Intn(250)
+		
+		time.Sleep(time.Duration(Config.Delay+RandomNess) * time.Millisecond)
 		color.Blue("Tried to catch your : " + Spawned_Pokemon_Name)
 
 		Command_To_Catch = strings.ReplaceAll(Command_To_Catch, "а", "a")
