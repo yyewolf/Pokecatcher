@@ -27,6 +27,7 @@ var upgrader = websocket.Upgrader{
 var Config ConfigStruct
 var Aliases map[string][]string
 var Pokemon_List map[string]interface{}
+var Pokemon_List_Info PokeListInfoStruct
 var Connections []*websocket.Conn
 var Websocket_Receive_Functions map[string]func(request Receive_Request)
 var DiscordSession *discordgo.Session

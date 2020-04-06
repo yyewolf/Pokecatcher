@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -136,7 +137,11 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Names := Aliases[OriginalName]
 		CatchName = Names[0]
 		if Config.Aliases {
-			CatchName = Names[rand.Intn(len(Names)-1)]
+			if len(Names) == 1 {
+				CatchName = Names[0]
+			} else {
+				CatchName = Names[rand.Intn(len(Names)-1)]
+			}
 		}
 	}
 
@@ -212,7 +217,8 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	PokemonLevel := strings.Split(strings.Split(msg.Content, "level ")[1], " "+PokemonName)[0]
 
 	if len(Pokemon_List) != 0 {
-		PokemonNumber := fmt.Sprintf("%.0f", Pokemon_List["realmax"].(float64))
+
+		PokemonNumber := strconv.Itoa(Pokemon_List_Info.Realmax)
 
 		Pokemon_List[PokemonNumber] = Pokemon{
 			Name:      PokemonName,
@@ -221,9 +227,9 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			NewNumber: PokemonNumber,
 		}
 
-		Pokemon_List["names"] = Pokemon_List["names"].(string) + PokemonName + ","
-		Pokemon_List["realmax"] = Pokemon_List["realmax"].(float64) + 1
-		Pokemon_List["array"] = Pokemon_List["array"].(float64) + 1
+		Pokemon_List_Info.Names += PokemonName + ","
+		Pokemon_List_Info.Realmax += 1
+		Pokemon_List_Info.Array += 1
 		SavePokemonList()
 		Websocket_SendPokemonList()
 	}

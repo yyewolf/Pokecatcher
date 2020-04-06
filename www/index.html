@@ -129,7 +129,7 @@
 				}else if(msg['action'] == 'registered'){
 					document.getElementById("alertbox").parentNode.removeChild(document.getElementById("alertbox"));
 				}else if(msg['action'] == 'refreshlist'){
-					listobj = msg['listobj'];
+					listobj = JSON.parse(msg['listobj']);
 					if(typeof listobj !== 'undefined'){
 						var html = [];
 						for (k = 0; k < listobj['array']; k++) {

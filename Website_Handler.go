@@ -76,20 +76,10 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 		add += "<script> var aliases = " + strconv.FormatBool(Config.Aliases) + "</script>\n"
 		add += "<script> var prefixes = " + string(SendPrefix) + "</script>\n"
 		add += "<script> var farmer = {}</script>\n"
-		if Pokemon_List["array"] != nil {
-			MaxPoke := ""
-			switch Pokemon_List["array"].(type) {
-			case int:
-				MaxPoke = strconv.Itoa(Pokemon_List["array"].(int))
-			case float64:
-				MaxPoke = fmt.Sprintf("%.0f", Pokemon_List["array"].(float64))
-			default:
-				return
-			}
-			if MaxPoke != "0" {
-				SendList, _ := json.Marshal(Pokemon_List)
-				add += "<script> var listobj = " + string(SendList) + "</script>\n"
-			}
+
+		MaxPoke := strconv.Itoa(Pokemon_List_Info.Array)
+		if MaxPoke != "0" {
+			add += "<script> var listobj = " + PokeListForWebsite() + "</script>\n"
 		}
 		fmt.Fprint(w, add+dat)
 	} else {

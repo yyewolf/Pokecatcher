@@ -28,7 +28,7 @@ func Websocket_SendPokemonList() {
 
 	Message, err := json.Marshal(Send_Request{
 		Action:      "refreshlist",
-		PokemonList: Pokemon_List,
+		PokemonList: PokeListForWebsite(),
 	})
 	if err != nil {
 		if Config.Debug {
@@ -45,7 +45,7 @@ func Websocket_RemovedFromList(Number int) {
 
 	Message, err := json.Marshal(Send_Request{
 		Action:        "removefromlist",
-		PokemonList:   Pokemon_List,
+		PokemonList:   PokeListForWebsite(),
 		PokemonNumber: Number,
 	})
 	if err != nil {

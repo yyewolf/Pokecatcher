@@ -1,24 +1,24 @@
 package main
 
 import (
-	"net/http"
 	"fmt"
+	"net/http"
 )
 
 type Send_Request struct {
-	Action         string                 `json:"action"`
-	Command        string                 `json:"command"`
-	Name           string                 `json:"name"`
-	Nickname       string                 `json:"nickname"`
-	GuildName      string                 `json:"server"`
-	ChannelName    string                 `json:"channelname"`
-	ChannelID      string                 `json:"channelid"`
-	Message        string                 `json:"message"`
-	PokemonList    map[string]interface{} `json:"listobj"`
-	PokemonNumber  int                    `json:"number"`
-	PokemonName    string                 `json:"pokemonname"`
-	PokemonMoves   string                 `json:"moves"`
-	LearnChannelID string                 `json:"channelmovesid"`
+	Action         string `json:"action"`
+	Command        string `json:"command"`
+	Name           string `json:"name"`
+	Nickname       string `json:"nickname"`
+	GuildName      string `json:"server"`
+	ChannelName    string `json:"channelname"`
+	ChannelID      string `json:"channelid"`
+	Message        string `json:"message"`
+	PokemonList    string `json:"listobj"`
+	PokemonNumber  int    `json:"number"`
+	PokemonName    string `json:"pokemonname"`
+	PokemonMoves   string `json:"moves"`
+	LearnChannelID string `json:"channelmovesid"`
 }
 
 type Receive_Request struct {
