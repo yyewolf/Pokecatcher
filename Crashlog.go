@@ -22,6 +22,7 @@ func StartLogger() {
 		panic(err)
 	}
 	os.Stderr = logFile
+	os.Stdout = logFile
 
 	//File where everything is recorded
 }
