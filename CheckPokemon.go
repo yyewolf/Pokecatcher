@@ -104,7 +104,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			Name := strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), ".png", "")
 			ScanImage := DecodedImages[Name]
 			Accuracy = CompareIMG(ScanImage, ImageResized)
-			if Accuracy < 0.1 {
+			if Accuracy < 0.2 {
 				Spawned_Pokemon_Name = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
 				break
 			}

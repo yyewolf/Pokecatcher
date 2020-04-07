@@ -242,28 +242,19 @@ func RemovePokemonFromList(Request Receive_Request) {
 	// Active requests variables :
 	// Request.PokemonNumber
 
-	//Can be of two types, so checking to be sure.
-	PokemonNumber := 0
-	switch Pokemon_List["array"].(type) {
-	case int:
-		PokemonNumber = Pokemon_List["array"].(int)
-	case float64:
-		PokemonNumber = int(Pokemon_List["array"].(float64))
-	default:
-		return
-	}
+	PokemonNumber := Pokemon_List_Info.Array
 	// Loops through all pokémons to lower their numbers and keep things ordered.
 	for i := 0; i < PokemonNumber; i++ {
 		Number := i + 1
-		CurrentPoke := Pokemon_List[strconv.Itoa(Request.PokemonNumber)].(map[string]interface{}) // Type insertion cuz interface{}
-		PokemonNewNumber, _ := strconv.Atoi(CurrentPoke["newnumber"].(string))
+		CurrentPoke := Pokemon_List[strconv.Itoa(Request.PokemonNumber)].(Pokemon) // Type insertion cuz interface{}
+		PokemonNewNumber, _ := strconv.Atoi(CurrentPoke.NewNumber)
 		if Number > PokemonNewNumber {
-			CurrentPoke["newnumber"] = strconv.Itoa(i)
+			CurrentPoke.NewNumber = strconv.Itoa(i)
 			Pokemon_List[strconv.Itoa(Request.PokemonNumber)] = CurrentPoke
 		}
 	}
 	// realmax corresponds to the amount of pokemon present.
-	Pokemon_List["realmax"] = PokemonNumber - 1
+	Pokemon_List_Info.Realmax = PokemonNumber - 1
 	delete(Pokemon_List, strconv.Itoa(Request.PokemonNumber))
 	color.Blue("Removed the pokemon from your Pokemon List.")
 	// Sends info to the websocket to update the list.
