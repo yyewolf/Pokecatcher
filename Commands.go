@@ -19,6 +19,10 @@ type Pokemon struct {
 }
 
 func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
+	// Reload the session
+	if DiscordSession != s {
+		DiscordSession = s
+	}
 	//Check if the person is allowed
 	if !Config.IsAllowedToUse {
 		return
@@ -29,6 +33,7 @@ func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 
 	if strings.HasPrefix(msg.Content, Config.PrefixBot+"register") {
+
 		Config.ChannelID = msg.ChannelID
 		Channel_Registered, err := s.Channel(msg.ChannelID)
 		if err != nil {

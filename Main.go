@@ -83,11 +83,13 @@ func OpenBrowser(url string) {
 
 }
 
-func GuildCreate(s *discordgo.Session, event *discordgo.GuildCreate) {
+func GuildCreate(s *discordgo.Session, event *discordgo.GuildUpdate) {
 	if !Ready {
 		Ready = true
 		color.Green("The bot is ready to be used !")
 	}
+
+	DiscordSession = s
 	return
 }
 
@@ -106,6 +108,7 @@ func Useful_Variables() {
 }
 
 func main() {
+	Ready = false
 	// Create a new Discord session using the provided bot token.
 	Useful_Variables()
 
@@ -138,5 +141,6 @@ func botReady(session *discordgo.Session, evt *discordgo.Ready) {
 
 	CheckLicences(session)
 	go OpenBrowser("http://localhost:" + strconv.Itoa(Config.WebPort))
+
 	Host_Website() // Starts hosting the website.
 }

@@ -35,14 +35,12 @@ func ImageToString(URL string) string {
 func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string, Accuracy float64, AliasUsed string) {
 	wgPokeSpawn.Wait()
 	wgPokeSpawn.Add(1)
-	fmt.Println("")
 	color.Green("-------------------------------------------------------")
 	PrintGreen := color.New(color.FgHiGreen).PrintfFunc()
 	PrintBlue := color.New(color.FgHiBlue).PrintfFunc()
 	PrintGreen("A ")
 	PrintBlue(PokemonName)
-	PrintGreen(" has spawned on : \nGuild Name : "+GuildName+"\nChannel Name : #"+ChannelName+".\nAccuracy : %f%%\nAlias used : "+AliasUsed, Accuracy)
-	fmt.Println("")
+	PrintGreen(" has spawned on : \nGuild Name : "+GuildName+"\nChannel Name : #"+ChannelName+".\nAccuracy : %f%%\nAlias used : "+AliasUsed+"\n", Accuracy)
 	wgPokeSpawn.Done()
 }
 
@@ -66,6 +64,10 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !Config.IsAllowedToUse {
 		return
 	}
+	//Check if the server is whitelisted
+	if !ServerWhitelist[msg.GuildID] {
+		return
+	}
 	//Check if the author is pokecord
 	if msg.Author.ID != "365975655608745985" {
 		return
@@ -80,9 +82,6 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 	//Check if it's a pokemon spawn
 	if !strings.Contains(msg.Embeds[0].Title, "A wild") {
-		return
-	}
-	if !ServerWhitelist[msg.GuildID] {
 		return
 	}
 	ImageURL := msg.Embeds[0].Image.URL
@@ -104,7 +103,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			Name := strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), ".png", "")
 			ScanImage := DecodedImages[Name]
 			Accuracy = CompareIMG(ScanImage, ImageResized)
-			if Accuracy < 0.2 {
+			if Accuracy < 0.35 {
 				Spawned_Pokemon_Name = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
 				break
 			}
