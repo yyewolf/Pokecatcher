@@ -100,7 +100,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	for i := range List {
 		if strings.Contains(List[i], "img") {
-			Name := strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), ".png", "")
+			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\",""), ".png", "")
 			ScanImage := DecodedImages[Name]
 			Accuracy = CompareIMG(ScanImage, ImageResized)
 			if Accuracy < 0.35 {

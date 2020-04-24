@@ -56,13 +56,15 @@ type Receive_Request struct {
 
 func Websocket_Broadcast(msg string) {
 	for i := range Connections {
-		err := Connections[i].WriteMessage(1, []byte(msg))
-		if err != nil {
-			if Config.Debug {
-				fmt.Println(err)
+		if i < len(Connections) {
+			err := Connections[i].WriteMessage(1, []byte(msg))
+			if err != nil {
+				if Config.Debug {
+					fmt.Println(err)
+				}
+				Connections = append(Connections[:i], Connections[i+1:]...)
+				//Removes the connection if it's unable to send a message.
 			}
-			Connections = append(Connections[:i], Connections[i+1:]...)
-			//Removes the connection if it's unable to send a message.
 		}
 	}
 }

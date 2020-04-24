@@ -55,6 +55,9 @@ var SpamChannel chan (int)
 // Readyness
 var Ready bool
 
+//Stdout
+var OStdout *os.File
+
 func check(e error) {
 	if e != nil {
 		if Config.Debug {
@@ -138,7 +141,6 @@ func main() {
 
 func botReady(session *discordgo.Session, evt *discordgo.Ready) {
 	color.Green("Successfully connected to discord !")
-
 	CheckLicences(session)
 	go OpenBrowser("http://localhost:" + strconv.Itoa(Config.WebPort))
 

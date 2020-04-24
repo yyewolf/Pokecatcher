@@ -108,7 +108,7 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			CurrentPokemonLevel := InfosSlice[1]
 			CurrentPokemonNumber := InfosSlice[2]
 			CurrentPokemonIV := ""
-			if len(InfosSlice) == 4 {
+			if len(InfosSlice) >= 4 {
 				CurrentPokemonIV = InfosSlice[3]
 			}
 
