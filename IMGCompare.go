@@ -6,7 +6,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"strings"
-	
 )
 
 var DecodedImages map[string]image.Image
@@ -14,10 +13,10 @@ var DecodedImages map[string]image.Image
 func DecodeKnown() {
 	DecodedImages = make(map[string]image.Image)
 	List := box.List()
-	for i := range List{
-		if strings.Contains(List[i], "img"){
+	for i := range List {
+		if strings.Contains(List[i], "img") {
 			c, _ := box.FindString(List[i])
-			Name := strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), ".png", "")
+			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\", ""), ".png", "")
 			img, _ := loadImg(c)
 			DecodedImages[Name] = img
 		}
@@ -58,6 +57,6 @@ func CompareIMG(f1 image.Image, f2 image.Image) float64 {
 	}
 
 	nPixels := (b.Max.X - b.Min.X) * (b.Max.Y - b.Min.Y)
-	
-	return float64(sum*100)/(float64(nPixels)*0xffff*3)
+
+	return float64(sum*100) / (float64(nPixels) * 0xffff * 3)
 }

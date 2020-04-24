@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/fatih/color"
 )
 
 type Pokemon struct {
@@ -42,7 +41,7 @@ func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			}
 			return
 		}
-		color.Yellow("Successfully registered channel : #" + Channel_Registered.Name)
+		PrintYellowln("Successfully registered channel : #" + Channel_Registered.Name)
 	}
 
 	if strings.HasPrefix(msg.Content, Config.PrefixBot+"list") {
@@ -121,7 +120,8 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 			Pokemon_List_Info.Names = Pokemon_List_Info.Names + CurrentPokemonName + ","
 		}
-
+		
+		ProgressBar.Absolute(int(CurrentPage), int(MaxPage))
 		if CurrentPage != MaxPage {
 			//Goes to the next page
 			time.Sleep(3 * time.Second)
@@ -129,8 +129,9 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		} else {
 			RefreshingList = false
 			SavePokemonList()
-			color.Yellow("Your pokemon list has been loaded !")
+			PrintYellowln("Your pokemon list has been loaded !")
 			Websocket_SendPokemonList()
+			ProgressBar.Absolute(0, 0)
 		}
 	}
 }

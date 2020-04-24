@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"time"
-
-	"github.com/fatih/color"
 )
 
 //////////////////////////////////////////////
@@ -16,17 +14,17 @@ func RefreshPokemonList(Request Receive_Request) {
 	// Active requests variables :
 	// #######
 
-	color.Yellow("Refreshing your pokemon list...")
+	PrintYellowln("Refreshing your pokemon list...")
 	if Config.ChannelID != "" {
 		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixBot+"list")
 		if err != nil {
 			if Config.Debug {
 				fmt.Println(err)
 			}
-			color.Red("Couldn't send the message to start the reading of the list. (Try to register a new channel ?)")
+			PrintRedln("Couldn't send the message to start the reading of the list. (Try to register a new channel ?)")
 		}
 	} else {
-		color.Red("No channel are registered, register one before trying again.")
+		PrintRedln("No channel are registered, register one before trying again.")
 	}
 }
 
@@ -34,19 +32,19 @@ func RefreshPokemonMovesList(Request Receive_Request) {
 	// Active requests variables :
 	// #######
 
-	color.Yellow("Refreshing your pokemon's moves list...")
+	PrintYellowln("Refreshing your pokemon's moves list...")
 	if Config.ChannelID != "" {
 		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"moves")
 		if err != nil {
 			if Config.Debug {
 				fmt.Println(err)
 			}
-			color.Red("Couldn't send the message to start the reading of the list. (Try to register a new channel ?)")
+			PrintRedln("Couldn't send the message to start the reading of the list. (Try to register a new channel ?)")
 		} else {
 			RefreshingMoves = true
 		}
 	} else {
-		color.Red("No channel are registered, register one before trying again.")
+		PrintRedln("No channel are registered, register one before trying again.")
 	}
 }
 
@@ -69,11 +67,11 @@ func UpdateSpammerSettings(Request Receive_Request) {
 	if SpamState {
 		if Config.ChannelID != "" {
 			SpamChannel = make(chan (int))
-			color.Yellow("The spammer has been started.")
+			PrintYellowln("The spammer has been started.")
 			go SpamFunc(DiscordSession, Config.ChannelID, Request.SpamInterval, Request.Message)
 			//Better than the JS equivalent c:
 		} else {
-			color.Red("No channel are registered, register one before trying again.")
+			PrintRedln("No channel are registered, register one before trying again.")
 		}
 	} else {
 		//This will cause the SpamFunc to return
@@ -89,7 +87,7 @@ func UpdateToken(Request Receive_Request) {
 	LoadConfig()
 	Config.Token = Request.Token
 	SaveConfig()
-	color.White("Restart the bot to apply your changes now. The bot may not work properly from now on.")
+	PrintRedln("Restart the bot to apply your changes now. The bot may not work properly from now on.")
 	//Not sure if it's true, don't have time to test it though.
 }
 
@@ -100,7 +98,7 @@ func UpdateServerWhitelist(Request Receive_Request) {
 
 	ServerWhitelist[Request.GuildID] = Request.GuildState
 	SaveWhitelist()
-	color.Yellow("Your server whitelist has been successfully updated.")
+	PrintYellowln("Your server whitelist has been successfully updated.")
 }
 
 func ChangePrefixes(Request Receive_Request) {
@@ -115,7 +113,7 @@ func ChangePrefixes(Request Receive_Request) {
 		Config.PrefixPokecord = Request.Prefix
 	}
 	SaveConfig()
-	color.Yellow("The prefix has been successfully updated.")
+	PrintYellowln("The prefix has been successfully updated.")
 }
 
 func ChangeDelay(Request Receive_Request) {
@@ -124,7 +122,7 @@ func ChangeDelay(Request Receive_Request) {
 
 	Config.Delay = Request.AutoCatchDelay
 	SaveConfig()
-	color.Yellow("The delay for the autocatcher has been succesfully updated.")
+	PrintYellowln("The delay for the autocatcher has been succesfully updated.")
 }
 
 func AutoCatcherOnOff(Request Receive_Request) {
@@ -132,7 +130,7 @@ func AutoCatcherOnOff(Request Receive_Request) {
 	// Request.State
 
 	Config.AutoCatching = Request.State
-	color.Yellow("Autocatching : " + strconv.FormatBool(Config.AutoCatching))
+	PrintYellowln("Autocatching : " + strconv.FormatBool(Config.AutoCatching))
 }
 
 func DuplicatesOnOff(Request Receive_Request) {
@@ -141,7 +139,7 @@ func DuplicatesOnOff(Request Receive_Request) {
 
 	Config.Duplicate = Request.State
 	SaveConfig()
-	color.Yellow("Catching duplicates : " + strconv.FormatBool(Config.Duplicate))
+	PrintYellowln("Catching duplicates : " + strconv.FormatBool(Config.Duplicate))
 }
 
 func AliasesOnOff(Request Receive_Request) {
@@ -150,7 +148,7 @@ func AliasesOnOff(Request Receive_Request) {
 
 	Config.Aliases = Request.State
 	SaveConfig()
-	color.Yellow("Catching pokemons with aliases : " + strconv.FormatBool(Config.Aliases))
+	PrintYellowln("Catching pokemons with aliases : " + strconv.FormatBool(Config.Aliases))
 }
 
 //////////////////////////////////////////////
@@ -177,7 +175,7 @@ func Release(Request Receive_Request) {
 		if Config.Debug {
 			fmt.Println(err)
 		}
-		color.Red("Couldn't release your pokemon, check that you've registered a channel and try again.")
+		PrintRedln("Couldn't release your pokemon, check that you've registered a channel and try again.")
 	}
 }
 
@@ -194,7 +192,7 @@ func LearnNewMove(Request Receive_Request) {
 		time.Sleep(3 * time.Second)
 		DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"replace "+strconv.Itoa(Request.MovePosition))
 	} else {
-		color.Red("You didn't register any channel ! Register one by using : '" + Config.PrefixBot + "register' in a channel.")
+		PrintRedln("You didn't register any channel ! Register one by using : '" + Config.PrefixBot + "register' in a channel.")
 	}
 }
 
@@ -217,9 +215,9 @@ func CatchAPokemon(Request Receive_Request) {
 	_, err = DiscordSession.ChannelMessageSend(Request.ChannelID, Request.Command+" "+Request.Name)
 	if err != nil {
 		Notif_CatchingErr(Request.Name, Guild_Spawn.Name, Channel_Spawn.Name)
-		color.Red("There was a problem when trying to catch that pokemon, try again next time maybe ?")
+		PrintRedln("There was a problem when trying to catch that pokemon, try again next time maybe ?")
 	} else {
-		color.Blue("Tried to catch your : " + Request.Name)
+		PrintBlueln("Tried to catch your : " + Request.Name)
 	}
 
 }
@@ -231,10 +229,10 @@ func RenamePokemon(Request Receive_Request) {
 	_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"nickname "+Request.Nickname)
 	if err != nil {
 		Notif_RenameFailed(Request.Nickname)
-		color.Red("There was a problem when trying to rename your pokemon, try with another one maybe ?")
+		PrintRedln("There was a problem when trying to rename your pokemon, try with another one maybe ?")
 	} else {
 		Notif_RenameSuccess(Request.Nickname)
-		color.Blue("Successfully renamed your selected pokemon into " + Request.Nickname + " !")
+		PrintBlueln("Successfully renamed your selected pokemon into " + Request.Nickname + " !")
 	}
 }
 
@@ -256,7 +254,7 @@ func RemovePokemonFromList(Request Receive_Request) {
 	// realmax corresponds to the amount of pokemon present.
 	Pokemon_List_Info.Realmax = PokemonNumber - 1
 	delete(Pokemon_List, strconv.Itoa(Request.PokemonNumber))
-	color.Blue("Removed the pokemon from your Pokemon List.")
+	PrintBlueln("Removed the pokemon from your Pokemon List.")
 	// Sends info to the websocket to update the list.
 	Websocket_RemovedFromList(Request.PokemonNumber)
 }
@@ -288,7 +286,7 @@ func SelectPokemon(Request Receive_Request) {
 		if Config.Debug {
 			fmt.Println(err)
 		}
-		color.Red("There was a problem when trying to select the pokemon, try with another one maybe ?")
+		PrintRedln("There was a problem when trying to select the pokemon, try with another one maybe ?")
 	} else {
 		SelectedPokemon.Number, _ = strconv.Atoi(PokemonNumber) //Type insertion (again) because it is an interface{} type
 		SelectedPokemon.Name = Request.Name

@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-
-	"github.com/fatih/color"
 )
 
 //SelectedPoke = Struct of the selected pokemon.
@@ -46,7 +44,7 @@ func NoConfig() {
 	path, _ := filepath.Abs("./saves/config.json")
 	file, _ := json.MarshalIndent(DefaultConfig, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)
-	color.Red("Enter your informations in config.json !")
+	PrintRedln("Enter your informations in config.json !")
 }
 
 func LoadConfig() {
@@ -63,7 +61,7 @@ func LoadConfig() {
 }
 
 func NoAliases() {
-	color.Red("Pokemon's aliases are missing, this might result in a blacklist !")
+	PrintRedln("Pokemon's aliases are missing, this might result in a blacklist !")
 }
 
 func LoadAliases() {

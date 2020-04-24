@@ -14,8 +14,10 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/fatih/color"
 	"github.com/gorilla/websocket"
+	"github.com/mum4k/termdash/terminal/termbox"
+	"github.com/mum4k/termdash/widgets/text"
+	"github.com/mum4k/termdash/widgets/gauge"
 )
 
 var upgrader = websocket.Upgrader{
@@ -23,6 +25,15 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
+
+//Terminal
+
+var tmx *termbox.Terminal
+var logBox *text.Text
+var imageBox *text.Text
+var ProgressBar *gauge.Gauge
+
+//Important
 
 var Config ConfigStruct
 var Aliases map[string][]string
@@ -89,7 +100,7 @@ func OpenBrowser(url string) {
 func GuildCreate(s *discordgo.Session, event *discordgo.GuildUpdate) {
 	if !Ready {
 		Ready = true
-		color.Green("The bot is ready to be used !")
+		PrintGreenln("The bot is ready to be used !")
 	}
 
 	DiscordSession = s
@@ -100,29 +111,33 @@ func Useful_Variables() {
 	StartLogger() //Will log crashes if it happens.
 	LoadConfig()  // Will load config.json file into the program.
 	LoadAliases() // Will load aliases.json file.
-	color.Yellow("Your config file has been successfully imported !")
+	PrintYellowln("Your config file has been successfully imported !")
 	Pokemon_List = make(map[string]interface{}) //Where the Pokemon List of the user will be stored.
 	LoadPokemonList()                           // Will load the Users Pokémons list.
 	ServerWhitelist = make(map[string]bool)     //Where the Whitelist of the servers will be stored.
 	LoadWhitelist()                             // Will load server_whitelist into ServerWhitelist.
-	color.Yellow("The server whitelist has been successfully imported !")
+	PrintYellowln("The server whitelist has been successfully imported !")
 	Websocket_Receive_Functions = make(map[string]func(request Receive_Request))
 	Websocket_Receive_AllFunctions()
+	Login() //Logins to discord
 }
 
 func main() {
 	Ready = false
-	// Create a new Discord session using the provided bot token.
-	Useful_Variables()
+	//Launches UI
+	InitUI()
+}
 
+func Login() {
+	// Create a new Discord session using the provided bot token.
 	dg, err := discordgo.New(Config.Token)
 	if err != nil {
 		if Config.Debug {
 			fmt.Println(err)
 		}
-		color.Red("Cannot connect to discord, check your token !")
+		PrintRedln("Cannot connect to discord, check your token !")
 	}
-	color.Yellow("The website is being hosted you can connect to it on : http://localhost:" + strconv.Itoa(Config.WebPort))
+	PrintYellowln("The website is being hosted you can connect to it on : http://localhost:" + strconv.Itoa(Config.WebPort))
 	dg.AddHandler(botReady)
 	dg.AddHandler(CheckForPokemon)
 	dg.AddHandler(SuccessfulCatch)
@@ -140,7 +155,7 @@ func main() {
 }
 
 func botReady(session *discordgo.Session, evt *discordgo.Ready) {
-	color.Green("Successfully connected to discord !")
+	PrintGreenln("Successfully connected to discord !")
 	CheckLicences(session)
 	go OpenBrowser("http://localhost:" + strconv.Itoa(Config.WebPort))
 

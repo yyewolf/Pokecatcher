@@ -7,8 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/fatih/color"
-
 	"github.com/gobuffalo/packr"
 )
 
@@ -21,9 +19,9 @@ type Prefixes struct {
 
 func Host_Website() {
 	box = packr.NewBox("./www")
-	color.Yellow("Pokemon's decoding started!")
+	PrintYellowln("Pokemon's decoding started!")
 	DecodeKnown() // Will decode every resized pokemon images for comparisions.
-	color.Yellow("Pokemon's decoding done !")
+	PrintYellowln("Pokemon's decoding done !")
 
 	http.HandleFunc("/ws", Websocket_Connection)
 	http.HandleFunc("/", Website_Handler)

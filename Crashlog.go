@@ -19,7 +19,6 @@ func StartLogger() {
 		if Config.Debug {
 			fmt.Println(err)
 		}
-		panic(err)
 	}
 	OStdout = os.Stdout
 	os.Stderr = logFile
