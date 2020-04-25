@@ -43,7 +43,7 @@ func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			return
 		}
 		re := regexp.MustCompile("[[:^ascii:]]")
-		ChannelName = re.ReplaceAllLiteralString(Channel_Registered.Name, "")
+		ChannelName := re.ReplaceAllLiteralString(Channel_Registered.Name, "")
 		PrintYellowln("Successfully registered channel : #" + ChannelName)
 	}
 
