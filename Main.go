@@ -16,8 +16,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/gorilla/websocket"
 	"github.com/mum4k/termdash/terminal/termbox"
-	"github.com/mum4k/termdash/widgets/text"
 	"github.com/mum4k/termdash/widgets/gauge"
+	"github.com/mum4k/termdash/widgets/text"
 )
 
 var upgrader = websocket.Upgrader{
@@ -42,6 +42,7 @@ var Pokemon_List_Info PokeListInfoStruct
 var Connections []*websocket.Conn
 var Websocket_Receive_Functions map[string]func(request Receive_Request)
 var DiscordSession *discordgo.Session
+var LatestPokemon LatestPokemonType
 
 // Refreshes
 
@@ -65,6 +66,7 @@ var SpamChannel chan (int)
 
 // Readyness
 var Ready bool
+var isHosted bool
 
 //Stdout
 var OStdout *os.File
@@ -124,6 +126,7 @@ func Useful_Variables() {
 
 func main() {
 	Ready = false
+	isHosted = false
 	//Launches UI
 	InitUI()
 }
@@ -157,7 +160,9 @@ func Login() {
 func botReady(session *discordgo.Session, evt *discordgo.Ready) {
 	PrintGreenln("Successfully connected to discord !")
 	CheckLicences(session)
-	go OpenBrowser("http://localhost:" + strconv.Itoa(Config.WebPort))
 
-	Host_Website() // Starts hosting the website.
+	if !isHosted {
+		Host_Website() // Starts hosting the website.
+		go OpenBrowser("http://localhost:" + strconv.Itoa(Config.WebPort))
+	}
 }

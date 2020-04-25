@@ -26,6 +26,8 @@ func Host_Website() {
 	http.HandleFunc("/ws", Websocket_Connection)
 	http.HandleFunc("/", Website_Handler)
 	http.Handle("/img/", http.FileServer(box))
+	//Prevents glitch in case of reconnect
+	isHosted = true
 	http.ListenAndServe(":"+strconv.Itoa(Config.WebPort), nil)
 }
 
