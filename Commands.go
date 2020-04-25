@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -41,7 +42,9 @@ func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			}
 			return
 		}
-		PrintYellowln("Successfully registered channel : #" + Channel_Registered.Name)
+		re := regexp.MustCompile("[[:^ascii:]]")
+		ChannelName = re.ReplaceAllLiteralString(Channel_Registered.Name, "")
+		PrintYellowln("Successfully registered channel : #" + ChannelName)
 	}
 
 	if strings.HasPrefix(msg.Content, Config.PrefixBot+"list") {
@@ -120,7 +123,7 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 			Pokemon_List_Info.Names = Pokemon_List_Info.Names + CurrentPokemonName + ","
 		}
-		
+
 		ProgressBar.Absolute(int(CurrentPage), int(MaxPage))
 		if CurrentPage != MaxPage {
 			//Goes to the next page

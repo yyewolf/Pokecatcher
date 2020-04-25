@@ -34,6 +34,11 @@ func ImageToString(URL string) string {
 func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string, Accuracy float64, AliasUsed string) {
 	wgPokeSpawn.Wait()
 	wgPokeSpawn.Add(1)
+
+	re := regexp.MustCompile("[[:^ascii:]]")
+	GuildName = re.ReplaceAllLiteralString(GuildName, "")
+	ChannelName = re.ReplaceAllLiteralString(ChannelName, "")
+
 	PrintGreenln("-------------------------------------------------------")
 	PrintGreen("A ")
 	PrintBlue(PokemonName)
@@ -44,7 +49,7 @@ func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string, A
 	LPrintGreen("A ")
 	LPrintBlue(PokemonName)
 	LPrintGreen(" has spawned on : \nGuild Name : " + GuildName + "\nChannel Name : #" + ChannelName + ".\nAccuracy : " + f + "\nAlias used : " + AliasUsed + "\n")
-	
+
 	wgPokeSpawn.Done()
 }
 
@@ -153,7 +158,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Command_To_Catch := strings.Split(strings.Split(msg.Embeds[0].Description, "type ")[1], " <po")[0]
 	Notif_PokeSpawn(OriginalName, Guild_Spawn.Name, Command_To_Catch, Channel_Spawn.Name, Channel_Spawn.ID)
 	PrintCyanln("Command : " + Command_To_Catch + " " + OriginalName)
-	
+
 	if Config.AutoCatching {
 		//Closes spammer
 		if SpamState {
