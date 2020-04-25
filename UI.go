@@ -57,7 +57,7 @@ func InitUI() {
 		return nil
 	},
 		button.GlobalKey('r'),
-		button.FillColor(cell.ColorRGB24(255, 165, 0)),
+		button.FillColor(cell.ColorYellow),
 	)
 
 	//This is the catch latest pokemon button
@@ -66,7 +66,7 @@ func InitUI() {
 		return nil
 	},
 		button.GlobalKey('c'),
-		button.FillColor(cell.ColorRGB24(255, 165, 0)),
+		button.FillColor(cell.ColorYellow),
 	)
 
 	c, err := container.New(
