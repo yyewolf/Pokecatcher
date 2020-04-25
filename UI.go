@@ -10,6 +10,7 @@ import (
 	"github.com/mum4k/termdash/linestyle"
 	"github.com/mum4k/termdash/terminal/termbox"
 	"github.com/mum4k/termdash/terminal/terminalapi"
+	"github.com/mum4k/termdash/widgets/button"
 	"github.com/mum4k/termdash/widgets/gauge"
 	"github.com/mum4k/termdash/widgets/text"
 )
@@ -27,17 +28,21 @@ func InitUI() {
 	}
 	defer tmx.Close()
 	ctx, cancel := context.WithCancel(context.Background())
+
+	//This is where the logs are
 	logBox, err = text.New(text.RollContent(), text.WrapAtWords())
 	if err != nil {
 		panic(err)
 	}
 	PrintGreenln("Terminal successfully launched.")
 
+	//This is where the last pokemon appear
 	imageBox, err = text.New(text.RollContent(), text.WrapAtWords())
 	if err != nil {
 		panic(err)
 	}
 
+	//This is where the pokemon list refreshes
 	ProgressBar, err = gauge.New(
 		gauge.Height(1),
 		gauge.Color(cell.ColorBlue),
@@ -45,6 +50,24 @@ func InitUI() {
 		gauge.BorderTitle("Pokemon List Refresh"),
 	)
 	ProgressBar.Absolute(0, 0)
+
+	//This is the clear log button
+	ClearLogs, _ := button.New("Clear logs", func() error {
+		logBox.Reset()
+		return nil
+	},
+		button.GlobalKey('r'),
+		button.FillColor(cell.ColorRGB24(255, 165, 0)),
+	)
+
+	//This is the catch latest pokemon button
+	CatchLast, _ := button.New("Catch latest", func() error {
+		CatchLatest()
+		return nil
+	},
+		button.GlobalKey('c'),
+		button.FillColor(cell.ColorRGB24(255, 165, 0)),
+	)
 
 	c, err := container.New(
 		tmx,
@@ -59,7 +82,23 @@ func InitUI() {
 			container.Right(
 				container.SplitHorizontal(
 					container.Top(
-						container.PlaceWidget(ProgressBar),
+						container.SplitHorizontal(
+							container.Top(
+								container.PlaceWidget(ProgressBar),
+							),
+							container.Bottom(
+								container.SplitVertical(
+									container.Left(
+										container.PlaceWidget(ClearLogs),
+									),
+									container.Right(
+										container.PlaceWidget(CatchLast),
+									),
+									container.SplitPercent(50),
+								),
+							),
+							container.SplitPercent(50),
+						),
 					),
 					container.Bottom(
 						container.Border(linestyle.Light),

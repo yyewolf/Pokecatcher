@@ -156,8 +156,16 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	LogPokemonSpawn(OriginalName, Guild_Spawn.Name, Channel_Spawn.Name, Accuracy, CatchName)
 	//Gets the command from the message : "Guess the pokemon and type p!catch <pokémon> to catch it !"
 	Command_To_Catch := strings.Split(strings.Split(msg.Embeds[0].Description, "type ")[1], " <po")[0]
+	Command_To_Catch = strings.ReplaceAll(Command_To_Catch, "а", "a")
+	//Pokécord patched this
+
 	Notif_PokeSpawn(OriginalName, Guild_Spawn.Name, Command_To_Catch, Channel_Spawn.Name, Channel_Spawn.ID)
 	PrintCyanln("Command : " + Command_To_Catch + " " + OriginalName)
+
+	LatestPokemon = LatestPokemonType{
+		ChannelID: msg.ChannelID,
+		Command:   Command_To_Catch + " " + strings.ToLower(CatchName),
+	}
 
 	if Config.AutoCatching {
 		//Closes spammer
@@ -172,7 +180,6 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		time.Sleep(time.Duration(Config.Delay+RandomNess) * time.Millisecond)
 		PrintBlueln("Tried to catch your : " + OriginalName)
 
-		Command_To_Catch = strings.ReplaceAll(Command_To_Catch, "а", "a")
 		_, err := s.ChannelMessageSend(msg.ChannelID, Command_To_Catch+" "+strings.ToLower(CatchName))
 		if err != nil {
 			if Config.Debug {

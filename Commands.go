@@ -18,6 +18,20 @@ type Pokemon struct {
 	NewNumber string `json:"newnumber"`
 }
 
+type LatestPokemonType struct {
+	ChannelID string
+	Command   string
+}
+
+func CatchLatest() {
+	_, err := DiscordSession.ChannelMessageSend(LatestPokemon.ChannelID, LatestPokemon.Command)
+	if err != nil {
+		PrintRedln("There was a problem when trying to catch that pokemon, try again next time maybe ?")
+	} else {
+		PrintBlueln("Tried to catch latest Pokemon.")
+	}
+}
+
 func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	// Reload the session
 	if DiscordSession != s {
