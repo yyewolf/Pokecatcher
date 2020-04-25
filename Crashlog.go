@@ -14,7 +14,7 @@ func StartLogger() {
 		t.Hour(), t.Minute(), t.Second())
 	Name := "log-" + formatted // Just like 2020-01-02 16-39-05
 	Path, _ := filepath.Abs("./crash/" + Name + ".txt")
-	logFile, err := os.OpenFile(Path, os.O_CREATE|os.O_RDWR, 0666)
+	logFile, err := os.OpenFile(Path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
 	if err != nil {
 		if Config.Debug {
 			fmt.Println(err)
