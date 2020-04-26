@@ -141,6 +141,7 @@ func Login() {
 		PrintRedln("Cannot connect to discord, check your token !")
 	}
 	PrintYellowln("The website is being hosted you can connect to it on : http://localhost:" + strconv.Itoa(Config.WebPort))
+	dg.LogLevel = -1
 	dg.AddHandler(botReady)
 	dg.AddHandler(CheckForPokemon)
 	dg.AddHandler(SuccessfulCatch)
