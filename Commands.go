@@ -141,7 +141,7 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		ProgressBar.Absolute(int(CurrentPage), int(MaxPage))
 		if CurrentPage != MaxPage {
 			//Goes to the next page
-			time.Sleep(3 * time.Second)
+			time.Sleep(4 * time.Second)
 			s.ChannelMessageSend(msg.ChannelID, Config.PrefixPokecord+"pokemon "+fmt.Sprintf("%.0f", (CurrentPage+1)))
 		} else {
 			RefreshingList = false
