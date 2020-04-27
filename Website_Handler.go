@@ -19,9 +19,9 @@ type Prefixes struct {
 
 func Host_Website() {
 	box = packr.NewBox("./www")
-	PrintYellowln("Pokemon's decoding started!")
+	LogYellowLn(Logs, "Pokemon's decoding started!")
 	DecodeKnown() // Will decode every resized pokemon images for comparisions.
-	PrintYellowln("Pokemon's decoding done !")
+	LogYellowLn(Logs, "Pokemon's decoding done !")
 
 	http.HandleFunc("/ws", Websocket_Connection)
 	http.HandleFunc("/", Website_Handler)

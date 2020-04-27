@@ -44,7 +44,7 @@ func NoConfig() {
 	path, _ := filepath.Abs("./saves/config.json")
 	file, _ := json.MarshalIndent(DefaultConfig, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)
-	PrintRedln("Enter your informations in config.json !")
+	LogRedLn(Logs, "Enter your informations in config.json !")
 }
 
 func LoadConfig() {
@@ -61,7 +61,7 @@ func LoadConfig() {
 }
 
 func NoAliases() {
-	PrintRedln("Pokemon's aliases are missing, this might result in a blacklist !")
+	LogRedLn(Logs, "Pokemon's aliases are missing, this might result in a blacklist !")
 }
 
 func LoadAliases() {

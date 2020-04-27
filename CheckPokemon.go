@@ -6,11 +6,12 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"regexp"
 	"strconv"
+	"regexp"
 	"strings"
 	"time"
 
+	"fyne.io/fyne/widget"
 	"github.com/bwmarrin/discordgo"
 	"github.com/nfnt/resize"
 )
@@ -35,20 +36,13 @@ func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string, A
 	wgPokeSpawn.Wait()
 	wgPokeSpawn.Add(1)
 
-	re := regexp.MustCompile("[[:^ascii:]]")
-	GuildName = re.ReplaceAllLiteralString(GuildName, "")
-	ChannelName = re.ReplaceAllLiteralString(ChannelName, "")
-
-	PrintGreenln("-------------------------------------------------------")
-	PrintGreen("A ")
-	PrintBlue(PokemonName)
+	LogGreenLn(Logs, "-------------------------------------------------------")
+	Logs.Append(widget.NewHBox(GreenTXT("A"), BlueTXT(PokemonName), GreenTXT("has spawned on :")))
 	f := fmt.Sprintf("%f", Accuracy)
-	PrintGreen(" has spawned on : \nGuild Name : " + GuildName + "\nChannel Name : #" + ChannelName + ".\nAccuracy : " + f + "\nAlias used : " + AliasUsed + "\n")
-	//Last pokemon record
-	imageBox.Reset()
-	LPrintGreen("A ")
-	LPrintBlue(PokemonName)
-	LPrintGreen(" has spawned on : \nGuild Name : " + GuildName + "\nChannel Name : #" + ChannelName + ".\nAccuracy : " + f + "\nAlias used : " + AliasUsed + "\n")
+	LogGreenLn(Logs, "Guild Name : " + GuildName)
+	LogGreenLn(Logs, "Channel Name : #" + ChannelName)
+	LogGreenLn(Logs, "Accuracy : " + f)
+	LogGreenLn(Logs, "Alias used : " + AliasUsed)
 
 	wgPokeSpawn.Done()
 }
@@ -114,6 +108,10 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			Accuracy = CompareIMG(ScanImage, ImageResized)
 			if Accuracy < 0.35 {
 				Spawned_Pokemon_Name = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
+				
+				LastPokemonImg.Image = ScanImage
+				LastPokemonLabel.SetText(Spawned_Pokemon_Name)
+				LastPokemonImg.Refresh()
 				break
 			}
 		}
@@ -160,13 +158,13 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Pokécord patched this
 
 	Notif_PokeSpawn(OriginalName, Guild_Spawn.Name, Command_To_Catch, Channel_Spawn.Name, Channel_Spawn.ID)
-	PrintCyanln("Command : " + Command_To_Catch + " " + OriginalName)
-
+	LogCyanLn(Logs, "Command : " + Command_To_Catch + " " + OriginalName)
+	
 	LatestPokemon = LatestPokemonType{
 		ChannelID: msg.ChannelID,
 		Command:   Command_To_Catch + " " + strings.ToLower(CatchName),
 	}
-
+	
 	if Config.AutoCatching {
 		//Closes spammer
 		if SpamState {
@@ -178,7 +176,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		RandomNess := rand.Intn(250) - rand.Intn(250)
 
 		time.Sleep(time.Duration(Config.Delay+RandomNess) * time.Millisecond)
-		PrintBlueln("Tried to catch your : " + OriginalName)
+		LogBlueLn(Logs, "Tried to catch your : " + OriginalName)
 
 		_, err := s.ChannelMessageSend(msg.ChannelID, Command_To_Catch+" "+strings.ToLower(CatchName))
 		if err != nil {
@@ -264,6 +262,6 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		}
 		return
 	}
-	PrintCyanln("You caught a " + PokemonName + " !")
+	LogCyanLn(Logs, "You caught a " + PokemonName + " !")
 	Notif_PokeCaught(PokemonName, Guild_Spawn.Name, Channel_Spawn.Name)
 }

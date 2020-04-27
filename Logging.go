@@ -2,62 +2,110 @@
 package main
 
 import (
-	"github.com/mum4k/termdash/cell"
-	"github.com/mum4k/termdash/widgets/text"
+	"fmt"
+	"image/color"
+
+	"fyne.io/fyne"
+	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/widget"
 )
 
-func PrintBlueln(txt string) {
-	logBox.Write(txt+"\n", text.WriteCellOpts(
-		cell.FgColor(cell.ColorBlue)),
-	)
+func scaleString(c fyne.Canvas) string {
+	return fmt.Sprintf("%0.2f", c.Scale())
 }
 
-func PrintRedln(txt string) {
-	logBox.Write(txt+"\n", text.WriteCellOpts(
-		cell.FgColor(cell.ColorRed)),
-	)
+func LogBlueLn(g *widget.Box, s string) {
+	t := canvas.NewText(s, color.RGBA{
+		R: 0,
+		G: 0,
+		B: 255,
+		A: 255,
+	})
+	g.Append(t)
+	adjust := Logs.MinSize().Height
+	LogScroll.Offset = fyne.NewPos(0, adjust)
+	LogScroll.Refresh()
 }
 
-func PrintYellowln(txt string) {
-	logBox.Write(txt+"\n", text.WriteCellOpts(
-		cell.FgColor(cell.ColorYellow)),
-	)
+func LogRedLn(g *widget.Box, s string) {
+	t := canvas.NewText(s, color.RGBA{
+		R: 255,
+		G: 0,
+		B: 0,
+		A: 255,
+	})
+	g.Append(t)
+	adjust := Logs.MinSize().Height
+	LogScroll.Offset = fyne.NewPos(0, adjust)
+	LogScroll.Refresh()
 }
 
-func PrintCyanln(txt string) {
-	logBox.Write(txt+"\n", text.WriteCellOpts(
-		cell.FgColor(cell.ColorCyan)),
-	)
+func LogYellowLn(g *widget.Box, s string) {
+	t := canvas.NewText(s, color.RGBA{
+		R: 255,
+		G: 255,
+		B: 0,
+		A: 255,
+	})
+	g.Append(t)
+	adjust := Logs.MinSize().Height
+	LogScroll.Offset = fyne.NewPos(0, adjust)
+	LogScroll.Refresh()
 }
 
-func PrintGreenln(txt string) {
-	logBox.Write(txt+"\n", text.WriteCellOpts(
-		cell.FgColor(cell.ColorGreen)),
-	)
+func LogCyanLn(g *widget.Box, s string) {
+	t := canvas.NewText(s, color.RGBA{
+		R: 0,
+		G: 255,
+		B: 255,
+		A: 255,
+	})
+	g.Append(t)
+	adjust := Logs.MinSize().Height
+	LogScroll.Offset = fyne.NewPos(0, adjust)
+	LogScroll.Refresh()
 }
 
-func PrintMagentaln(txt string) {
-	logBox.Write(txt+"\n", text.WriteCellOpts(
-		cell.FgColor(cell.ColorGreen)),
-	)
+func LogGreenLn(g *widget.Box, s string) {
+	t := canvas.NewText(s, color.RGBA{
+		R: 0,
+		G: 255,
+		B: 0,
+		A: 255,
+	})
+	g.Append(t)
+	adjust := Logs.MinSize().Height
+	LogScroll.Offset = fyne.NewPos(0, adjust)
+	LogScroll.Refresh()
 }
 
-func PrintGreen(txt string) {
-	logBox.Write(txt, text.WriteCellOpts(
-		cell.FgColor(cell.ColorGreen)),
-	)
+func LogMagentaLn(g *widget.Box, s string) {
+	t := canvas.NewText(s, color.RGBA{
+		R: 255,
+		G: 0,
+		B: 255,
+		A: 255,
+	})
+	g.Append(t)
+	adjust := Logs.MinSize().Height
+	LogScroll.Offset = fyne.NewPos(0, adjust)
+	LogScroll.Refresh()
 }
 
-func PrintBlue(txt string) {
-	logBox.Write(txt, text.WriteCellOpts(
-		cell.FgColor(cell.ColorBlue)),
-	)
+func GreenTXT(s string) *canvas.Text {
+	return canvas.NewText(s, color.RGBA{
+		R: 0,
+		G: 255,
+		B: 0,
+		A: 255,
+	})
 }
 
-func LPrintGreen(txt string) {
-	imageBox.Write(txt, text.WriteCellOpts(cell.FgColor(cell.ColorGreen)))
-}
-
-func LPrintBlue(txt string) {
-	imageBox.Write(txt, text.WriteCellOpts(cell.FgColor(cell.ColorBlue)))
+func BlueTXT(s string) *canvas.Text {
+	return canvas.NewText(s, color.RGBA{
+		R: 0,
+		G: 0,
+		B: 255,
+		A: 255,
+	})
 }

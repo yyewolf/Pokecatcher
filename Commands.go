@@ -26,9 +26,9 @@ type LatestPokemonType struct {
 func CatchLatest() {
 	_, err := DiscordSession.ChannelMessageSend(LatestPokemon.ChannelID, LatestPokemon.Command)
 	if err != nil {
-		PrintRedln("There was a problem when trying to catch that pokemon, try again next time maybe ?")
+		LogRedLn(Logs, "There was a problem when trying to catch that pokemon, try again next time maybe ?")
 	} else {
-		PrintBlueln("Tried to catch latest Pokemon.")
+		LogBlueLn(Logs, "Tried to catch latest Pokemon.")
 	}
 }
 
@@ -58,7 +58,7 @@ func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		}
 		re := regexp.MustCompile("[[:^ascii:]]")
 		ChannelName := re.ReplaceAllLiteralString(Channel_Registered.Name, "")
-		PrintYellowln("Successfully registered channel : #" + ChannelName)
+		LogYellowLn(Logs, "Successfully registered channel : #" + ChannelName)
 	}
 
 	if strings.HasPrefix(msg.Content, Config.PrefixBot+"list") {
@@ -137,8 +137,10 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 			Pokemon_List_Info.Names = Pokemon_List_Info.Names + CurrentPokemonName + ","
 		}
-
-		ProgressBar.Absolute(int(CurrentPage), int(MaxPage))
+		
+		ProgressBar.Min, ProgressBar.Max = 1, MaxPage
+		ProgressBar.SetValue(CurrentPage)
+		ProgressBar.Refresh()
 		if CurrentPage != MaxPage {
 			//Goes to the next page
 			time.Sleep(4 * time.Second)
@@ -146,9 +148,10 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		} else {
 			RefreshingList = false
 			SavePokemonList()
-			PrintYellowln("Your pokemon list has been loaded !")
+			LogYellowLn(Logs, "Your pokemon list has been loaded !")
 			Websocket_SendPokemonList()
-			ProgressBar.Absolute(0, 0)
+			ProgressBar.Min, ProgressBar.Max = 0, 1
+			ProgressBar.SetValue(0)
 		}
 	}
 }

@@ -11,7 +11,7 @@ import (
 func SpamFunc(Session *discordgo.Session, ChannelID string, interval int, message string) {
 	defer func() {
 		if r := recover(); r != nil {
-			PrintRedln("Error while spamming. Wait a bit and refresh the web page !")
+			LogRedLn(Logs, "Error while spamming. Wait a bit and refresh the web page !")
 		}
 	}()
 	SpamInterval = interval
@@ -29,7 +29,7 @@ func SpamFunc(Session *discordgo.Session, ChannelID string, interval int, messag
 		RandomInt := rand.Intn(len(MessageList))
 		_, err := Session.ChannelMessageSend(ChannelID, MessageList[RandomInt])
 		if err != nil {
-			PrintRedln("Error while spamming. (Try to register a new channel ?)")
+			LogRedLn(Logs, "Error while spamming. (Try to register a new channel ?)")
 			//If crash spam is now false.
 			SpamState = false
 		}
