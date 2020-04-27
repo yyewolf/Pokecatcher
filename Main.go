@@ -12,12 +12,13 @@ import (
 	"sync"
 	"syscall"
 	"time"
-
+	
+	"fyne.io/fyne"
+	"fyne.io/fyne/widget"
+	"fyne.io/fyne/canvas"
 	"github.com/bwmarrin/discordgo"
 	"github.com/gorilla/websocket"
-	"github.com/mum4k/termdash/terminal/termbox"
-	"github.com/mum4k/termdash/widgets/gauge"
-	"github.com/mum4k/termdash/widgets/text"
+	"github.com/gobuffalo/packr"
 )
 
 var upgrader = websocket.Upgrader{
@@ -28,10 +29,12 @@ var upgrader = websocket.Upgrader{
 
 //Terminal
 
-var tmx *termbox.Terminal
-var logBox *text.Text
-var imageBox *text.Text
-var ProgressBar *gauge.Gauge
+var Logs *widget.Box
+var LogScroll *widget.ScrollContainer
+var LastPokemonImg *canvas.Image
+var LastPokemonLabel *widget.Label
+var ProgressBar *widget.ProgressBar
+var App fyne.App
 
 //Important
 
@@ -102,7 +105,7 @@ func OpenBrowser(url string) {
 func GuildCreate(s *discordgo.Session, event *discordgo.GuildUpdate) {
 	if !Ready {
 		Ready = true
-		PrintGreenln("The bot is ready to be used !")
+		LogGreenLn(Logs, "The bot is ready to be used !")
 	}
 
 	DiscordSession = s
@@ -113,22 +116,23 @@ func Useful_Variables() {
 	StartLogger() //Will log crashes if it happens.
 	LoadConfig()  // Will load config.json file into the program.
 	LoadAliases() // Will load aliases.json file.
-	PrintYellowln("Your config file has been successfully imported !")
+	LogYellowLn(Logs, "Your config file has been successfully imported !")
 	Pokemon_List = make(map[string]interface{}) //Where the Pokemon List of the user will be stored.
 	LoadPokemonList()                           // Will load the Users Pokémons list.
 	ServerWhitelist = make(map[string]bool)     //Where the Whitelist of the servers will be stored.
 	LoadWhitelist()                             // Will load server_whitelist into ServerWhitelist.
-	PrintYellowln("The server whitelist has been successfully imported !")
+	LogYellowLn(Logs, "The server whitelist has been successfully imported !")
 	Websocket_Receive_Functions = make(map[string]func(request Receive_Request))
 	Websocket_Receive_AllFunctions()
 	Login() //Logins to discord
 }
 
 func main() {
+	box = packr.NewBox("./www")
 	Ready = false
 	isHosted = false
 	//Launches UI
-	InitUI()
+	UI()
 }
 
 func Login() {
@@ -138,9 +142,9 @@ func Login() {
 		if Config.Debug {
 			fmt.Println(err)
 		}
-		PrintRedln("Cannot connect to discord, check your token !")
+		LogRedLn(Logs, "Cannot connect to discord, check your token !")
 	}
-	PrintYellowln("The website is being hosted you can connect to it on : http://localhost:" + strconv.Itoa(Config.WebPort))
+	LogYellowLn(Logs, "The website is being hosted you can connect to it on : http://localhost:"+strconv.Itoa(Config.WebPort))
 	dg.LogLevel = -1
 	dg.AddHandler(botReady)
 	dg.AddHandler(CheckForPokemon)
@@ -159,7 +163,7 @@ func Login() {
 }
 
 func botReady(session *discordgo.Session, evt *discordgo.Ready) {
-	PrintGreenln("Successfully connected to discord !")
+	LogGreenLn(Logs, "Successfully connected to discord !")
 	CheckLicences(session)
 
 	if !isHosted {

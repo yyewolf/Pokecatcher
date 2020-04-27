@@ -1,127 +1,88 @@
 package main
 
 import (
-	"context"
-	"fmt"
-
-	"github.com/mum4k/termdash"
-	"github.com/mum4k/termdash/cell"
-	"github.com/mum4k/termdash/container"
-	"github.com/mum4k/termdash/linestyle"
-	"github.com/mum4k/termdash/terminal/termbox"
-	"github.com/mum4k/termdash/terminal/terminalapi"
-	"github.com/mum4k/termdash/widgets/button"
-	"github.com/mum4k/termdash/widgets/gauge"
-	"github.com/mum4k/termdash/widgets/text"
+	"fyne.io/fyne"
+	"fyne.io/fyne/app"
+	"fyne.io/fyne/layout"
+	"fyne.io/fyne/widget"
+	"fyne.io/fyne/canvas"
+	
+	"image/color"
 )
 
-func writeLines(ctx context.Context, t *text.Text, text string) {
-	t.Write(fmt.Sprintf("%s\n", text))
+func makeCell() fyne.CanvasObject {
+	rect := canvas.NewRectangle(&color.RGBA{0, 0, 0, 255})
+	rect.SetMinSize(fyne.NewSize(2, 2))
+	return rect
 }
 
-func InitUI() {
-	var err error
-	tmx, err = termbox.New()
-	// TEMP:
-	if err != nil {
-		panic(err)
-	}
-	defer tmx.Close()
-	ctx, cancel := context.WithCancel(context.Background())
+func UI() {
 
-	//This is where the logs are
-	logBox, err = text.New(text.RollContent(), text.WrapAtWords())
-	if err != nil {
-		panic(err)
-	}
-	PrintGreenln("Terminal successfully launched.")
+	App = app.New()
+	w := App.NewWindow("Pokecatcher v2.3.0")
+	v, _ := box.Find("icon\\icons.png")
+	icon := fyne.NewStaticResource("pokecatcher.png", v)
+	w.SetIcon(icon)
 
-	//This is where the last pokemon appear
-	imageBox, err = text.New(text.RollContent(), text.WrapAtWords())
-	if err != nil {
-		panic(err)
-	}
+	labellog := widget.NewLabel("Logs :")
+	
+	
+	Logs = widget.NewVBox()
+	LogScroll = widget.NewVScrollContainer(Logs)
+	ProgressBar = widget.NewProgressBar()
+	ProgressBar.Resize(fyne.NewSize(200, 20))
+	ProgressBar.Min, ProgressBar.Max = 0, 1
+	ProgressBar.SetValue(0)
+	
+	
+	labelimg := widget.NewLabel("Last Pokemon Spawn :")
+	c, _ := box.FindString("icon\\nothing.png")
+	img, _ := loadImg(c)
+	LastPokemonImg = canvas.NewImageFromImage(img)
+	LastPokemonLabel = widget.NewLabelWithStyle("", fyne.TextAlignCenter, fyne.TextStyle{})
+	LastPokemonImg.FillMode = 2
 
-	//This is where the pokemon list refreshes
-	ProgressBar, err = gauge.New(
-		gauge.Height(1),
-		gauge.Color(cell.ColorBlue),
-		gauge.Border(linestyle.Light),
-		gauge.BorderTitle("Pokemon List Refresh"),
-	)
-	ProgressBar.Absolute(0, 0)
-
-	//This is the clear log button
-	ClearLogs, _ := button.New("Clear logs", func() error {
-		logBox.Reset()
-		return nil
-	},
-		button.GlobalKey('r'),
-		button.FillColor(cell.ColorYellow),
-	)
-
-	//This is the catch latest pokemon button
-	CatchLast, _ := button.New("Catch latest", func() error {
-		CatchLatest()
-		return nil
-	},
-		button.GlobalKey('c'),
-		button.FillColor(cell.ColorYellow),
-	)
-
-	c, err := container.New(
-		tmx,
-		container.Border(linestyle.Light),
-		container.BorderTitle("PRESS Q TO QUIT"),
-		container.SplitVertical(
-			container.Left(
-				container.Border(linestyle.Light),
-				container.BorderTitle("Logs"),
-				container.PlaceWidget(logBox),
-			),
-			container.Right(
-				container.SplitHorizontal(
-					container.Top(
-						container.SplitHorizontal(
-							container.Top(
-								container.PlaceWidget(ProgressBar),
-							),
-							container.Bottom(
-								container.SplitVertical(
-									container.Left(
-										container.PlaceWidget(ClearLogs),
-									),
-									container.Right(
-										container.PlaceWidget(CatchLast),
-									),
-									container.SplitPercent(50),
-								),
-							),
-							container.SplitPercent(50),
-						),
-					),
-					container.Bottom(
-						container.Border(linestyle.Light),
-						container.BorderTitle("Last Pokemon :"),
-						container.PlaceWidget(imageBox),
-					),
-					container.SplitPercent(50),
-				),
+	bottom1 := makeCell()
+	left1 := makeCell()
+	right1 := makeCell()
+	bottom2 := makeCell()
+	left2 := makeCell()
+	right2 := makeCell()
+	
+	w.SetContent(widget.NewHBox(
+		widget.NewHBox(
+		fyne.NewContainerWithLayout(layout.NewBorderLayout(labellog, bottom1, left1, right1),
+			labellog,
+			bottom1,
+			left1,
+			right1,
+			LogScroll,
 			),
 		),
-	)
-	if err != nil {
-		panic(err)
-	}
+		widget.NewHBox(
+		fyne.NewContainerWithLayout(layout.NewGridLayout(1),
+			widget.NewVBox(widget.NewLabel("Refresh Pokemon List :"), ProgressBar), 
+			widget.NewVBox(
+				widget.NewButton("Clear Logs", func() {
+					Logs.Children = []fyne.CanvasObject{}
+					Logs.Refresh()
+					LogGreenLn(Logs, "The console has been cleared successfully !");
+				}),
+				widget.NewButton("Catch latest", func() {
+					CatchLatest()
+				}),
+				fyne.NewContainerWithLayout(layout.NewBorderLayout(labelimg, bottom2, left2, right2),
+					labelimg,
+					bottom2,
+					left2,
+					right2,
+					fyne.NewContainerWithLayout(layout.NewGridLayout(1),
+						widget.NewVBox(LastPokemonImg,LastPokemonLabel)),
+		)),
+	))))
+	w.Resize(fyne.NewSize(500, 500))
+	w.SetFixedSize(true)
 	go Useful_Variables()
+	w.ShowAndRun()
 
-	quitter := func(k *terminalapi.Keyboard) {
-		if k.Key == 'q' || k.Key == 'Q' {
-			cancel()
-		}
-	}
-
-	if err := termdash.Run(ctx, tmx, c, termdash.KeyboardSubscriber(quitter)); err != nil {
-		panic(err)
-	}
 }
