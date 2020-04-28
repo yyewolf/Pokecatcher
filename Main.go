@@ -1,4 +1,3 @@
-//go:generate goversioninfo
 package main
 
 import (
@@ -12,13 +11,13 @@ import (
 	"sync"
 	"syscall"
 	"time"
-	
+
 	"fyne.io/fyne"
-	"fyne.io/fyne/widget"
 	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/widget"
 	"github.com/bwmarrin/discordgo"
-	"github.com/gorilla/websocket"
 	"github.com/gobuffalo/packr"
+	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{
@@ -145,6 +144,7 @@ func Login() {
 		LogRedLn(Logs, "Cannot connect to discord, check your token !")
 	}
 	LogYellowLn(Logs, "The website is being hosted you can connect to it on : http://localhost:"+strconv.Itoa(Config.WebPort))
+	LogScroll.SetMinSize(LogScroll.MinSize())
 	dg.LogLevel = -1
 	dg.AddHandler(botReady)
 	dg.AddHandler(CheckForPokemon)
@@ -167,7 +167,7 @@ func botReady(session *discordgo.Session, evt *discordgo.Ready) {
 	CheckLicences(session)
 
 	if !isHosted {
+		isHosted = true
 		Host_Website() // Starts hosting the website.
-		go OpenBrowser("http://localhost:" + strconv.Itoa(Config.WebPort))
 	}
 }

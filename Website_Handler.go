@@ -27,7 +27,8 @@ func Host_Website() {
 	http.HandleFunc("/", Website_Handler)
 	http.Handle("/img/", http.FileServer(box))
 	//Prevents glitch in case of reconnect
-	isHosted = true
+
+	go OpenBrowser("http://localhost:" + strconv.Itoa(Config.WebPort))
 	http.ListenAndServe(":"+strconv.Itoa(Config.WebPort), nil)
 }
 

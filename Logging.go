@@ -103,9 +103,9 @@ func GreenTXT(s string) *canvas.Text {
 
 func BlueTXT(s string) *canvas.Text {
 	return canvas.NewText(s, color.RGBA{
-		R: 0,
-		G: 0,
-		B: 255,
+		R: 255,
+		G: 183,
+		B: 50,
 		A: 255,
 	})
 }
