@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
   <assemblyIdentity
-    type="win32"
+    type="win64"
     name="Pokecord Autocatcher"
     version="2.3.0"
     language="*"
