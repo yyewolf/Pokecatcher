@@ -138,7 +138,7 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			Pokemon_List_Info.Names = Pokemon_List_Info.Names + CurrentPokemonName + ","
 		}
 		
-		ProgressBar.Min, ProgressBar.Max = 1, MaxPage
+		ProgressBar.Min, ProgressBar.Max = 0, MaxPage
 		ProgressBar.SetValue(CurrentPage)
 		ProgressBar.Refresh()
 		if CurrentPage != MaxPage {
