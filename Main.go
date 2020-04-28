@@ -130,6 +130,7 @@ func main() {
 	box = packr.NewBox("./www")
 	Ready = false
 	isHosted = false
+	_ = os.Chdir("/storage/emulated/0/Android/data/org.golang.todo.Pokecatcher/files")
 	//Launches UI
 	UI()
 }

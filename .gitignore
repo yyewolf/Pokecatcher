@@ -11,3 +11,6 @@ BuildCompre.bat
 *.exe
 crash/log-2020-01-02 16-49-19.txt
 *.lic
+*.apk
+resource.syso
+*.syso
