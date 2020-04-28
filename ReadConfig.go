@@ -41,6 +41,13 @@ func NoConfig() {
 		PrefixBot:      "p^",
 		Debug:          false,
 	}
+	_, err := os.Stat("saves")
+	if os.IsNotExist(err) {
+		errDir := os.MkdirAll("saves", 0755)
+		if errDir != nil {
+			//
+		}
+	}
 	path, _ := filepath.Abs("./saves/config.json")
 	file, _ := json.MarshalIndent(DefaultConfig, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)

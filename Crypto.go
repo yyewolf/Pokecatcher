@@ -51,6 +51,15 @@ func CheckLicences(s *discordgo.Session) {
 	if err != nil {
 		LogRedLn(Logs, "You don't have any files in the folder 'licences', cannot check for authenticity.")
 	}
+	
+	
+	_, err = os.Stat("licences")
+	if os.IsNotExist(err) {
+		errDir := os.MkdirAll("licences", 0755)
+		if errDir != nil {
+			//
+		}
+	}
 
 	for _, file := range files {
 		if file.Mode().IsRegular() {
