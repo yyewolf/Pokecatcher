@@ -165,7 +165,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Command:   Command_To_Catch + " " + strings.ToLower(CatchName),
 	}
 	
-	if Config.AutoCatching {
+	if Config.AutoCatching && !strings.Contains(Pokemon_List_Info, OriginalName) {
 		//Closes spammer
 		if SpamState {
 			SpamChannel <- 1
@@ -173,7 +173,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		FakeTalk(s, msg.ChannelID, len(Command_To_Catch+" "+strings.ToLower(CatchName)))
 
 		rand.Seed(time.Now().UnixNano())
-		RandomNess := rand.Intn(250) - rand.Intn(250)
+		RandomNess := rand.Intn(422) - rand.Intn(221)
 
 		time.Sleep(time.Duration(Config.Delay+RandomNess) * time.Millisecond)
 		LogBlueLn(Logs, "Tried to catch your : " + OriginalName)
