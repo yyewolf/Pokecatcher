@@ -6,6 +6,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"strings"
+	"fmt"
 )
 
 var DecodedImages map[string]image.Image
@@ -17,7 +18,12 @@ func DecodeKnown() {
 		if strings.Contains(List[i], "img") {
 			c, _ := box.FindString(List[i])
 			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\", ""), ".png", "")
-			img, _ := loadImg(c)
+			img, err := loadImg(c)
+			if err != nil {
+				if Config.Debug {
+					fmt.Println(err)
+				}
+			}
 			DecodedImages[Name] = img
 		}
 	}

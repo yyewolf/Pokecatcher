@@ -130,7 +130,6 @@ func main() {
 	box = packr.NewBox("./www")
 	Ready = false
 	isHosted = false
-	_ = os.Chdir("/storage/emulated/0/Android/data/org.golang.todo.Pokecatcher/files")
 	//Launches UI
 	UI()
 }
@@ -138,14 +137,7 @@ func main() {
 func Login() {
 	// Create a new Discord session using the provided bot token.
 	dg, err := discordgo.New(Config.Token)
-	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
-		LogRedLn(Logs, "Cannot connect to discord, check your token !")
-	}
-	LogYellowLn(Logs, "The website is being hosted you can connect to it on : http://localhost:"+strconv.Itoa(Config.WebPort))
-	LogScroll.SetMinSize(LogScroll.MinSize())
+	check(err)
 	dg.LogLevel = -1
 	dg.AddHandler(botReady)
 	dg.AddHandler(CheckForPokemon)
@@ -153,7 +145,12 @@ func Login() {
 	dg.AddHandler(CheckForCommand)
 	dg.AddHandler(GuildCreate)
 	err = dg.Open()
-	check(err)
+	if err != nil {
+		if Config.Debug {
+			fmt.Println(err)
+		}
+		LogRedLn(Logs, "Cannot connect to discord, check your token !")
+	}
 	// Wait here until CTRL-C or other term signal is received.
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
@@ -169,6 +166,8 @@ func botReady(session *discordgo.Session, evt *discordgo.Ready) {
 
 	if !isHosted {
 		isHosted = true
+		LogYellowLn(Logs, "The website is being hosted you can connect to it on : http://localhost:"+strconv.Itoa(Config.WebPort))
+		LogScroll.SetMinSize(LogScroll.MinSize())
 		Host_Website() // Starts hosting the website.
 	}
 }
