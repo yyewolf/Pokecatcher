@@ -75,7 +75,7 @@ func LoadAliases() {
 	path, _ := filepath.Abs("./saves/aliases.json")
 	jsonFile, err := os.Open(path)
 	if err != nil {
-		NoConfig()
+		NoAliases()
 		return
 	}
 	defer jsonFile.Close()
