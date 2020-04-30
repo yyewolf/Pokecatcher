@@ -26,17 +26,16 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
-//Terminal
-
+//Window
 var Logs *widget.Box
 var LogScroll *widget.ScrollContainer
 var LastPokemonImg *canvas.Image
 var LastPokemonLabel *widget.Label
 var ProgressBar *widget.ProgressBar
 var App fyne.App
+var WindowIcon fyne.Resource 
 
 //Important
-
 var Config ConfigStruct
 var Aliases map[string][]string
 var Pokemon_List map[string]Pokemon
@@ -162,6 +161,7 @@ func Login() {
 			fmt.Println(err)
 		}
 		LogRedLn(Logs, "Cannot connect to discord, check your token !")
+		AskUserForToken()
 	}
 	// Wait here until CTRL-C or other term signal is received.
 	sc := make(chan os.Signal, 1)

@@ -30,7 +30,7 @@ type ConfigStruct struct {
 
 func NoConfig() {
 	//Creates the default config file
-	DefaultConfig := ConfigStruct{
+	Config = ConfigStruct{
 		Token:          "Put your token here (in case of problem add 'Bot' before your token)",
 		ChannelID:      "Put a channel ID here",
 		Delay:          3000,
@@ -49,9 +49,9 @@ func NoConfig() {
 		}
 	}
 	path, _ := filepath.Abs("./saves/config.json")
-	file, _ := json.MarshalIndent(DefaultConfig, "", " ")
+	file, _ := json.MarshalIndent(Config, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)
-	LogRedLn(Logs, "Enter your informations in config.json !")
+	LogRedLn(Logs, "Enter your token in the window!")
 }
 
 func LoadConfig() {

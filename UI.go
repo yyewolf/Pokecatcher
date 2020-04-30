@@ -21,8 +21,8 @@ func UI() {
 	App = app.New()
 	w := App.NewWindow("Pokecatcher v2.4.0")
 	v, _ := box.Find("icon\\icons.png")
-	icon := fyne.NewStaticResource("pokecatcher.png", v)
-	w.SetIcon(icon)
+	WindowIcon = fyne.NewStaticResource("pokecatcher.png", v)
+	w.SetIcon(WindowIcon)
 
 	labellog := widget.NewLabel("Logs :")
 
