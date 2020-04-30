@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -49,16 +48,14 @@ func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if strings.HasPrefix(msg.Content, Config.PrefixBot+"register") {
 
 		Config.ChannelID = msg.ChannelID
-		Channel_Registered, err := s.Channel(msg.ChannelID)
+		ChannelRegistered, err := s.Channel(msg.ChannelID)
 		if err != nil {
 			if Config.Debug {
 				fmt.Println(err)
 			}
 			return
 		}
-		re := regexp.MustCompile("[[:^ascii:]]")
-		ChannelName := re.ReplaceAllLiteralString(Channel_Registered.Name, "")
-		LogYellowLn(Logs, "Successfully registered channel : #" + ChannelName)
+		LogYellowLn(Logs, "Successfully registered channel : #"+ChannelRegistered.Name)
 	}
 
 	if strings.HasPrefix(msg.Content, Config.PrefixBot+"list") {
@@ -137,13 +134,13 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 			Pokemon_List_Info.Names = Pokemon_List_Info.Names + CurrentPokemonName + ","
 		}
-		
+
 		ProgressBar.Min, ProgressBar.Max = 0, MaxPage
 		ProgressBar.SetValue(CurrentPage)
 		ProgressBar.Refresh()
 		if CurrentPage != MaxPage {
 			//Goes to the next page
-			time.Sleep(4 * time.Second)
+			time.Sleep(4500 * time.Millisecond)
 			s.ChannelMessageSend(msg.ChannelID, Config.PrefixPokecord+"pokemon "+fmt.Sprintf("%.0f", (CurrentPage+1)))
 		} else {
 			RefreshingList = false

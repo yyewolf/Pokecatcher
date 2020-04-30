@@ -6,8 +6,8 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"strconv"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -39,10 +39,10 @@ func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string, A
 	LogGreenLn(Logs, "-------------------------------------------------------")
 	Logs.Append(widget.NewHBox(GreenTXT("A"), BlueTXT(PokemonName), GreenTXT("has spawned on :")))
 	f := fmt.Sprintf("%f", Accuracy)
-	LogGreenLn(Logs, "Guild Name : " + GuildName)
-	LogGreenLn(Logs, "Channel Name : #" + ChannelName)
-	LogGreenLn(Logs, "Accuracy : " + f)
-	LogGreenLn(Logs, "Alias used : " + AliasUsed)
+	LogGreenLn(Logs, "Guild Name : "+GuildName)
+	LogGreenLn(Logs, "Channel Name : #"+ChannelName)
+	LogGreenLn(Logs, "Accuracy : "+f)
+	LogGreenLn(Logs, "Alias used : "+AliasUsed)
 
 	wgPokeSpawn.Done()
 }
@@ -108,7 +108,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			Accuracy = CompareIMG(ScanImage, ImageResized)
 			if Accuracy < 0.35 {
 				Spawned_Pokemon_Name = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
-				
+
 				LastPokemonImg.Image = ScanImage
 				LastPokemonLabel.SetText(Spawned_Pokemon_Name)
 				LastPokemonImg.Refresh()
@@ -158,14 +158,14 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Pokécord patched this
 
 	Notif_PokeSpawn(OriginalName, Guild_Spawn.Name, Command_To_Catch, Channel_Spawn.Name, Channel_Spawn.ID)
-	LogCyanLn(Logs, "Command : " + Command_To_Catch + " " + OriginalName)
-	
+	LogCyanLn(Logs, "Command : "+Command_To_Catch+" "+OriginalName)
+
 	LatestPokemon = LatestPokemonType{
 		ChannelID: msg.ChannelID,
 		Command:   Command_To_Catch + " " + strings.ToLower(CatchName),
 	}
-	
-	if Config.AutoCatching && !strings.Contains(Pokemon_List_Info, OriginalName) {
+
+	if Config.AutoCatching && !strings.Contains(Pokemon_List_Info.Names, OriginalName) {
 		//Closes spammer
 		if SpamState {
 			SpamChannel <- 1
@@ -176,7 +176,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		RandomNess := rand.Intn(422) - rand.Intn(221)
 
 		time.Sleep(time.Duration(Config.Delay+RandomNess) * time.Millisecond)
-		LogBlueLn(Logs, "Tried to catch your : " + OriginalName)
+		LogBlueLn(Logs, "Tried to catch your : "+OriginalName)
 
 		_, err := s.ChannelMessageSend(msg.ChannelID, Command_To_Catch+" "+strings.ToLower(CatchName))
 		if err != nil {
@@ -227,41 +227,46 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//99 Pokemon
 	//99Pokemon
 	//Pokemon
-	PokemonName := reg.ReplaceAllString(strings.ReplaceAll(strings.Split(strings.Split(msg.Content, "level ")[1], "! Added")[0], " ", ""), "")
-	PokemonLevel := strings.Split(strings.Split(msg.Content, "level ")[1], " "+PokemonName)[0]
+	PokemonName := strings.Split(msg.Content, "level ")[1]
+	PokemonName = strings.Split(PokemonName, "!")[0]
+	PokemonName = strings.ReplaceAll(PokemonName, " ", "")
+	PokemonName = reg.ReplaceAllString(PokemonName, "")
+	//Do the same to detect its level
+	PokemonLevel := strings.Split(msg.Content, "level ")[1]
+	PokemonLevel = strings.Split(PokemonLevel, " "+PokemonName)[0]
 
-	if len(Pokemon_List) != 0 {
+	//Adds the pokemon to the list
 
-		PokemonNumber := strconv.Itoa(Pokemon_List_Info.Realmax)
+	Pokemon_List_Info.Names += PokemonName + ","
+	Pokemon_List_Info.Realmax++
+	Pokemon_List_Info.Array++
+	
+	PokemonNumber := strconv.Itoa(Pokemon_List_Info.Realmax)
 
-		Pokemon_List[PokemonNumber] = Pokemon{
-			Name:      PokemonName,
-			Level:     PokemonLevel,
-			IV:        "-",
-			NewNumber: PokemonNumber,
-		}
-
-		Pokemon_List_Info.Names += PokemonName + ","
-		Pokemon_List_Info.Realmax += 1
-		Pokemon_List_Info.Array += 1
-		SavePokemonList()
-		Websocket_SendPokemonList()
+	Pokemon_List[PokemonNumber] = Pokemon{
+		Name:      PokemonName,
+		Level:     PokemonLevel,
+		IV:        "-",
+		NewNumber: PokemonNumber,
 	}
+	
+	go SavePokemonList()
+	go Websocket_SendPokemonList()
 
-	Guild_Spawn, err := s.Guild(msg.GuildID)
+	GuildSpawn, err := s.Guild(msg.GuildID)
 	if err != nil {
 		if Config.Debug {
 			fmt.Println(err)
 		}
 		return
 	}
-	Channel_Spawn, err := s.Channel(msg.ChannelID)
+	ChannelSpawn, err := s.Channel(msg.ChannelID)
 	if err != nil {
 		if Config.Debug {
 			fmt.Println(err)
 		}
 		return
 	}
-	LogCyanLn(Logs, "You caught a " + PokemonName + " !")
-	Notif_PokeCaught(PokemonName, Guild_Spawn.Name, Channel_Spawn.Name)
+	LogCyanLn(Logs, "You caught a "+PokemonName+" !")
+	Notif_PokeCaught(PokemonName, GuildSpawn.Name, ChannelSpawn.Name)
 }

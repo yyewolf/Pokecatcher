@@ -39,7 +39,7 @@ var App fyne.App
 
 var Config ConfigStruct
 var Aliases map[string][]string
-var Pokemon_List map[string]interface{}
+var Pokemon_List map[string]Pokemon
 var Pokemon_List_Info PokeListInfoStruct
 var Connections []*websocket.Conn
 var Websocket_Receive_Functions map[string]func(request Receive_Request)
@@ -72,6 +72,9 @@ var isHosted bool
 
 //Stdout
 var OStdout *os.File
+
+//AutoLeveler
+var InfoMenu InfoActivated
 
 func check(e error) {
 	if e != nil {
@@ -111,15 +114,15 @@ func GuildCreate(s *discordgo.Session, event *discordgo.GuildUpdate) {
 	return
 }
 
-func Useful_Variables() {
+func UsefulVariables() {
 	StartLogger() //Will log crashes if it happens.
 	LoadConfig()  // Will load config.json file into the program.
 	LoadAliases() // Will load aliases.json file.
 	LogYellowLn(Logs, "Your config file has been successfully imported !")
-	Pokemon_List = make(map[string]interface{}) //Where the Pokemon List of the user will be stored.
-	LoadPokemonList()                           // Will load the Users Pokémons list.
-	ServerWhitelist = make(map[string]bool)     //Where the Whitelist of the servers will be stored.
-	LoadWhitelist()                             // Will load server_whitelist into ServerWhitelist.
+	Pokemon_List = make(map[string]Pokemon) //Where the Pokemon List of the user will be stored.
+	LoadPokemonList()                       // Will load the Users Pokémons list.
+	ServerWhitelist = make(map[string]bool) //Where the Whitelist of the servers will be stored.
+	LoadWhitelist()                         // Will load server_whitelist into ServerWhitelist.
 	LogYellowLn(Logs, "The server whitelist has been successfully imported !")
 	Websocket_Receive_Functions = make(map[string]func(request Receive_Request))
 	Websocket_Receive_AllFunctions()
@@ -140,10 +143,19 @@ func Login() {
 	check(err)
 	dg.LogLevel = -1
 	dg.AddHandler(botReady)
+	//Recognize pokemons
 	dg.AddHandler(CheckForPokemon)
+	//Adds pokemon to list
 	dg.AddHandler(SuccessfulCatch)
+	//Recognize commands
 	dg.AddHandler(CheckForCommand)
+	//Updates Servers
 	dg.AddHandler(GuildCreate)
+	//AutoLeveling Feature
+	dg.AddHandler(InfoActivator)
+	dg.AddHandler(InfoVerifier)
+	dg.AddHandler(SelectVerifier)
+	dg.AddHandler(AutoLeveler)
 	err = dg.Open()
 	if err != nil {
 		if Config.Debug {
