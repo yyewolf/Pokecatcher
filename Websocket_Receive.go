@@ -130,7 +130,7 @@ func AutoCatcherOnOff(Request Receive_Request) {
 	// Request.State
 
 	Config.AutoCatching = Request.State
-	LogYellowLn(Logs, "Autocatching : " + strconv.FormatBool(Config.AutoCatching))
+	LogYellowLn(Logs, "Autocatching : "+strconv.FormatBool(Config.AutoCatching))
 }
 
 func DuplicatesOnOff(Request Receive_Request) {
@@ -139,7 +139,7 @@ func DuplicatesOnOff(Request Receive_Request) {
 
 	Config.Duplicate = Request.State
 	SaveConfig()
-	LogYellowLn(Logs, "Catching duplicates : " + strconv.FormatBool(Config.Duplicate))
+	LogYellowLn(Logs, "Catching duplicates : "+strconv.FormatBool(Config.Duplicate))
 }
 
 func AliasesOnOff(Request Receive_Request) {
@@ -148,7 +148,7 @@ func AliasesOnOff(Request Receive_Request) {
 
 	Config.Aliases = Request.State
 	SaveConfig()
-	LogYellowLn(Logs, "Catching pokemons with aliases : " + strconv.FormatBool(Config.Aliases))
+	LogYellowLn(Logs, "Catching pokemons with aliases : "+strconv.FormatBool(Config.Aliases))
 }
 
 //////////////////////////////////////////////
@@ -192,7 +192,7 @@ func LearnNewMove(Request Receive_Request) {
 		time.Sleep(3 * time.Second)
 		DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"replace "+strconv.Itoa(Request.MovePosition))
 	} else {
-		LogRedLn(Logs, "You didn't register any channel ! Register one by using : '" + Config.PrefixBot + "register' in a channel.")
+		LogRedLn(Logs, "You didn't register any channel ! Register one by using : '"+Config.PrefixBot+"register' in a channel.")
 	}
 }
 
@@ -217,7 +217,7 @@ func CatchAPokemon(Request Receive_Request) {
 		Notif_CatchingErr(Request.Name, Guild_Spawn.Name, Channel_Spawn.Name)
 		LogRedLn(Logs, "There was a problem when trying to catch that pokemon, try again next time maybe ?")
 	} else {
-		LogBlueLn(Logs, "Tried to catch your : " + Request.Name)
+		LogBlueLn(Logs, "Tried to catch your : "+Request.Name)
 	}
 
 }
@@ -232,7 +232,7 @@ func RenamePokemon(Request Receive_Request) {
 		LogRedLn(Logs, "There was a problem when trying to rename your pokemon, try with another one maybe ?")
 	} else {
 		Notif_RenameSuccess(Request.Nickname)
-		LogBlueLn(Logs, "Successfully renamed your selected pokemon into " + Request.Nickname + " !")
+		LogBlueLn(Logs, "Successfully renamed your selected pokemon into "+Request.Nickname+" !")
 	}
 }
 
@@ -244,7 +244,7 @@ func RemovePokemonFromList(Request Receive_Request) {
 	// Loops through all pokémons to lower their numbers and keep things ordered.
 	for i := 0; i < PokemonNumber; i++ {
 		Number := i + 1
-		CurrentPoke := Pokemon_List[strconv.Itoa(Request.PokemonNumber)].(Pokemon) // Type insertion cuz interface{}
+		CurrentPoke := Pokemon_List[strconv.Itoa(Request.PokemonNumber)]
 		PokemonNewNumber, _ := strconv.Atoi(CurrentPoke.NewNumber)
 		if Number > PokemonNewNumber {
 			CurrentPoke.NewNumber = strconv.Itoa(i)
@@ -256,6 +256,7 @@ func RemovePokemonFromList(Request Receive_Request) {
 	delete(Pokemon_List, strconv.Itoa(Request.PokemonNumber))
 	LogBlueLn(Logs, "Removed the pokemon from your Pokemon List.")
 	// Sends info to the websocket to update the list.
+	go SavePokemonList()
 	Websocket_RemovedFromList(Request.PokemonNumber)
 }
 
@@ -271,15 +272,7 @@ func SelectPokemon(Request Receive_Request) {
 	}
 
 	PokemonNumberOnWebsite := strconv.Itoa(Request.PokemonNumber)
-	PokemonNumber := "0"
-	switch Pokemon_List[PokemonNumberOnWebsite].(type) {
-	case Pokemon:
-		PokemonNumber = Pokemon_List[PokemonNumberOnWebsite].(Pokemon).NewNumber
-	case map[string]interface{}:
-		PokemonNumber = Pokemon_List[PokemonNumberOnWebsite].(map[string]interface{})["newnumber"].(string)
-	default:
-		return
-	}
+	PokemonNumber := Pokemon_List[PokemonNumberOnWebsite].NewNumber
 
 	_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"select "+PokemonNumber) //Type insertion because it is an interface{} type
 	if err != nil {
