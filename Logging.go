@@ -16,9 +16,9 @@ func scaleString(c fyne.Canvas) string {
 
 func LogBlueLn(g *widget.Box, s string) {
 	t := canvas.NewText(s, color.RGBA{
-		R: 0,
-		G: 0,
-		B: 255,
+		R: 88,
+		G: 127,
+		B: 252,
 		A: 255,
 	})
 	g.Append(t)

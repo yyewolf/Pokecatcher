@@ -64,7 +64,7 @@ func UI() {
 					widget.NewButton("Clear Logs", func() {
 						Logs.Children = []fyne.CanvasObject{}
 						Logs.Refresh()
-						LogGreenLn(Logs, "The console has been cleared successfully !")
+						LogBlueLn(Logs, "The console has been cleared successfully !")
 					}),
 					widget.NewButton("Catch latest", func() {
 						CatchLatest()
