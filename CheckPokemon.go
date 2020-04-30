@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"image/png"
+	"fyne.io/fyne"
 
 	"fyne.io/fyne/widget"
 	"github.com/bwmarrin/discordgo"
@@ -35,13 +37,19 @@ func ImageToString(URL string) string {
 func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string, Accuracy float64, AliasUsed string) {
 	wgPokeSpawn.Wait()
 	wgPokeSpawn.Add(1)
+	
+	if len(Logs.Children)+6 > 150 {
+		Logs.Children = []fyne.CanvasObject{}
+		Logs.Refresh()
+		LogBlueLn(Logs, "The console has been cleared automatically.")
+	}
 
 	LogGreenLn(Logs, "-------------------------------------------------------")
 	Logs.Append(widget.NewHBox(GreenTXT("A"), BlueTXT(PokemonName), GreenTXT("has spawned on :")))
 	f := fmt.Sprintf("%f", Accuracy)
 	LogGreenLn(Logs, "Guild Name : "+GuildName)
 	LogGreenLn(Logs, "Channel Name : #"+ChannelName)
-	LogGreenLn(Logs, "Accuracy : "+f)
+	LogGreenLn(Logs, "Accuracy : "+f+"%")
 	LogGreenLn(Logs, "Alias used : "+AliasUsed)
 
 	wgPokeSpawn.Done()
@@ -98,6 +106,9 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	ImageResized := resize.Resize(64, 64, ImageDecoded, resize.Bicubic)
+	Buffer := &buf{}
+	_ = png.Encode(Buffer, ImageResized)
+	ImageResized, _ = png.Decode(Buffer)
 	List := box.List()
 	Accuracy := 0.0
 
