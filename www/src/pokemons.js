@@ -2,15 +2,15 @@ function LoadList(list){
 	if(typeof list !== 'undefined'){
 		var html = [];
 		for (k = 0; k < list['array']; k++) {
-			if (typeof list[k + 1] != undefined) {
+			if (typeof list[k + 1] != "undefined") {
 				try {
 					var pokemonnumber = k + 1;
 					var pokemonname = list[k + 1]['name']
 					var pokemonlevel = list[k + 1]['level']
 					var pokemoniv = list[k + 1]['iv']
+					var ThisPkmn = new Pokemon(pokemonnumber, pokemonname, pokemonlevel, pokemoniv);
+					html.push(ThisPkmn.ListHTML)
 				} catch (e) {};
-				var ThisPkmn = new Pokemon(pokemonnumber, pokemonname, pokemonlevel, pokemoniv);
-				html[k] = ThisPkmn.ListHTML
 			};
 		};
 		clusterize = new Clusterize({
@@ -27,15 +27,15 @@ function ReloadList(list){
 	if(typeof list !== 'undefined'){
 		var html = [];
 		for (k = 0; k < list['array']; k++) {
-			if (typeof list[k + 1] != undefined) {
+			if (typeof list[k + 1] != "undefined") {
 				try {
 					var pokemonnumber = k + 1;
 					var pokemonname = list[k + 1]['name']
 					var pokemonlevel = list[k + 1]['level']
 					var pokemoniv = list[k + 1]['iv']
+					var ThisPkmn = new Pokemon(pokemonnumber, pokemonname, pokemonlevel, pokemoniv);
+					html.push(ThisPkmn.ListHTML)
 				} catch (e) {};
-				var ThisPkmn = new Pokemon(pokemonnumber, pokemonname, pokemonlevel, pokemoniv);
-				html[k] = ThisPkmn.ListHTML
 			};
 		};
 		if(typeof clusterize !== 'undefined'){
