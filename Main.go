@@ -39,6 +39,7 @@ var WindowIcon fyne.Resource
 var Config ConfigStruct
 var Aliases map[string][]string
 var Pokemon_List map[string]Pokemon
+var Pokemon_Whitelist map[string]bool
 var Pokemon_List_Info PokeListInfoStruct
 var Connections []*websocket.Conn
 var Websocket_Receive_Functions map[string]func(request Receive_Request)
@@ -46,7 +47,6 @@ var DiscordSession *discordgo.Session
 var LatestPokemon LatestPokemonType
 
 // Refreshes
-
 var RefreshingMoves bool
 var RefreshingMovesChannelID string
 var RefreshingList bool
@@ -119,7 +119,8 @@ func UsefulVariables() {
 	LoadAliases() // Will load aliases.json file.
 	LogYellowLn(Logs, "Your config file has been successfully imported !")
 	Pokemon_List = make(map[string]Pokemon) //Where the Pokemon List of the user will be stored.
-	LoadPokemonList()                       // Will load the Users Pokémons list.
+	LoadPokemonList()                       // Will load the Users Pokémon list.
+	LoadPokemonWhitelist()					// Will load the Users Pokémon Whitelist
 	ServerWhitelist = make(map[string]bool) //Where the Whitelist of the servers will be stored.
 	LoadWhitelist()                         // Will load server_whitelist into ServerWhitelist.
 	LogYellowLn(Logs, "The server whitelist has been successfully imported !")

@@ -145,6 +145,11 @@ function refreshwhitelist(id){
 	ws.send('{"action":"whitelist","serverid":"'+id+'","serverstate":'+document.getElementById("server"+id).checked+'}');
 };
 
+function refreshpkmnwhitelist(name, checked){
+	pokewhitelist[name] = checked
+	ws.send('{"action":"pokemonwhitelist","name":"'+name+'","state":'+checked+'}');
+};
+
 function changeprefix(type,prefix){
 	NotifTitle = 'This prefix has been changed!';
 	notify('info', NotifTitle);

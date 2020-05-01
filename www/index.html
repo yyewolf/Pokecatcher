@@ -21,12 +21,13 @@
 	<script src="./src/init.js"></script>
 	<script src="./src/websocket.js"></script>
 	<script src="./src/changes.js"></script>
+	<script src="./src/whitelist.js"></script>
 	<!--- ---->
     <link rel="shortcut icon" href="./icon/favicon.ico" type="image/x-icon">
 	<link rel="icon" href="./icon/favicon.ico" type="image/x-icon">
 </head>
 
-<body>
+<body style="text-align: center;">
     <div class="notifyjs-corner" id="corner" style="top: 0px; left: 0px;"></div>
     <div class="jumbotron">
         <h1 class="display-4" style="text-align: center;">Pokécord Helper</h1>
@@ -172,43 +173,34 @@
         </div>
     </div>
     <div class="container" id="thirdPage" style="display: none;">
-        <div class="container" id="learnmoves" style="margin-top: 25px; text-align: center; border:1px solid #cecece;">
-            <h2 style="direction:ltr;">Farm settings :</h2>
-            <br />
-            <label>
-                <div style="display:inline-block;">
-                    <input type="text" style="width:500px; display:inline-block;" class="form-control" id="farmtoken1" name="farmtoken1" placeholder="Token 1 here" />
-                    <span style="font-size: 20px; display:inline-block;" class="label-text">Farmer 1 token</span>
-                    <button onclick="farmerconfig('token1', document.getElementById('farmtoken1').value);" class="btn btn-validate" id="updatefarmtoken1" name="updatefarmtoken1"><span class="fa fa-check"></span></button>
-                </div>
-            </label>
-            <label>
-                <div style="display:inline-block;">
-                    <input type="text" style="width:500px; display:inline-block;" class="form-control" id="farmtoken2" name="farmtoken2" placeholder="Token 2 here" />
-                    <span style="font-size: 20px; display:inline-block;" class="label-text">Farmer 2 token</span>
-                    <button onclick="farmerconfig('token2', document.getElementById('farmtoken2').value);" class="btn btn-validate" id="updatefarmtoken2" name="updatefarmtoken2"><span class="fa fa-check"></span></button>
-                </div>
-            </label>
-            <label>
-                <div style="display:inline-block;">
-                    <input type="text" style="width:250px; display:inline-block;" class="form-control" id="farmchannelid" name="farmchannelid" placeholder="ID here" />
-                    <span style="font-size: 20px; display:inline-block;" class="label-text">Channel ID (Tutorial <a href="https://www.youtube.com/watch?v=RI3_Z0AEMck">here</a>)</span>
-                    <button onclick="farmerconfig('channelid', document.getElementById('farmchannelid').value);" class="btn btn-validate" id="updatefarmchannelid" name="updatefarmchannelid"><span class="fa fa-check"></span></button>
-                </div>
-            </label>
-            <br />
-            <label>
-                <div style="display:inline-block;">
-                    <input onchange="farmerconfig('state', document.getElementById('farmactive').checked);" class="form-control" type="checkbox" id="farmactive"> <span class="label-text">Active</span>
-                </div>
-            </label>
+        <div class="col-lg" style="border:1px solid #cecece;">
+            <input type="text" style="width:400px; display:inline-block;" onkeyup="Search(this.value)" onchange="Search(this.value)" class="form-control" placeholder="Search a Pokémon" />
+        </div>
+		<br />
+		<p style="display:inline-block;">
+			<form id="form" style="float: left; padding: 8px;">
+				<input type="button" onclick="AllChecked();" class="btn btn-validate" id="achecked" name="achecked" value="All checked" />
+			</form>
+			<form id="form" style="float: left; padding: 8px;">
+				<input type="button" onclick="AllUnchecked();" class="btn btn-validate" id="auchecked" name="auchecked" value="All unchecked" />
+			</form>
+		</p>
+		<br />
+        <div class="col-lg pre-scrollable list_container" id="WLScroll" class="clusterize-scroll" style="border:1px solid #cecece; max-height: 400px;">
+            <h2 style="direction:ltr;">Pokemon Whitelist :</h2>
+			<div id="WLContent" class="clusterize-content">
+				<div class="clusterize-no-data">Loading…</div>
+			</div>
         </div>
     </div>
     <br />
     <div class="row">
         <div class="col-lg-1" style="float: none; margin: 0 auto;">
             <a href="javascript:void(0)" onclick="pageprevious();" style="background-color: #4CAF50; color: white; display: inline-block; padding: 8px; border-radius: 10%;">
-                <</a> <a href="javascript:void(0)" onclick="pagenext();" style="background-color: #4CAF50; color: white; display: inline-block; padding: 8px; border-radius: 10%;">>
+				<
+            </a> 
+			<a href="javascript:void(0)" onclick="pagenext();" style="background-color: #4CAF50; color: white; display: inline-block; padding: 8px; border-radius: 10%;">
+				>
             </a>
         </div>
     </div>

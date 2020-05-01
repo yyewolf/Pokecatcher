@@ -87,8 +87,8 @@ func UpdateToken(Request Receive_Request) {
 	LoadConfig()
 	Config.Token = Request.Token
 	SaveConfig()
-	LogRedLn(Logs, "Restart the bot to apply your changes now. The bot may not work properly from now on.")
-	//Not sure if it's true, don't have time to test it though.
+	Login()
+	//Will login instead of prompting the user to relaunch the program
 }
 
 func UpdateServerWhitelist(Request Receive_Request) {
@@ -101,11 +101,21 @@ func UpdateServerWhitelist(Request Receive_Request) {
 	LogYellowLn(Logs, "Your server whitelist has been successfully updated.")
 }
 
+func UpdatePokemonWhitelist(Request Receive_Request) {
+	// Active requests variables :
+	// Request.Name
+	// Request.State
+
+	Pokemon_Whitelist[Request.Name] = Request.State
+	SavePokemonWhitelist()
+	LogYellowLn(Logs, "Your Pokémon whitelist has been successfully updated.")
+}
+
 func ChangePrefixes(Request Receive_Request) {
 	// Active requests variables :
 	// Request.Type
 	// Request.Prefix
-	// sb => self-bot ; pc => pokécord
+	// sb => self-bot's prefix ; pc => pokécord's prefix
 
 	if Request.Type == "sb" {
 		Config.PrefixBot = Request.Prefix
@@ -287,6 +297,26 @@ func SelectPokemon(Request Receive_Request) {
 	}
 }
 
+func WhitelistAllChecked(Request Receive_Request) {
+	// Active requests variables :
+	// 
+	
+	for current := range Pokemon_Whitelist {
+		Pokemon_Whitelist[current] = true
+	}
+	SavePokemonWhitelist()
+}
+
+func WhitelistAllUnchecked(Request Receive_Request) {
+	// Active requests variables :
+	// 
+	
+	for current := range Pokemon_Whitelist {
+		Pokemon_Whitelist[current] = false
+	}
+	SavePokemonWhitelist()
+}
+
 func Websocket_Receive_AllFunctions() {
 	// Directly translated from the old code.
 	Websocket_Receive_Functions["aca"] = AutoCatcherOnOff
@@ -303,7 +333,10 @@ func Websocket_Receive_AllFunctions() {
 	Websocket_Receive_Functions["catch"] = CatchAPokemon
 	Websocket_Receive_Functions["learn"] = LearnNewMove
 	Websocket_Receive_Functions["whitelist"] = UpdateServerWhitelist
+	Websocket_Receive_Functions["pokemonwhitelist"] = UpdatePokemonWhitelist
 	Websocket_Receive_Functions["autodelaychange"] = RefreshPokemonMovesList
 	Websocket_Receive_Functions["prefixchange"] = ChangePrefixes
 	Websocket_Receive_Functions["autodelaychange"] = ChangeDelay
+	Websocket_Receive_Functions["pkmnwhitelistallchecked"] = WhitelistAllChecked
+	Websocket_Receive_Functions["pkmnwhitelistallunchecked"] = WhitelistAllUnchecked
 }

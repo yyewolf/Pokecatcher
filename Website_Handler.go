@@ -32,7 +32,7 @@ func Host_Website() {
 	http.ListenAndServe(":"+strconv.Itoa(Config.WebPort), nil)
 }
 
-func Find_Servers() (string, string) {
+func FindServers() (string, string) {
 	Names := ""
 	IDs := ""
 	if DiscordSession == nil || DiscordSession.State == nil || DiscordSession.State.Guilds == nil {
@@ -57,7 +57,8 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 		check(err)
 		Whitelist, _ := json.Marshal(ServerWhitelist)
 		Selected, _ := json.Marshal(SelectedPokemon)
-		ServerNames, ServerIDs := Find_Servers()
+		PokeWhitelist, _ := json.Marshal(Pokemon_Whitelist)
+		ServerNames, ServerIDs := FindServers()
 		Prefix := Prefixes{
 			Pokebot:  Config.PrefixBot,
 			Pokecord: Config.PrefixPokecord,
@@ -76,7 +77,7 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 		add += "<script> var duplicate = " + strconv.FormatBool(Config.Duplicate) + "</script>\n"
 		add += "<script> var aliases = " + strconv.FormatBool(Config.Aliases) + "</script>\n"
 		add += "<script> var prefixes = " + string(SendPrefix) + "</script>\n"
-		add += "<script> var farmer = {}</script>\n"
+		add += "<script> var pokewhitelist = " + string(PokeWhitelist) + "</script>\n"
 
 		MaxPoke := strconv.Itoa(Pokemon_List_Info.Array)
 		if MaxPoke != "0" {

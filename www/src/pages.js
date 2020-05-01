@@ -10,8 +10,7 @@ function pagenext(){
 	}else if(page == 3){
 		document.getElementById("firstPage").style["display"] = "none";
 		document.getElementById("secondPage").style["display"] = "none";
-		//document.getElementById("thirdPage").style["display"] = "contents";
-		pagenext();
+		document.getElementById("thirdPage").style["display"] = "contents";
 	}else if(page == 2){
 		document.getElementById("firstPage").style["display"] = "none";
 		document.getElementById("secondPage").style["display"] = "contents";
@@ -25,8 +24,7 @@ function pageprevious(){
 		page = 3;
 		document.getElementById("firstPage").style["display"] = "none";
 		document.getElementById("secondPage").style["display"] = "none";
-		//document.getElementById("thirdPage").style["display"] = "contents";
-		pageprevious();
+		document.getElementById("thirdPage").style["display"] = "contents";
 	}else if(page == 2){
 		document.getElementById("firstPage").style["display"] = "none";
 		document.getElementById("secondPage").style["display"] = "contents";

@@ -1,6 +1,8 @@
 var clusterize;
+var wlvalue;
 
 window.onload = function() {
+	wlvalue = ""
 	if (typeof autocatcher !== 'undefined') {
 		if (autocatcher == true) {
 			document.getElementById("catcher").checked = true;
@@ -85,4 +87,5 @@ window.onload = function() {
 		var noservers = '<label><span style="color:red;" class="label-text">You don\'t have any servers :c</span></label>'
 		document.getElementById("listeserver").innerHTML = noservers;
 	};
+	LoadPokemons()
 };

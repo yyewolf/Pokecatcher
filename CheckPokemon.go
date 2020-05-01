@@ -111,13 +111,20 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	ImageResized, _ = png.Decode(Buffer)
 	List := box.List()
 	Accuracy := 0.0
+	isInWhitelist := false
 
 	for i := range List {
 		if strings.Contains(List[i], "img") {
+			//Gets rid of the path debris
 			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\", ""), ".png", "")
+			
 			ScanImage := DecodedImages[Name]
 			Accuracy = CompareIMG(ScanImage, ImageResized)
 			if Accuracy < 0.35 {
+				//Check if the Pokémon is in whitelist (now because of Nidoran)
+				if Pokemon_Whitelist[Name] {
+					isInWhitelist = true
+				}
 				Spawned_Pokemon_Name = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
 
 				LastPokemonImg.Image = ScanImage
@@ -176,7 +183,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Command:   Command_To_Catch + " " + strings.ToLower(CatchName),
 	}
 
-	if Config.AutoCatching && !strings.Contains(Pokemon_List_Info.Names, OriginalName) {
+	if Config.AutoCatching && !strings.Contains(Pokemon_List_Info.Names, OriginalName) && isInWhitelist{
 		//Closes spammer
 		if SpamState {
 			SpamChannel <- 1
