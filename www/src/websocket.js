@@ -63,7 +63,6 @@ if ("WebSocket" in window) {
 			fetch('./attacks.json').then(res => res.json())
 				.then((lines) => {
 					for(var k=0 ; k < movelist.length ; k++){
-						console.log(lines[movelist[k]]);
 						var html = '';
 						html += '<p style="display:inline-block;">';
 							html += '<form style="float: left; padding: 5px;" id="formmove'+pokemonnumber+'">';
