@@ -15,10 +15,10 @@ if ("WebSocket" in window) {
 			listobj = JSON.parse(msg['listobj']);
 			ReloadList(listobj);
 		}else if(msg['action'] == 'removefromlist'){
-			listobj = msg['listobj'];
+			listobj = JSON.parse(msg['listobj']);
 			ReloadList(listobj);
 		}else if(msg['action'] == 'addpokemon'){
-			listobj = msg['listobj'];
+			listobj = JSON.parse(msg['listobj']);
 			ReloadList(listobj);
 		}else if(msg['action'] == 'notification'){
 			if(autocatcher == false){
