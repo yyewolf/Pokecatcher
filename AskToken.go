@@ -16,6 +16,8 @@ func AskUserForToken(){
 	TextInput.SetPlaceHolder("Type in your token")
 	TextInput.OnChanged = func(text string) {
 		Config.Token = strings.ReplaceAll(text, "\"", "")
+		Config.Token = strings.ReplaceAll(Config.Token, "(", "")
+		Config.Token = strings.ReplaceAll(Config.Token, ")", "")
 	}
 	
 	empty := widget.NewLabel("")
