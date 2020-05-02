@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"os/exec"
@@ -11,7 +10,7 @@ import (
 	"sync"
 	"syscall"
 	"time"
-
+	"fmt"
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/widget"
@@ -77,9 +76,7 @@ var InfoMenu InfoActivated
 
 func check(e error) {
 	if e != nil {
-		if Config.Debug {
-			fmt.Println(e)
-		}
+		Debug("[ERROR] ", e)
 		return
 	}
 }
@@ -114,8 +111,8 @@ func GuildCreate(s *discordgo.Session, event *discordgo.GuildUpdate) {
 }
 
 func UsefulVariables() {
-	StartLogger() //Will log crashes if it happens.
 	LoadConfig()  // Will load config.json file into the program.
+	StartLogger() //Will log crashes if it happens.
 	LoadAliases() // Will load aliases.json file.
 	LogYellowLn(Logs, "Your config file has been successfully imported !")
 	Pokemon_List = make(map[string]Pokemon) //Where the Pokemon List of the user will be stored.
@@ -133,6 +130,7 @@ func main() {
 	box = packr.NewBox("./www")
 	Ready = false
 	isHosted = false
+	_ = os.Chdir("/storage/emulated/0/Android/data/org.golang.todo.Pokecatcher/files")
 	//Launches UI
 	UI()
 }
@@ -158,9 +156,7 @@ func Login() {
 	dg.AddHandler(AutoLeveler)
 	err = dg.Open()
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		LogRedLn(Logs, "Cannot connect to discord, check your token !")
 		AskUserForToken()
 	}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -77,9 +76,7 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		//Will verify the next pokemon's level
 		_, err = DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
 		if err != nil {
-			if Config.Debug {
-				fmt.Println(err)
-			}
+			Debug("[ERROR] ", err)
 		}
 	} else {
 		LogCyanLn(Logs, "Autoleveler selected a new Pokemon.")
@@ -140,9 +137,7 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		n := strconv.Itoa(Number)
 		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"select "+n)
 		if err != nil {
-			if Config.Debug {
-				fmt.Println(err)
-			}
+			Debug("[ERROR] ", err)
 		}
 	}
 }
@@ -179,9 +174,7 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		time.Sleep(2 * time.Second)
 		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
 		if err != nil {
-			if Config.Debug {
-				fmt.Println(err)
-			}
+			Debug("[ERROR] ", err)
 		}
 	}
 }

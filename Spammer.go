@@ -29,6 +29,7 @@ func SpamFunc(Session *discordgo.Session, ChannelID string, interval int, messag
 		RandomInt := rand.Intn(len(MessageList))
 		_, err := Session.ChannelMessageSend(ChannelID, MessageList[RandomInt])
 		if err != nil {
+			Debug("[ERROR] ", err)
 			LogRedLn(Logs, "Error while spamming. (Try to register a new channel ?)")
 			//If crash spam is now false.
 			SpamState = false

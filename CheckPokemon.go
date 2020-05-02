@@ -26,9 +26,7 @@ func ImageToString(URL string) string {
 	//Closes the web page when it's done
 	image, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return "nothing"
 	}
 	return string(image)
@@ -100,9 +98,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Spawned_Pokemon_Name := ""
 	ImageDecoded, err := loadImg(ImageString)
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return
 	}
 	ImageResized := resize.Resize(64, 64, ImageDecoded, resize.Bicubic)
@@ -142,16 +138,12 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 	Guild_Spawn, err := s.Guild(msg.GuildID)
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return
 	}
 	Channel_Spawn, err := s.Channel(msg.ChannelID)
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return
 	}
 	//Logs info into the console and sends a notification to the website.
@@ -192,15 +184,18 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 		rand.Seed(time.Now().UnixNano())
 		RandomNess := rand.Intn(422) - rand.Intn(221)
+		
+		
+		Debug("[DEBUG]", " Waiting to catch a ", OriginalName)
 
 		time.Sleep(time.Duration(Config.Delay+RandomNess) * time.Millisecond)
 		LogBlueLn(Logs, "Tried to catch your : "+OriginalName)
 
 		_, err := s.ChannelMessageSend(msg.ChannelID, Command_To_Catch+" "+strings.ToLower(CatchName))
+		
+		Debug("[DEBUG]", " Sent message to catch a ", OriginalName)
 		if err != nil {
-			if Config.Debug {
-				fmt.Println(err)
-			}
+			Debug("[ERROR] ", err)
 			Notif_CatchingErr(OriginalName, Guild_Spawn.Name, Channel_Spawn.Name)
 			return
 		}
@@ -273,16 +268,12 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	GuildSpawn, err := s.Guild(msg.GuildID)
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return
 	}
 	ChannelSpawn, err := s.Channel(msg.ChannelID)
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return
 	}
 	LogCyanLn(Logs, "You caught a "+PokemonName+" !")

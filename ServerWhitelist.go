@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
-	"fmt"
 	"path/filepath"
 )
 
@@ -20,9 +19,7 @@ func LoadWhitelist() {
 	path, _ := filepath.Abs("./saves/server_whitelist.json")
 	jsonFile, err := os.Open(path)
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		NoWhitelist()
 		return
 	}

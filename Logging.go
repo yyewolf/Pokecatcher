@@ -10,6 +10,13 @@ import (
 	"fyne.io/fyne/widget"
 )
 
+
+func Debug(a ...interface{}) {
+	if Config.Debug {
+		fmt.Println(a)
+	}
+}
+
 func scaleString(c fyne.Canvas) string {
 	return fmt.Sprintf("%0.2f", c.Scale())
 }

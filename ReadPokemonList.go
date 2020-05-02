@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -50,9 +49,7 @@ func LoadPokemonList() {
 	path, _ := filepath.Abs("./saves/your_pokemon_list.json")
 	jsonFile, err := os.Open(path)
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		NoPokemonList()
 		return
 	}
@@ -64,9 +61,7 @@ func LoadPokemonList() {
 	path, _ = filepath.Abs("./saves/your_pokemon_list_info.json")
 	jsonFile, err = os.Open(path)
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		NoPokemonList()
 		return
 	}

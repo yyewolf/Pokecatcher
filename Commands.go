@@ -50,9 +50,7 @@ func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Config.ChannelID = msg.ChannelID
 		ChannelRegistered, err := s.Channel(msg.ChannelID)
 		if err != nil {
-			if Config.Debug {
-				fmt.Println(err)
-			}
+			Debug("[ERROR] ", err)
 			return
 		}
 		LogYellowLn(Logs, "Successfully registered channel : #"+ChannelRegistered.Name)

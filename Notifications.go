@@ -1,7 +1,6 @@
 package main
 
 import "encoding/json"
-import "fmt"
 
 func Notif_DuplicateErr(PokemonName string, GuildName string, ChannelName string) {
 	// Message in websocket :
@@ -16,6 +15,7 @@ func Notif_DuplicateErr(PokemonName string, GuildName string, ChannelName string
 		ChannelName: ChannelName,
 	})
 	if err != nil {
+		Debug("[ERROR] ", err)
 		return
 	}
 	Websocket_Broadcast(string(Notification))
@@ -34,9 +34,7 @@ func Notif_CatchingErr(PokemonName string, GuildName string, ChannelName string)
 		ChannelName: ChannelName,
 	})
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return
 	}
 	Websocket_Broadcast(string(Notification))
@@ -55,6 +53,7 @@ func Notif_PokeSpawn(PokemonName string, GuildName string, Command string, Chann
 		ChannelID:   ChannelID,
 	})
 	if err != nil {
+		Debug("[ERROR] ", err)
 		return
 	}
 	Websocket_Broadcast(string(Notification))
@@ -73,9 +72,7 @@ func Notif_PokeCaught(PokemonName string, GuildName string, ChannelName string) 
 		ChannelName: ChannelName,
 	})
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return
 	}
 	Websocket_Broadcast(string(Notification))
@@ -89,9 +86,7 @@ func Notif_ChannelRegistered() {
 		Action: "registered",
 	})
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return
 	}
 	Websocket_Broadcast(string(Notification))
@@ -108,9 +103,7 @@ func Notif_RenameSuccess(Nickname string) {
 		Nickname: Nickname,
 	})
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return
 	}
 	Websocket_Broadcast(string(Notification))
@@ -127,9 +120,7 @@ func Notif_RenameFailed(Nickname string) {
 		Nickname: Nickname,
 	})
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return
 	}
 	Websocket_Broadcast(string(Notification))

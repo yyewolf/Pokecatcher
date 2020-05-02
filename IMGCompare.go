@@ -6,7 +6,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"strings"
-	"fmt"
 )
 
 var DecodedImages map[string]image.Image
@@ -20,9 +19,7 @@ func DecodeKnown() {
 			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\", ""), ".png", "")
 			img, err := loadImg(c)
 			if err != nil {
-				if Config.Debug {
-					fmt.Println(err)
-				}
+				Debug("[ERROR] ", err)
 			}
 			DecodedImages[Name] = img
 		}

@@ -15,6 +15,7 @@ func Websocket_SendMoveList(PokemonName string, PokemonMoves string, LearnChanne
 	})
 	if err != nil {
 		if Config.Debug {
+			fmt.Print("[ERROR] ")
 			fmt.Println(err)
 		}
 		return
@@ -32,6 +33,7 @@ func Websocket_SendPokemonList() {
 	})
 	if err != nil {
 		if Config.Debug {
+			fmt.Print("[ERROR] ")
 			fmt.Println(err)
 		}
 		return
@@ -50,6 +52,7 @@ func Websocket_RemovedFromList(Number int) {
 	})
 	if err != nil {
 		if Config.Debug {
+			fmt.Print("[ERROR] ")
 			fmt.Println(err)
 		}
 		return
@@ -68,6 +71,7 @@ func Websocket_Selected(PokemonName string, Number int) {
 	})
 	if err != nil {
 		if Config.Debug {
+			fmt.Print("[ERROR] ")
 			fmt.Println(err)
 		}
 		return

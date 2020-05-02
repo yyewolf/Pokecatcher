@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -59,9 +58,7 @@ func Websocket_Broadcast(msg string) {
 		if i < len(Connections) {
 			err := Connections[i].WriteMessage(1, []byte(msg))
 			if err != nil {
-				if Config.Debug {
-					fmt.Println(err)
-				}
+				Debug("[ERROR] ", err)
 				Connections = append(Connections[:i], Connections[i+1:]...)
 				//Removes the connection if it's unable to send a message.
 			}
@@ -76,9 +73,7 @@ func Websocket_Connection(w http.ResponseWriter, r *http.Request) {
 	}
 	conn, err := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		return
 	}
 	conn.SetCloseHandler(func(code int, text string) error {
@@ -96,9 +91,7 @@ func Websocket_Connection(w http.ResponseWriter, r *http.Request) {
 		rec := Receive_Request{}
 		err := conn.ReadJSON(&rec)
 		if err != nil {
-			if Config.Debug {
-				fmt.Println(err)
-			}
+			Debug("[ERROR] ", err)
 			return
 		}
 		if _, ok := Websocket_Receive_Functions[rec.Action]; !ok {

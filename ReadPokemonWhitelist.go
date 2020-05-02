@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -43,9 +42,7 @@ func LoadPokemonWhitelist() {
 	path, _ := filepath.Abs("./saves/pokemon_whitelist.json")
 	jsonFile, err := os.Open(path)
 	if err != nil {
-		if Config.Debug {
-			fmt.Println(err)
-		}
+		Debug("[ERROR] ", err)
 		NoPokemonWhitelist()
 		return
 	}
