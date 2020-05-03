@@ -156,6 +156,15 @@ func AliasesOnOff(Request Receive_Request) {
 	LogYellowLn(Logs, "Catching pokemons with aliases : "+strconv.FormatBool(Config.Aliases))
 }
 
+func FilterOnOff(Request Receive_Request) {
+	// Active requests variables :
+	// Request.State
+
+	Config.GoodFilter = Request.State
+	SaveConfig()
+	LogYellowLn(Logs, "Filter active : "+strconv.FormatBool(Config.Duplicate))
+}
+
 //////////////////////////////////////////////
 //////////Funcs related to Pokemons///////////
 //////////////////////////////////////////////

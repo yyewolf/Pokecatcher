@@ -20,6 +20,7 @@ type ConfigStruct struct {
 	Delay          int    `json:"Delay_For_Spammer"`
 	Duplicate      bool   `json:"Do_I_Catch_Duplicate"`
 	Aliases        bool   `json:"Do_I_Catch_With_Aliases"`
+	GoodFilter	   bool   `json:"Do_I_Release_Bad_Pokemons"`
 	AutoCatching   bool   `json:"-"`
 	WebPort        int    `json:"Port_For_Webserver"`
 	PrefixPokecord string `json:"Pokecord_Prefix_On_Your_Server"`

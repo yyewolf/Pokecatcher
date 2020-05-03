@@ -278,4 +278,16 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 	LogCyanLn(Logs, "You caught a "+PokemonName+" !")
 	Notif_PokeCaught(PokemonName, GuildSpawn.Name, ChannelSpawn.Name)
+	
+	if !Config.GoodFilter {
+		return
+	}
+	time.Sleep(3 * time.Second)
+	InfoMenu.AutoRelease = true
+	//Will release the pokémon if it is bad
+	_, err = DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info latest")
+	if err != nil {
+		Debug("[ERROR] ", err)
+		return
+	}
 }

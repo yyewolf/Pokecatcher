@@ -22,6 +22,18 @@ function duplichange(){
 	};
 };
 
+function filterchange(){
+	filter = document.getElementById("filter").checked;
+	ws.send('{"action":"filter","state":'+filter+'}');
+	if(filter){
+		NotifTitle = 'I will now filter every pokemons!';
+		notify('info', NotifTitle);
+	}else{
+		NotifTitle = 'I won\'t filter every pokemons !';
+		notify('info', NotifTitle);
+	};
+};
+
 function aliaschange(){
 	aliases = document.getElementById("aliases").checked;
 	ws.send('{"action":"aliases","state":'+aliases+'}');

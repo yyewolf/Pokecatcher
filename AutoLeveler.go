@@ -10,9 +10,10 @@ import (
 )
 
 type InfoActivated struct {
-	ChannelID string
-	Activated bool
-	MessageID string
+	ChannelID   string
+	Activated   bool
+	MessageID   string
+	AutoRelease bool
 }
 
 //InfoActivator will activate the verification
@@ -26,7 +27,7 @@ func InfoActivator(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the command is p!info
-	if msg.Content != Config.PrefixPokecord+"info" && !strings.Contains(msg.Content, Config.PrefixPokecord+"select")  {
+	if !strings.Contains(msg.Content, Config.PrefixPokecord+"info") && !strings.Contains(msg.Content, Config.PrefixPokecord+"select")  {
 		return
 	}
 
@@ -81,7 +82,6 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	} else {
 		LogCyanLn(Logs, "Autoleveler selected a new Pokemon.")
 	}
-	
 }
 
 //InfoVerifier will verify the infos of the current pokemon
@@ -95,6 +95,9 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	if !InfoMenu.Activated {
+		return
+	}
+	if !InfoMenu.AutoRelease {
 		return
 	}
 	if msg.ChannelID != InfoMenu.ChannelID {
@@ -178,3 +181,5 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		}
 	}
 }
+
+

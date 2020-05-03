@@ -97,7 +97,6 @@ func OpenBrowser(url string) {
 	if err != nil {
 		// Not important :/
 	}
-
 }
 
 func GuildCreate(s *discordgo.Session, event *discordgo.GuildUpdate) {
@@ -140,20 +139,31 @@ func Login() {
 	dg, err := discordgo.New(Config.Token)
 	check(err)
 	dg.LogLevel = -1
+	
+	//Ready event
 	dg.AddHandler(botReady)
+	
 	//Recognize pokemons
 	dg.AddHandler(CheckForPokemon)
+	
 	//Adds pokemon to list
 	dg.AddHandler(SuccessfulCatch)
+	
 	//Recognize commands
 	dg.AddHandler(CheckForCommand)
+	
 	//Updates Servers
 	dg.AddHandler(GuildCreate)
+	
 	//AutoLeveling Feature
 	dg.AddHandler(InfoActivator)
 	dg.AddHandler(InfoVerifier)
 	dg.AddHandler(SelectVerifier)
 	dg.AddHandler(AutoLeveler)
+	
+	//AutoReleaser feature
+	dg.AddHandler(AutoRelease)
+	
 	err = dg.Open()
 	if err != nil {
 		Debug("[ERROR] ", err)
