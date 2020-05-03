@@ -1,6 +1,6 @@
 package main
 
-const Legendaries = []string{
+var Legendaries = []string{
 	"Articuno",
 	"Zapdos",
 	"Moltres",
