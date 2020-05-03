@@ -32,6 +32,12 @@ func IsAGoodPokemon(Pokemons PokeInfoParsed) (bool) {
 	if Pokemons.TotalIV < 10 {
 		return true
 	}
+	//Pokemon is legendary
+	for i := range Legendaries {
+		if Pokemons.Name == Legendaries[i] {
+			return true
+		}
+	}
 	return false
 }
 
