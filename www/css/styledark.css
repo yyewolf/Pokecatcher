@@ -1,0 +1,181 @@
+@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+
+.darkmode--activated body{
+	padding: 50px;
+}
+
+.darkmode--activated label{
+	position: relative;
+	cursor: pointer;
+	color: #999;
+	font-size: 30px;
+}
+
+.darkmode--activated h2{
+	color: #999;
+}
+
+.darkmode--activated input[type="checkbox"], input[type="radio"]{
+	position: absolute;
+	right: 9000px;
+}
+
+/*Check box*/
+.darkmode--activated input[type="checkbox"] + .label-text:before{
+	content: "\f096";
+	font-family: "FontAwesome";
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing:antialiased;
+	width: 1em;
+	display: inline-block;
+	margin-right: 5px;
+}
+
+.darkmode--activated input[type="checkbox"]:checked + .label-text:before{
+	content: "\f14a";
+	color: #2980b9;
+	animation: effect 250ms ease-in;
+}
+
+.darkmode--activated input[type="checkbox"]:disabled + .label-text{
+	color: #aaa;
+}
+
+.darkmode--activated input[type="checkbox"]:disabled + .label-text:before{
+	content: "\f0c8";
+	color: #ccc;
+}
+
+/*Radio box*/
+
+.darkmode--activated input[type="radio"] + .label-text:before{
+	content: "\f10c";
+	font-family: "FontAwesome";
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing:antialiased;
+	width: 1em;
+	display: inline-block;
+	margin-right: 5px;
+}
+
+.darkmode--activated input[type="radio"]:checked + .label-text:before{
+	content: "\f192";
+	color: #8e44ad;
+	animation: effect 250ms ease-in;
+}
+
+.darkmode--activated input[type="radio"]:disabled + .label-text{
+	color: #aaa;
+}
+
+.darkmode--activated input[type="radio"]:disabled + .label-text:before{
+	content: "\f111";
+	color: #ccc;
+}
+
+/*Radio Toggle*/
+
+.darkmode--activated .toggle input[type="radio"] + .label-text:before{
+	content: "\f204";
+	font-family: "FontAwesome";
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing:antialiased;
+	width: 1em;
+	display: inline-block;
+	margin-right: 10px;
+}
+
+.darkmode--activated .toggle input[type="radio"]:checked + .darkmode--activated .label-text:before{
+	content: "\f205";
+	color: #16a085;
+	animation: effect 250ms ease-in;
+}
+
+.darkmode--activated .toggle input[type="radio"]:disabled + .darkmode--activated .label-text{
+	color: #aaa;
+}
+
+.darkmode--activated .toggle input[type="radio"]:disabled + .darkmode--activated .label-text:before{
+	content: "\f204";
+	color: #ccc;
+}
+
+.darkmode--activated input[type="button"].btn-validate{
+	content: "\f204";
+	background-color: #ddd;
+}
+
+.darkmode--activated input[type="text"].form-control{
+	content: "\f204";
+	background-color: #ddd;
+}
+
+.darkmode--activated span.label-text{
+	content: "\f204";
+	color: #ddd;
+}
+
+.darkmode--activated input::placeholder {
+	color: #000;
+}
+
+.darkmode--activated #style-6::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+.darkmode--activated #style-6::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+.darkmode--activated #style-6::-webkit-scrollbar-thumb
+{
+	background-color: #F90;	
+	background-image: -webkit-linear-gradient(45deg,
+											  rgba(255, 255, 255, .2) 25%,
+											  transparent 25%,
+											  transparent 50%,
+											  rgba(255, 255, 255, .2) 50%,
+											  rgba(255, 255, 255, .2) 75%,
+											  transparent 75%,
+											  transparent)
+}
+
+.Steel{background:#b8b8d0}
+.Fighting{background:#c03028}
+.Dragon{background:#7038f8}
+.Water{background:#6890f0}
+.Electric{background:#f8d030}
+.Fairy{background:#ee99ac}
+.Fire{background:#f08030}
+.Ice{background:#98d8d8}
+.Bug{background:#a8b820}
+.Normal{background:#a8a878}
+.Grass{background:#78c850}
+.Poison{background:#a040a0}
+.Psychic{background:#f85888}
+.Rock{background:#b8a038}
+.Ground{background:#e0c068}
+.Dark{background:#705848}
+.Flying{background:#a890f0}
+.Ghost{background:#66b}
+.Other, .statut{background:#aa9f90}
+
+.Ghost, .Steel, .Fighting, .Dragon, .Water, .Electric, .Fairy, .Fire, .Ice, .Bug, .Normal, .Grass, .Poison, .Psychic, .Rock, .Ground, .Dark, .Flying, .Other, .statut{width:65px;height:22px;box-sizing:border-box;font-family:'Century Gothic', Verdana;font-size:11px;line-height:20px;text-transform:uppercase;text-align:center;border-radius:10px;display:inline-block;margin-right:5px;color:#fff;font-weight:bold;margin:5px 0;border: 1px solid #656565;box-shadow:0 0 0 0.2em rgba(255,255,255,0.4) inset;}
