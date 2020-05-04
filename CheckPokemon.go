@@ -175,7 +175,13 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Command:   Command_To_Catch + " " + strings.ToLower(CatchName),
 	}
 
-	if Config.AutoCatching && !strings.Contains(Pokemon_List_Info.Names, OriginalName) && isInWhitelist{
+	if Config.AutoCatching && isInWhitelist{
+		//Verifies that it isn't a duplicate if it's ON
+		if Config.Duplicate {
+			if !strings.Contains(Pokemon_List_Info.Names, OriginalName) {
+				return
+			}
+		}
 		//Closes spammer
 		if SpamState {
 			SpamChannel <- 1

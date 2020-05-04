@@ -144,7 +144,7 @@ func DuplicatesOnOff(Request Receive_Request) {
 
 	Config.Duplicate = Request.State
 	SaveConfig()
-	LogYellowLn(Logs, "Catching duplicates : "+strconv.FormatBool(Config.Duplicate))
+	LogYellowLn(Logs, "Ignoring duplicates : "+strconv.FormatBool(Config.Duplicate))
 }
 
 func AliasesOnOff(Request Receive_Request) {

@@ -18,7 +18,7 @@ type ConfigStruct struct {
 	Token          string `json:"Token"`
 	ChannelID      string `json:"Channel_Registered_ID"`
 	Delay          int    `json:"Delay_For_Spammer"`
-	Duplicate      bool   `json:"Do_I_Catch_Duplicate"`
+	Duplicate      bool   `json:"Do_I_Ignore_Duplicate"`
 	Aliases        bool   `json:"Do_I_Catch_With_Aliases"`
 	GoodFilter	   bool   `json:"Do_I_Release_Bad_Pokemons"`
 	AutoCatching   bool   `json:"-"`
@@ -35,7 +35,7 @@ func NoConfig() {
 		Token:          "Put your token here (in case of problem add 'Bot' before your token)",
 		ChannelID:      "Put a channel ID here",
 		Delay:          3000,
-		Duplicate:      true,
+		Duplicate:      false,
 		Aliases:        true,
 		WebPort:        3000,
 		PrefixPokecord: "p!",

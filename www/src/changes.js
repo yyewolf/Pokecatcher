@@ -14,10 +14,10 @@ function duplichange(){
 	duplicate = document.getElementById("duplicate").checked;
 	ws.send('{"action":"duplicate","state":'+duplicate+'}');
 	if(duplicate){
-		NotifTitle = 'I will now catch every pokemons!';
+		NotifTitle = 'I will now ignore duplicate pokémon!';
 		notify('info', NotifTitle);
 	}else{
-		NotifTitle = 'I won\'t catch duplicate pokemons !';
+		NotifTitle = 'I woill now catch every pokémon !';
 		notify('info', NotifTitle);
 	};
 };
