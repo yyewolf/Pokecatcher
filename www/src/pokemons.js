@@ -64,8 +64,6 @@ function ClearAll(str) {
 	return str
 }
 
-var legendaries = ['Moltres', 'Articuno', 'Zapdos', 'Mewtwo', 'Mew', 'Entei', 'Raikou', 'Suicune', 'Ho-Oh', 'Lugia', 'Celebi', 'Regice', 'Regirock', 'Registeel', 'Regigigas', 'Latios', 'Latias', 'Groudon', 'Kyogre', 'Rayquaza', 'Jirachi', 'Deoxys', 'Uxie', 'Mesprit', 'Azelf', 'Dialga', 'Palkia', 'Giratina', 'Arceus', 'Cresselia', 'Darkrai', 'Shaymin', 'Heatran', 'Manaphy', 'Phione', 'Cobalion', 'Terrakion', 'Virizion', 'Keldeo', 'Tornadus', 'Thundurus', 'Landorus', 'Zekrom', 'Reshiram', 'Kyurem', 'Victini', 'Meloetta', 'Genesect', 'Xerneas', 'Yveltal', 'Zygarde', 'Hoopa', 'Volcanion', 'Silvally', 'Tapu-Lele', 'Tapu-Koko', 'Tapu-Bulu', 'Tapu-Fini', 'Cosmog', 'Cosmoem', 'Solgaleo', 'Lunala', 'Necrozma', 'Magearna', 'Marshadow', 'Zeraora', 'Poipole', 'Naganadel', 'Guzzlord', 'Celesteela', 'Kartana', 'Xurkitree', 'Blacephalon', 'Buzzwole', 'Pheromosa', 'Nihilego', 'Stakataka']
-
 class Pokemon {
   constructor(id, name, level, iv) {
     this._id = id;

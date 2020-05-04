@@ -55,6 +55,7 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 	if Path == "" {
 		dat, err := box.FindString("index.html")
 		check(err)
+		Legend, _ := json.Marshal(Legendaries)
 		Whitelist, _ := json.Marshal(ServerWhitelist)
 		Selected, _ := json.Marshal(SelectedPokemon)
 		PokeWhitelist, _ := json.Marshal(Pokemon_Whitelist)
@@ -67,6 +68,7 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 		add := "<script> var websocket = '" + strconv.Itoa(Config.WebPort) + "/ws';</script>\n"
 		add += "<script> var autocatchdelay = '" + strconv.Itoa(Config.Delay) + "';</script>\n"
 		add += "<script> var whitelist = '" + string(Whitelist) + "';</script>\n"
+		add += "<script> var legendaries = " + string(Legend) + ";</script>\n"
 		add += "<script> var serverid = '" + ServerIDs + "';</script>\n"
 		add += "<script> var servernames = '" + strings.ReplaceAll(ServerNames, "'", "\\'") + "';</script>\n"
 		add += "<script> var spamactive = " + strconv.FormatBool(SpamState) + ";</script>\n"
@@ -76,6 +78,7 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 		add += "<script> var autocatcher = " + strconv.FormatBool(Config.AutoCatching) + "</script>\n"
 		add += "<script> var duplicate = " + strconv.FormatBool(Config.Duplicate) + "</script>\n"
 		add += "<script> var aliases = " + strconv.FormatBool(Config.Aliases) + "</script>\n"
+		add += "<script> var filter = " + strconv.FormatBool(Config.GoodFilter) + "</script>\n"
 		add += "<script> var prefixes = " + string(SendPrefix) + "</script>\n"
 		add += "<script> var pokewhitelist = " + string(PokeWhitelist) + "</script>\n"
 

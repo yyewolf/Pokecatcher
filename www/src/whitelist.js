@@ -64,3 +64,14 @@ function AllUnchecked(){
 	LoadPokemons()
 	ws.send('{"action":"pkmnwhitelistallunchecked"}');
 };
+
+function LegendCheck(){
+	names = Object.keys(pokewhitelist)
+	for (k = 0; k < names.length; k++) {
+		if(legendaries.includes(names[k])) {
+			pokewhitelist[names[k]] = true
+		}
+	};
+	LoadPokemons()
+	ws.send('{"action":"pkmnwhitelistlegendchecked"}');
+};
