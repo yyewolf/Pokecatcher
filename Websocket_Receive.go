@@ -12,7 +12,11 @@ import (
 func RefreshPokemonList(Request Receive_Request) {
 	// Active requests variables :
 	// #######
-
+	
+	//Resets everything
+	NoPokemonList()
+	LoadPokemonList()
+	
 	LogYellowLn(Logs, "Refreshing your pokemon list...")
 	if Config.ChannelID != "" {
 		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixBot+"list")
@@ -347,7 +351,6 @@ func Websocket_Receive_AllFunctions() {
 	Websocket_Receive_Functions["whitelist"] = UpdateServerWhitelist
 	Websocket_Receive_Functions["pokemonwhitelist"] = UpdatePokemonWhitelist
 	Websocket_Receive_Functions["spam"] = UpdateSpammerSettings
-	Websocket_Receive_Functions["autodelaychange"] = RefreshPokemonMovesList
 	
 	Websocket_Receive_Functions["release"] = Release
 	Websocket_Receive_Functions["select"] = SelectPokemon
