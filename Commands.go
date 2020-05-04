@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"regexp"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -67,6 +68,10 @@ func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 }
 
 func MovesLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
+	//Check if the user is the one sending the command
+	if msg.Author.ID != "365975655608745985" {
+		return
+	}
 	//Verifies that there's an embed
 	if len(msg.Embeds) == 0 {
 		return
@@ -75,11 +80,20 @@ func MovesLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !RefreshingMoves {
 		return
 	}
+	//Check if there is a footer in the embed
+	if msg.Embeds[0].Footer == nil {
+		return
+	}
 	// Looking for the right message
-	if strings.Contains(msg.Embeds[0].Title, "'s moves") {
+	if strings.Contains(msg.Embeds[0].Footer.Text, "Moves") {
 		RefreshingMoves = false
-		PokemonName := strings.Split(msg.Embeds[0].Title, "'s")[0]
+		//Gets the level from the embed's title : "Level 99 Pokemon"
+		reg, _ := regexp.Compile("[^0-9/]")
+		PokeLevel := reg.ReplaceAllString(msg.Embeds[0].Title, "")
+		//Gets the name using the level
+		PokemonName := strings.Split(msg.Embeds[0].Title, PokeLevel+" ")[1]
 		Moves := strings.ReplaceAll(msg.Embeds[0].Fields[1].Value, "\n", ";")
+		Moves = strings.ReplaceAll(Moves, " ;", ";")
 		RefreshingMovesChannelID := msg.ChannelID
 
 		Websocket_SendMoveList(PokemonName, Moves, RefreshingMovesChannelID)

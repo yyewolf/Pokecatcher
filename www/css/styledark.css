@@ -158,24 +158,48 @@
 											  transparent)
 }
 
-.Steel{background:#b8b8d0}
-.Fighting{background:#c03028}
-.Dragon{background:#7038f8}
-.Water{background:#6890f0}
-.Electric{background:#f8d030}
-.Fairy{background:#ee99ac}
-.Fire{background:#f08030}
-.Ice{background:#98d8d8}
-.Bug{background:#a8b820}
-.Normal{background:#a8a878}
-.Grass{background:#78c850}
-.Poison{background:#a040a0}
-.Psychic{background:#f85888}
-.Rock{background:#b8a038}
-.Ground{background:#e0c068}
-.Dark{background:#705848}
-.Flying{background:#a890f0}
-.Ghost{background:#66b}
-.Other, .statut{background:#aa9f90}
+.darkmode--activated .Steel{background:#47472f}
+.darkmode--activated .Fighting{background:#3fcfd7}
+.darkmode--activated .Dragon{background:#8fc707}
+.darkmode--activated .Water{background:#976f0f}
+.darkmode--activated .Electric{background:#072fcf}
+.darkmode--activated .Fairy{background:#116653}
+.darkmode--activated .Fire{background:#0f7fcf}
+.darkmode--activated .Ice{background:#672727}
+.darkmode--activated .Bug{background:#5747df}
+.darkmode--activated .Normal{background:#575787}
+.darkmode--activated .Grass{background:#8737af}
+.darkmode--activated .Poison{background:#5fbf5f}
+.darkmode--activated .Psychic{background:#07a777}
+.darkmode--activated .Rock{background:#475fc7}
+.darkmode--activated .Ground{background:#1f3f97}
+.darkmode--activated .Dark{background:#8fa7b7}
+.darkmode--activated .Flying{background:#576f0f}
+.darkmode--activated .Ghost{background:#999944}
+.darkmode--activated .Other, .darkmode--activated .statut{background:#55606f}
 
-.Ghost, .Steel, .Fighting, .Dragon, .Water, .Electric, .Fairy, .Fire, .Ice, .Bug, .Normal, .Grass, .Poison, .Psychic, .Rock, .Ground, .Dark, .Flying, .Other, .statut{width:65px;height:22px;box-sizing:border-box;font-family:'Century Gothic', Verdana;font-size:11px;line-height:20px;text-transform:uppercase;text-align:center;border-radius:10px;display:inline-block;margin-right:5px;color:#fff;font-weight:bold;margin:5px 0;border: 1px solid #656565;box-shadow:0 0 0 0.2em rgba(255,255,255,0.4) inset;}
+.darkmode--activated .btn-warning {
+	background-color:#b7ad52;
+}
+
+
+.darkmode--activated .moves{color:#000 !important ; font-weight: bold;}
+
+.darkmode--activated .Ghost, .darkmode--activated .Steel, .darkmode--activated .Fighting, .darkmode--activated .Dragon, .darkmode--activated .Water, .Electric, .darkmode--activated .Fairy, .darkmode--activated .Fire, .darkmode--activated .Ice, .darkmode--activated .Bug, .darkmode--activated .Normal,.darkmode--activated .Grass,.darkmode--activated .Poison,.darkmode--activated .Psychic,.darkmode--activated .Rock,.darkmode--activated .Ground,.darkmode--activated .Dark,.darkmode--activated .Flying,.darkmode--activated .Other,.darkmode--activated .statut{
+	width:65px;
+	height:22px;
+	box-sizing:border-box;
+	font-family:'Century Gothic', Verdana;
+	font-size:11px;
+	line-height:20px;
+	text-transform:uppercase;
+	text-align:center;
+	border-radius:10px;
+	display:inline-block;
+	margin-right:5px;
+	color:#000;
+	font-weight:bold;
+	margin:5px 0;
+	border: 1px solid #656565;
+	box-shadow:0 0 0 0.2em rgba(255,255,255,0.4) inset;
+}

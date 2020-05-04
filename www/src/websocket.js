@@ -79,23 +79,27 @@ if ("WebSocket" in window) {
 				document.getElementById("moveslist").innerHTML = "";
 				fetch('./attacks.json').then(res => res.json())
 					.then((lines) => {
+						console.log(lines)
 						for(var k=0 ; k < movelist.length ; k++){
-							var html = '';
-							html += '<p style="display:inline-block;">';
-								html += '<form style="float: left; padding: 5px;" id="formmove'+pokemonnumber+'">';
-									html += '<input onclick="setmove(\''+movelist[k]+'\',\''+pokemonname+'\',\'1\',\''+channelset+'\');" class="btn btn-warning" type="button" value="Set 1st" id="setmove'+movelist[k]+'"/>';
-									html += '<input onclick="setmove(\''+movelist[k]+'\',\''+pokemonname+'\',\'2\',\''+channelset+'\');" style="margin-left:5px" class="btn btn-warning" type="button" value="Set 2nd" id="setmove'+movelist[k]+'"/>';
-									html += '<input onclick="setmove(\''+movelist[k]+'\',\''+pokemonname+'\',\'3\',\''+channelset+'\');" style="margin-left:5px" class="btn btn-warning" type="button" value="Set 3rd" id="setmove'+movelist[k]+'"/>';
-									html += '<input onclick="setmove(\''+movelist[k]+'\',\''+pokemonname+'\',\'4\',\''+channelset+'\');" style="margin-left:5px" class="btn btn-warning" type="button" value="Set 4th" id="setmove'+movelist[k]+'"/>';
-								html += '</form>';
-								html += '<button class="'+lines[movelist[k]]['Type']+'" disabled>'+lines[movelist[k]]['Type']+'</button>';
-								if(lines[movelist[k]]['Effect'] != ""){
-								html += '<span class="label-text"> '+movelist[k]+' <i class="fa fa-info-circle" data-toggle="tooltip" title="" id="tootltip" data-original-title="'+lines[movelist[k]]['Effect']+'"></i> for <img src="./img/'+pokemonname+'.png" class="img-circle" width="50" height="50"> '+pokemonname+'</span>';
-								}else{
-								html += '<span class="label-text"> '+movelist[k]+' for <img src="./img/'+pokemonname+'.png" class="img-circle" width="50" height="50"> '+pokemonname+'</span>';
-								};
-							html += '</p>';
-							document.getElementById("moveslist").innerHTML += html;
+							console.log(lines[movelist[k]])
+							if(lines[movelist[k]] != undefined) {
+								var html = '';
+								html += '<p style="display:inline-block;">';
+									html += '<form style="float: left; padding: 5px;" id="formmove">';
+										html += '<input onclick="setmove(\''+movelist[k]+'\',\''+pokemonname+'\',\'1\',\''+channelset+'\');" class="btn btn-warning" type="button" value="Set 1st" id="setmove'+movelist[k]+'"/>';
+										html += '<input onclick="setmove(\''+movelist[k]+'\',\''+pokemonname+'\',\'2\',\''+channelset+'\');" style="margin-left:5px" class="btn btn-warning" type="button" value="Set 2nd" id="setmove'+movelist[k]+'"/>';
+										html += '<input onclick="setmove(\''+movelist[k]+'\',\''+pokemonname+'\',\'3\',\''+channelset+'\');" style="margin-left:5px" class="btn btn-warning" type="button" value="Set 3rd" id="setmove'+movelist[k]+'"/>';
+										html += '<input onclick="setmove(\''+movelist[k]+'\',\''+pokemonname+'\',\'4\',\''+channelset+'\');" style="margin-left:5px" class="btn btn-warning" type="button" value="Set 4th" id="setmove'+movelist[k]+'"/>';
+									html += '</form>';
+									html += '<button class="'+lines[movelist[k]]['Type']+'" disabled>'+lines[movelist[k]]['Type']+'</button>';
+									if(lines[movelist[k]]['Effect'] != ""){
+										html += '<span class="label-text moves"> '+movelist[k]+' <i class="fa fa-info-circle" data-toggle="tooltip" title="" id="tootltip" data-original-title="'+lines[movelist[k]]['Effect']+'"></i> for <img src="./img/'+pokemonname+'.png" class="img-circle" width="50" height="50"> '+pokemonname+'</span>';
+									}else{
+										html += '<span class="label-text moves"> '+movelist[k]+' for <img src="./img/'+pokemonname+'.png" class="img-circle" width="50" height="50"> '+pokemonname+'</span>';
+									};
+								html += '</p>';
+								document.getElementById("moveslist").innerHTML += html;
+							}
 						};
 						$(function () {
 							$('[data-toggle="tooltip"]').tooltip()
