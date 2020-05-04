@@ -32,6 +32,10 @@ func IsAGoodPokemon(Pokemons PokeInfoParsed) (bool) {
 	if Pokemons.TotalIV < 10 {
 		return true
 	}
+	//IV above 80%
+	if Pokemons.TotalIV > 80 {
+		return true
+	}
 	//Pokemon is legendary
 	for i := range Legendaries {
 		if Pokemons.Name == Legendaries[i] {
@@ -52,6 +56,9 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	if !InfoMenu.Activated {
+		return
+	}
+	if !InfoMenu.AutoRelease {
 		return
 	}
 	if msg.ChannelID != InfoMenu.ChannelID {
