@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="./css/style.css">
+	<link rel="stylesheet" href="./css/styledark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://clusterize.js.org/css/clusterize.css">
@@ -192,6 +193,9 @@
 			<form id="form" style="float: left; padding: 8px;">
 				<input type="button" onclick="AllUnchecked();" class="btn btn-validate" id="auchecked" name="auchecked" value="All unchecked" />
 			</form>
+			<form id="form" style="float: left; padding: 8px;">
+				<input type="button" onclick="LegendCheck();" class="btn btn-validate" id="lchecked" name="lchecked" value="Check Legendaries" />
+			</form>
 		</p>
 		<br />
         <div class="col-lg pre-scrollable list_container" id="WLScroll" class="clusterize-scroll" style="border:1px solid #cecece; max-height: 400px;">
@@ -214,4 +218,23 @@
     </div>
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.5/lib/darkmode-js.min.js"></script>
+<script>
+	var options = {
+	  bottom: '64px', // default: '32px'
+	  right: 'unset', // default: '32px'
+	  left: '32px', // default: 'unset'
+	  time: '0.5s', // default: '0.3s'
+	  mixColor: '#ddd', // default: '#fff'
+	  backgroundColor: '#fff',  // default: '#fff'
+	  buttonColorDark: '#100f2c',  // default: '#100f2c'
+	  buttonColorLight: '#fff', // default: '#fff'
+	  saveInCookies: true, // default: true,
+	  label: '🌓', // default: ''
+	  autoMatchOsTheme: true // default: true
+	}
+
+	const darkmode = new Darkmode(options);
+	darkmode.showWidget();
+</script>
 </html>

@@ -18,6 +18,11 @@ window.onload = function() {
 			document.getElementById("aliases").checked = true;
 		};
 	};
+	if (typeof filter !== 'undefined') {
+		if (filter == true) {
+			document.getElementById("filter").checked = true;
+		};
+	};
 	if (typeof farmer !== 'undefined') {
 		farmtoken1 = farmer['token1'];
 		farmtoken2 = farmer['token2'];

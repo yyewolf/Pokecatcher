@@ -162,7 +162,7 @@ func FilterOnOff(Request Receive_Request) {
 
 	Config.GoodFilter = Request.State
 	SaveConfig()
-	LogYellowLn(Logs, "Filter active : "+strconv.FormatBool(Config.Duplicate))
+	LogYellowLn(Logs, "Filter active : "+strconv.FormatBool(Config.GoodFilter))
 }
 
 //////////////////////////////////////////////
@@ -317,26 +317,46 @@ func WhitelistAllUnchecked(Request Receive_Request) {
 	SavePokemonWhitelist()
 }
 
+func WhitelistLegendChecked(Request Receive_Request) {
+	// Active requests variables :
+	// 
+	
+	for current := range Pokemon_Whitelist {
+		//Pokemon is legendary
+		for i := range Legendaries {
+			if current == Legendaries[i] {
+				Pokemon_Whitelist[current] = true
+			}
+		}
+	}
+	SavePokemonWhitelist()
+}
+
 func Websocket_Receive_AllFunctions() {
 	// Directly translated from the old code.
 	Websocket_Receive_Functions["aca"] = AutoCatcherOnOff
 	Websocket_Receive_Functions["duplicate"] = DuplicatesOnOff
 	Websocket_Receive_Functions["aliases"] = AliasesOnOff
+	Websocket_Receive_Functions["filter"] = FilterOnOff
+	Websocket_Receive_Functions["prefixchange"] = ChangePrefixes
+	Websocket_Receive_Functions["autodelaychange"] = ChangeDelay
+	Websocket_Receive_Functions["tokenchange"] = UpdateToken
+	
 	Websocket_Receive_Functions["refresh"] = RefreshPokemonList
 	Websocket_Receive_Functions["refreshmoves"] = RefreshPokemonMovesList
+	Websocket_Receive_Functions["whitelist"] = UpdateServerWhitelist
+	Websocket_Receive_Functions["pokemonwhitelist"] = UpdatePokemonWhitelist
+	Websocket_Receive_Functions["spam"] = UpdateSpammerSettings
+	Websocket_Receive_Functions["autodelaychange"] = RefreshPokemonMovesList
+	
 	Websocket_Receive_Functions["release"] = Release
 	Websocket_Receive_Functions["select"] = SelectPokemon
 	Websocket_Receive_Functions["remove"] = RemovePokemonFromList
 	Websocket_Receive_Functions["nickname"] = RenamePokemon
-	Websocket_Receive_Functions["tokenchange"] = UpdateToken
-	Websocket_Receive_Functions["spam"] = UpdateSpammerSettings
 	Websocket_Receive_Functions["catch"] = CatchAPokemon
 	Websocket_Receive_Functions["learn"] = LearnNewMove
-	Websocket_Receive_Functions["whitelist"] = UpdateServerWhitelist
-	Websocket_Receive_Functions["pokemonwhitelist"] = UpdatePokemonWhitelist
-	Websocket_Receive_Functions["autodelaychange"] = RefreshPokemonMovesList
-	Websocket_Receive_Functions["prefixchange"] = ChangePrefixes
-	Websocket_Receive_Functions["autodelaychange"] = ChangeDelay
+	
 	Websocket_Receive_Functions["pkmnwhitelistallchecked"] = WhitelistAllChecked
 	Websocket_Receive_Functions["pkmnwhitelistallunchecked"] = WhitelistAllUnchecked
+	Websocket_Receive_Functions["pkmnwhitelistlegendchecked"] = WhitelistLegendChecked
 }
