@@ -7,7 +7,7 @@ if ("WebSocket" in window) {
 	ws.onmessage = function (evt) { 
 		var message = evt.data;
 		var msg = JSON.parse(message);
-		switch(json.type) {
+		switch(msg["action"]) {
 			case 'selected' :
 				document.getElementById("img").innerHTML = '<img src="./img/'+ClearAll(msg['name'])+'.png" class="img-circle" width="50" height="50">';
 				break;
@@ -15,16 +15,25 @@ if ("WebSocket" in window) {
 				document.getElementById("alertbox").parentNode.removeChild(document.getElementById("alertbox"));
 				break;
 			case 'refreshlist' :
+				if(msg['listobj'] == ""){
+					LoadList("");
+				}
 				listobj = JSON.parse(msg['listobj']);
-				ReloadList(listobj);
+				LoadList(listobj);
 				break;
 			case 'removefromlist' :
+				if(msg['listobj'] == ""){
+					LoadList("");
+				}
 				listobj = JSON.parse(msg['listobj']);
-				ReloadList(listobj);
+				LoadList(listobj);
 				break;
 			case 'addpokemon' :
+				if(msg['listobj'] == ""){
+					LoadList("");
+				}
 				listobj = JSON.parse(msg['listobj']);
-				ReloadList(listobj);
+				LoadList(listobj);
 				break;
 			case 'notification' :
 				if(autocatcher == false){

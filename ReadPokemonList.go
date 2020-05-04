@@ -17,6 +17,9 @@ type PokeListInfoStruct struct {
 
 func PokeListForWebsite() string {
 	List, _ := json.Marshal(Pokemon_List)
+	if Pokemon_List_Info.Realmax == 0 {
+		return ""
+	}
 	ListString := string(List)
 	ListString = strings.TrimSuffix(ListString, "}")
 	ListString += ","

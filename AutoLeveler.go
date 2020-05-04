@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -30,10 +29,10 @@ func InfoActivator(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !strings.Contains(msg.Content, Config.PrefixPokecord+"info") && !strings.Contains(msg.Content, Config.PrefixPokecord+"select")  {
 		return
 	}
-
+	
 	InfoMenu.ChannelID = msg.ChannelID
-	InfoMenu.Activated = true
 	InfoMenu.MessageID = msg.ID
+	InfoMenu.Activated = true
 
 }
 
@@ -48,6 +47,9 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	if !InfoMenu.Activated {
+		return
+	}
+	if InfoMenu.AutoRelease {
 		return
 	}
 	if msg.ChannelID != InfoMenu.ChannelID {
@@ -73,6 +75,7 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Level = reg.ReplaceAllString(Level, "")
 
 	if Level == "100" {
+		Debug("[DEBUG] AutoLeveler is searching for a new pokemon.")
 		time.Sleep(3 * time.Second)
 		//Will verify the next pokemon's level
 		_, err = DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
@@ -97,7 +100,7 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !InfoMenu.Activated {
 		return
 	}
-	if !InfoMenu.AutoRelease {
+	if InfoMenu.AutoRelease {
 		return
 	}
 	if msg.ChannelID != InfoMenu.ChannelID {
@@ -122,15 +125,8 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	InfoMenu.Activated = false
 
-	if Infos.isInList {
-		Current := Pokemon_List[Infos.ListNumber]
-		Current.Level = Infos.Level
-		Pokemon_List[Infos.ListNumber] = Current
-		SavePokemonList()
-	}
-
 	if Infos.Level == "100" {
-		Number := 0
+		Number := 1
 		if !Infos.Last {
 			Number, _ = strconv.Atoi(Infos.Number)
 			Number++

@@ -269,8 +269,8 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		NewNumber: PokemonNumber,
 	}
 	
-	go SavePokemonList()
-	go Websocket_SendPokemonList()
+	SavePokemonList()
+	Websocket_SendPokemonList()
 
 	GuildSpawn, err := s.Guild(msg.GuildID)
 	if err != nil {
@@ -288,6 +288,9 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !Config.GoodFilter {
 		return
 	}
+	
+	Debug("[DEBUG] Will verify a ", PokemonName)
+	
 	time.Sleep(3 * time.Second)
 	InfoMenu.AutoRelease = true
 	//Will release the pokémon if it is bad

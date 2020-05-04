@@ -14,6 +14,7 @@ func RefreshPokemonList(Request Receive_Request) {
 	// #######
 	
 	//Resets everything
+	Pokemon_List = make(map[string]Pokemon) //Where the Pokemon List of the user will be stored.
 	NoPokemonList()
 	LoadPokemonList()
 	
@@ -185,10 +186,8 @@ func Release(Request Receive_Request) {
 	_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"release "+strconv.Itoa(Request.PokemonNumber))
 	if err == nil {
 		time.Sleep(3 * time.Second)
-		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"confirm")
-		if err == nil {
-			RemovePokemonFromList(Request)
-		}
+		_, _ = DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"confirm")
+		RemovePokemonFromList(Request)
 	} else {
 		Debug("[ERROR] ", err)
 		LogRedLn(Logs, "Couldn't release your pokemon, check that you've registered a channel and try again.")
@@ -258,17 +257,20 @@ func RemovePokemonFromList(Request Receive_Request) {
 
 	PokemonNumber := Pokemon_List_Info.Array
 	// Loops through all pokémons to lower their numbers and keep things ordered.
+	RemovedPoke := Pokemon_List[strconv.Itoa(Request.PokemonNumber)]
+	Pokemon_List_Info.Names = ""
 	for i := 0; i < PokemonNumber; i++ {
 		Number := i + 1
-		CurrentPoke := Pokemon_List[strconv.Itoa(Request.PokemonNumber)]
-		PokemonNewNumber, _ := strconv.Atoi(CurrentPoke.NewNumber)
-		if Number > PokemonNewNumber {
+		CurrentPoke := Pokemon_List[strconv.Itoa(Number)]
+		PokemonNewNumber, _ := strconv.Atoi(RemovedPoke.NewNumber)
+		if Number > PokemonNewNumber && CurrentPoke.Name != "" {
 			CurrentPoke.NewNumber = strconv.Itoa(i)
-			Pokemon_List[strconv.Itoa(Request.PokemonNumber)] = CurrentPoke
+			Pokemon_List[strconv.Itoa(Number)] = CurrentPoke
 		}
+		Pokemon_List_Info.Names = Pokemon_List_Info.Names + CurrentPoke.Name + ","
 	}
 	// realmax corresponds to the amount of pokemon present.
-	Pokemon_List_Info.Realmax = PokemonNumber - 1
+	Pokemon_List_Info.Realmax = Pokemon_List_Info.Realmax - 1
 	delete(Pokemon_List, strconv.Itoa(Request.PokemonNumber))
 	LogBlueLn(Logs, "Removed the pokemon from your Pokemon List.")
 	// Sends info to the websocket to update the list.

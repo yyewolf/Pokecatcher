@@ -107,8 +107,8 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		CurrentPage := math.Ceil(float64(CurrentPokemon) / 20)
 		FullMessage := strings.Split(msg.Embeds[0].Description, "\n")
 		//Values for the list
-		Pokemon_List_Info.Array = MaxPokemon - 1
-		Pokemon_List_Info.Realmax = MaxPokemon - 1
+		Pokemon_List_Info.Array = MaxPokemon
+		Pokemon_List_Info.Realmax = MaxPokemon
 		//Will go through each pokés
 		for i := range FullMessage {
 			CurrentInfos := strings.Replace(FullMessage[i], "Level: ", "", 1)

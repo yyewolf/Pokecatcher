@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/nfnt/resize"
 	"image/png"
@@ -90,10 +89,6 @@ func ParsePokemonInfo(msg *discordgo.MessageCreate) (PokeInfoParsed, error) {
 			Infos.ListNumber = n
 		}
 	}
-
-	if _, ok := Pokemon_List[Infos.Number]; ok {
-		Infos.isInList = true
-	}
 	
 	//Gets the name of the pokémon
 	ImageURL := msg.Embeds[0].Image.URL
@@ -134,7 +129,6 @@ func ParsePokemonInfo(msg *discordgo.MessageCreate) (PokeInfoParsed, error) {
 	}
 	content := strings.Split(msg.Embeds[0].Description, "\n")
 	for i := 3; i < len(content)-1; i++ {
-		fmt.Println(content[i])
 		iv := strings.Split(content[i], "-")[1]
 		iv = strings.Split(iv, "/")[0]
 		iv = reg.ReplaceAllString(iv, "")

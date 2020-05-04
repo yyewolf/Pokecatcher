@@ -23,35 +23,6 @@ function LoadList(list){
 		document.getElementById("PokeContent").innerHTML = nopokemons;
 	};
 }
-function ReloadList(list){
-	if(typeof list !== 'undefined'){
-		var html = [];
-		for (k = 0; k < list['array']; k++) {
-			if (typeof list[k + 1] != "undefined") {
-				try {
-					var pokemonnumber = k + 1;
-					var pokemonname = list[k + 1]['name']
-					var pokemonlevel = list[k + 1]['level']
-					var pokemoniv = list[k + 1]['iv']
-					var ThisPkmn = new Pokemon(pokemonnumber, pokemonname, pokemonlevel, pokemoniv);
-					html.push(ThisPkmn.ListHTML)
-				} catch (e) {};
-			};
-		};
-		if(typeof clusterize !== 'undefined'){
-			clusterize.update(html)
-		}else {
-			clusterize = new Clusterize({
-				rows: html,
-				scrollId: 'PokeScroll',
-				contentId: 'PokeContent'
-			});
-		}
-	}else{
-		var nopokemons = '<label><span style="color:red;" class="label-text">You don\'t have any pokemons / Your list isn\'t loaded :c</span></label>'
-		document.getElementById("PokeContent").innerHTML = nopokemons;
-	};
-}
 
 function ClearAll(str) {
 	str = str.replace(/\**/g, '');

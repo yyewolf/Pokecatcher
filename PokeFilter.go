@@ -4,6 +4,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"strconv"
 	"time"
+	"fmt"
 )
 
 func IsAGoodPokemon(Pokemons PokeInfoParsed) (bool) {
@@ -58,9 +59,6 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !InfoMenu.Activated {
 		return
 	}
-	if !InfoMenu.AutoRelease {
-		return
-	}
 	if msg.ChannelID != InfoMenu.ChannelID {
 		return
 	}
@@ -81,6 +79,18 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Debug("[ERROR] ", err)
 		return
 	}
+	
+	if Infos.isInList {
+		Current := Pokemon_List[Infos.ListNumber]
+		Current.Level = Infos.Level
+		Current.IV = "IV: " + fmt.Sprintf("%.2f", Infos.TotalIV)
+		Pokemon_List[Infos.ListNumber] = Current
+		SavePokemonList()
+	}
+	
+	if !InfoMenu.AutoRelease {
+		return
+	}
 
 	InfoMenu.Activated = false
 	InfoMenu.AutoRelease = false
@@ -90,6 +100,8 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		LogCyanLn(Logs, "You caught a good Pokémon !")
 		return
 	}
+	
+	Debug("[DEBUG] Will release a ", Infos.Name)
 	
 	time.Sleep(3*time.Second)
 	
