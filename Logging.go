@@ -13,7 +13,7 @@ import (
 
 func Debug(a ...interface{}) {
 	if Config.Debug {
-		fmt.Println(a)
+		fmt.Println(a...)
 	}
 }
 

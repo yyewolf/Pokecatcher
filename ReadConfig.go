@@ -17,7 +17,7 @@ type SelectedPoke struct {
 type ConfigStruct struct {
 	Token          string `json:"Token"`
 	ChannelID      string `json:"Channel_Registered_ID"`
-	Delay          int    `json:"Delay_For_Spammer"`
+	Delay          int    `json:"Delay_For_Autocatcher"`
 	Duplicate      bool   `json:"Do_I_Ignore_Duplicate"`
 	Aliases        bool   `json:"Do_I_Catch_With_Aliases"`
 	GoodFilter	   bool   `json:"Do_I_Release_Bad_Pokemons"`
