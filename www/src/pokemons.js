@@ -44,7 +44,7 @@ class Pokemon {
 	
 	this._color = 'background-color: transparent';
 	if (legendaries.includes(this._name)) {
-		this._color = 'background-color: Gold';
+		this._color = 'background-color: #ffd700a1';
 	};
   }
  
