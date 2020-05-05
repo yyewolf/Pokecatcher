@@ -93,6 +93,8 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !strings.Contains(msg.Embeds[0].Title, "A wild") {
 		return
 	}
+	//STARTS DETECTING HERE
+	
 	ImageURL := msg.Embeds[0].Image.URL
 	ImageString := ImageToString(ImageURL)
 	Spawned_Pokemon_Name := ""
@@ -130,6 +132,8 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			}
 		}
 	}
+	
+	//STOPS DETECTING HERE
 
 	Accuracy = 100.0 - Accuracy
 
@@ -253,7 +257,8 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Do the same to detect its level
 	PokemonLevel := strings.Split(msg.Content, "level ")[1]
 	PokemonLevel = strings.Split(PokemonLevel, " "+PokemonName)[0]
-
+	//Sends Debug infos
+	Debug("[DEBUG] Caught a ", PokemonName)
 	//Adds the pokemon to the list
 
 	Pokemon_List_Info.Names += PokemonName + ","
@@ -293,7 +298,7 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	
 	time.Sleep(3 * time.Second)
 	//Will release the pokémon if it is bad
-	m, err = DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info latest")
+	m, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info latest")
 	if err != nil {
 		Debug("[ERROR] ", err)
 		return

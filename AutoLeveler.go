@@ -57,7 +57,7 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Debug("[DEBUG] AutoLeveler is searching for a new pokemon.")
 		time.Sleep(3 * time.Second)
 		//Will verify the next pokemon's level
-		m, err = DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
+		m, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
 		if err != nil {
 			Debug("[ERROR] ", err)
 			return
@@ -109,6 +109,7 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	InfoMenu.Activated = false
 
 	if Infos.Level == "100" {
+		Debug("[DEBUG] AutoLeveler sending p!select")
 		Number := 1
 		if !Infos.Last {
 			Number, _ = strconv.Atoi(Infos.Number)
@@ -155,8 +156,9 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	NewLevel := reg.ReplaceAllString(msg.Embeds[0].Description, "")
-
+	
 	if NewLevel == "100" {
+		Debug("[DEBUG] AutoLeveler sending p!info")
 		time.Sleep(2 * time.Second)
 		m, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
 		if err != nil {
