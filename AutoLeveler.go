@@ -15,27 +15,6 @@ type InfoActivated struct {
 	AutoRelease bool
 }
 
-//InfoActivator will activate the verification
-func InfoActivator(s *discordgo.Session, msg *discordgo.MessageCreate) {
-	//Check if the person is allowed
-	if !Config.IsAllowedToUse {
-		return
-	}
-	//Check if the user is the one sending the command
-	if msg.Author.ID != s.State.User.ID {
-		return
-	}
-	//Check if the command is p!info
-	if !strings.Contains(msg.Content, Config.PrefixPokecord+"info") && !strings.Contains(msg.Content, Config.PrefixPokecord+"select")  {
-		return
-	}
-	
-	InfoMenu.ChannelID = msg.ChannelID
-	InfoMenu.MessageID = msg.ID
-	InfoMenu.Activated = true
-
-}
-
 //SelectVerifier will verify the level of the selected pokemon
 func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if the person is allowed
@@ -78,10 +57,14 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Debug("[DEBUG] AutoLeveler is searching for a new pokemon.")
 		time.Sleep(3 * time.Second)
 		//Will verify the next pokemon's level
-		_, err = DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
+		m, err = DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
 		if err != nil {
 			Debug("[ERROR] ", err)
+			return
 		}
+		InfoMenu.ChannelID = m.ChannelID
+		InfoMenu.MessageID = m.ID
+		InfoMenu.Activated = true
 	} else {
 		LogCyanLn(Logs, "Autoleveler selected a new Pokemon.")
 	}
@@ -134,10 +117,14 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		time.Sleep(2 * time.Second)
 		//Select the next pokemon
 		n := strconv.Itoa(Number)
-		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"select "+n)
+		m, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"select "+n)
 		if err != nil {
 			Debug("[ERROR] ", err)
+			return
 		}
+		InfoMenu.ChannelID = m.ChannelID
+		InfoMenu.MessageID = m.ID
+		InfoMenu.Activated = true
 	}
 }
 
@@ -171,10 +158,14 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	if NewLevel == "100" {
 		time.Sleep(2 * time.Second)
-		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
+		m, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
 		if err != nil {
 			Debug("[ERROR] ", err)
+			return
 		}
+		InfoMenu.ChannelID = m.ChannelID
+		InfoMenu.MessageID = m.ID
+		InfoMenu.Activated = true
 	}
 }
 

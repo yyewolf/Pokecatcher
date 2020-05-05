@@ -156,7 +156,6 @@ func Login() {
 	dg.AddHandler(GuildCreate)
 	
 	//AutoLeveling Feature
-	dg.AddHandler(InfoActivator)
 	dg.AddHandler(InfoVerifier)
 	dg.AddHandler(SelectVerifier)
 	dg.AddHandler(AutoLeveler)

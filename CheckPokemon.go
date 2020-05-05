@@ -292,11 +292,15 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Debug("[DEBUG] Will verify a ", PokemonName)
 	
 	time.Sleep(3 * time.Second)
-	InfoMenu.AutoRelease = true
 	//Will release the pokémon if it is bad
-	_, err = DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info latest")
+	m, err = DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info latest")
 	if err != nil {
 		Debug("[ERROR] ", err)
 		return
 	}
+	InfoMenu.ChannelID = m.ChannelID
+	InfoMenu.MessageID = m.ID
+	InfoMenu.Activated = true
+	InfoMenu.AutoRelease = true
+	
 }
