@@ -62,7 +62,6 @@ function catchpokemon(name, id, command){
 };
 
 function setmove(move, pokemonname, number, channel){
-	<!-- setmove(\''+movelist[k]+'\',\''+pokemonname+'\',\'4\',\''+channelset+'\'); -->
 	ws.send('{"action":"learn","pokemonname":"'+pokemonname+'","movenumber":'+number+',"movename":"'+move+'","channelset":"'+channel+'"}');
 	NotifTitle = 'Learned move to ' + pokemonname.replace(/\**/g, '').replace('**', '').replace(/ /g, '').replace(/ /g, '').replace(/é/g, 'e').replace(/è/g, 'e').replace('♂', '').replace('♀', '') + ' !';
 	NotifIcon = './img/' + pokemonname.replace(/\**/g, '').replace('**', '').replace(/ /g, '').replace(/ /g, '').replace(/é/g, 'e').replace(/è/g, 'e').replace('♂', '').replace('♀', '') + '.png';
@@ -101,55 +100,75 @@ function spamchange(){
 };
 
 function dothis(action,number,name){
-	if(action == 'release'){
-		NotifTitle = 'Releasing :';
-		NotifIcon = './img/' + name + '.png';
-		NotifMessage = name;
-		notify('info', NotifTitle, NotifIcon, NotifMessage);
-		ws.send('{"action":"release","number":'+number+'}');
-	}else if(action == 'remove'){
-		NotifTitle = 'Removing from the list :';
-		NotifIcon = './img/' + name + '.png';
-		NotifMessage = name;
-		notify('info', NotifTitle, NotifIcon, NotifMessage);
-		ws.send('{"action":"remove","number":'+number+'}');
-	}else if(action == 'select'){
-		NotifTitle = 'Selecting :';
-		NotifIcon = './img/' + name + '.png';
-		NotifMessage = name;
-		notify('info', NotifTitle, NotifIcon, NotifMessage);
-		ws.send('{"action":"select","number":'+number+',"name":"'+name+'"}');
-	}else if(action == 'nickname'){
-		var nickname = document.getElementById("nicknametext").value;
-		if(nickname != undefined) {
-			if(nickname != " ") {
-				if(nickname != "") {
-					ws.send('{"action":"nickname","nickname":"'+nickname+'"}');
+	
+	switch(action) {
+		case 'release' :
+			NotifTitle = 'Releasing :';
+			NotifIcon = './img/' + name + '.png';
+			NotifMessage = name;
+			notify('info', NotifTitle, NotifIcon, NotifMessage);
+			ws.send('{"action":"release","number":'+number+'}');
+			break;
+		case 'remove' :
+			NotifTitle = 'Removing from the list :';
+			NotifIcon = './img/' + name + '.png';
+			NotifMessage = name;
+			notify('info', NotifTitle, NotifIcon, NotifMessage);
+			ws.send('{"action":"remove","number":'+number+'}');
+			break;
+		case 'select' :
+			NotifTitle = 'Selecting :';
+			NotifIcon = './img/' + name + '.png';
+			NotifMessage = name;
+			notify('info', NotifTitle, NotifIcon, NotifMessage);
+			ws.send('{"action":"select","number":'+number+',"name":"'+name+'"}');
+			break;
+		case 'nickname' :
+			var nickname = document.getElementById("nicknametext").value;
+			if(nickname != undefined) {
+				if(nickname != " ") {
+					if(nickname != "") {
+						ws.send('{"action":"nickname","nickname":"'+nickname+'"}');
+					};
 				};
 			};
-		};
-	}else if(action == 'tokenchange'){
-		var tokenchange = document.getElementById("tokentext").value;
-		if(tokenchange != undefined) {
-			if(tokenchange != " ") {
-				if(tokenchange != "") {
-					NotifTitle = 'Restart the bot to apply the new token !';
-					notify('danger', NotifTitle);
-					ws.send('{"action":"tokenchange","token":"'+tokenchange+'"}');
+			break;
+		case 'tokenchange' :
+			var tokenchange = document.getElementById("tokentext").value;
+			if(tokenchange != undefined) {
+				if(tokenchange != " ") {
+					if(tokenchange != "") {
+						NotifTitle = 'Restart the bot to apply the new token !';
+						notify('danger', NotifTitle);
+						ws.send('{"action":"tokenchange","token":"'+tokenchange+'"}');
+					};
 				};
 			};
-		};
-	}else if(action == 'autodelay'){
-		var delay = document.getElementById("delayms").value;
-		if(delay != undefined) {
-			if(delay != " ") {
-				if(delay != "") {
-					NotifTitle = 'The delay has been changed !';
-					notify('danger', NotifTitle);
-					ws.send('{"action":"autodelaychange","delay":'+delay+'}');
+			break;
+		case 'autodelay' :
+			var delay = document.getElementById("delayms").value;
+			if(delay != undefined) {
+				if(delay != " ") {
+					if(delay != "") {
+						NotifTitle = 'The delay has been changed !';
+						notify('danger', NotifTitle);
+						ws.send('{"action":"autodelaychange","delay":'+delay+'}');
+					};
 				};
 			};
-		};
+			break;
+		case 'queue' :
+			var queuelist = document.getElementById("alt").value;
+			if(queuelist != undefined) {
+				if(queuelist != " ") {
+					if(queuelist != "") {
+						NotifTitle = 'The priority queue has been changed !';
+						notify('danger', NotifTitle);
+						ws.send('{"action":"queuelist","change":"'+queuelist+'"}');
+					};
+				};
+			};
+			break;
 	};
 };
 
@@ -166,11 +185,4 @@ function changeprefix(type,prefix){
 	NotifTitle = 'This prefix has been changed!';
 	notify('info', NotifTitle);
 	ws.send('{"action":"prefixchange","type":"'+type+'","prefix":"'+prefix+'"}');
-};
-
-function farmerconfig(action, setting){
-	// actions = token1, token2, channelid and state
-	NotifTitle = 'Settings updated!';
-	notify('info', NotifTitle);
-	ws.send('{"action":"farmerconfig","change":"'+action+'","setting":"'+setting+'"}');
 };

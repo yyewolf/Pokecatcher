@@ -23,24 +23,11 @@ window.onload = function() {
 			document.getElementById("filter").checked = true;
 		};
 	};
-	if (typeof farmer !== 'undefined') {
-		farmtoken1 = farmer['token1'];
-		farmtoken2 = farmer['token2'];
-		farmchannelid = farmer['channelid'];
-		farmstate = farmer['state'];
-		if (farmtoken1 != 'none') {
-			document.getElementById("farmtoken1").placeholder = farmtoken1;
-		}
-		if (farmtoken2 != 'none') {
-			document.getElementById("farmtoken2").placeholder = farmtoken2;
-		}
-		if (farmchannelid != 'none') {
-			document.getElementById("farmchannelid").placeholder = farmchannelid;
-		}
-		document.getElementById("farmactive").checked = farmstate;
-	};
-	if (token !== 'undefined') {
+	if (token !== '') {
 		document.getElementById("tokentext").placeholder = token;
+	};
+	if (queue !== '') {
+		document.getElementById("alt").placeholder = queue;
 	};
 	if (autocatchdelay !== 'undefined') {
 		document.getElementById("delayms").placeholder = autocatchdelay;

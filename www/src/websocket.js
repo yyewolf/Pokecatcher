@@ -51,24 +51,29 @@ if ("WebSocket" in window) {
 				};
 				break;
 			case 'warn' :
-				if(msg['message'] == 'couldnt-normal'){
-					NotifIcon = './img/' + ClearAll(msg['name']) + '.png';
-					NotifTitle = 'I couldn\'t catch ' + ClearAll(msg['name']) + ' !';
-					NotifChannelOf = 'In #'+msg['channelname']+' of '+msg['server']+'</span>';
-					notify('warning', NotifTitle, NotifIcon, 0, 3000, NotifChannelOf);
-				}else if(msg['message'] == 'couldnt-duplicate'){
-					NotifIcon = './img/' + ClearAll(msg['name']) + '.png';
-					NotifTitle = 'I didn\'t catch' + ClearAll(msg['name']) + ' because you have it!';
-					NotifChannelOf = 'In #'+msg['channelname']+' of '+msg['server']+'</span>';
-					notify('warning', NotifTitle, NotifIcon, 0, 3000, NotifChannelOf);
-				}else if(msg['message'] == 'nickname-success'){
-					NotifIcon = './src/check.png';
-					NotifTitle = 'Successfully changed the nickname of the current pokemon !';
-					notify('danger', NotifTitle, NotifIcon, 0, 3000);
-				}else if(msg['message'] == 'nickname-failed'){
-					NotifTitle = 'Couldn\'t change the nickname of the current pokemon !';
-					notify('danger', NotifTitle, 0, 0, 3000);
-				};
+				switch(msg["message"]) {
+					case 'couldnt-normal':
+						NotifIcon = './img/' + ClearAll(msg['name']) + '.png';
+						NotifTitle = 'I couldn\'t catch ' + ClearAll(msg['name']) + ' !';
+						NotifChannelOf = 'In #'+msg['channelname']+' of '+msg['server']+'</span>';
+						notify('warning', NotifTitle, NotifIcon, 0, 3000, NotifChannelOf);
+						break;
+					case 'couldnt-duplicate':
+						NotifIcon = './img/' + ClearAll(msg['name']) + '.png';
+						NotifTitle = 'I didn\'t catch' + ClearAll(msg['name']) + ' because you have it!';
+						NotifChannelOf = 'In #'+msg['channelname']+' of '+msg['server']+'</span>';
+						notify('warning', NotifTitle, NotifIcon, 0, 3000, NotifChannelOf);
+						break;
+					case 'nickname-succes':
+						NotifIcon = './src/check.png';
+						NotifTitle = 'Successfully changed the nickname of the current pokemon !';
+						notify('danger', NotifTitle, NotifIcon, 0, 3000);
+						break;
+					case 'nickname-failed':
+						NotifTitle = 'Couldn\'t change the nickname of the current pokemon !';
+						notify('danger', NotifTitle, 0, 0, 3000);
+						break;
+				}
 				break;
 			case 'refreshmovelist' :
 				NotifTitle = 'Your pokemon moves list has been refreshed';
