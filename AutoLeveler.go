@@ -57,7 +57,7 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Debug("[DEBUG] AutoLeveler is searching for a new pokemon.")
 		time.Sleep(3 * time.Second)
 		//Will verify the next pokemon's level
-		m, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
+		m, err := s.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
 		if err != nil {
 			Debug("[ERROR] ", err)
 			return
@@ -118,9 +118,9 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		time.Sleep(2 * time.Second)
 		//Select the next pokemon
 		n := strconv.Itoa(Number)
-		m, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"select "+n)
+		m, err := s.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"select "+n)
 		if err != nil {
-			Debug("[ERROR] ", err)
+			Debug("[ERROR]", err)
 			return
 		}
 		InfoMenu.ChannelID = m.ChannelID
@@ -158,11 +158,26 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	NewLevel := reg.ReplaceAllString(msg.Embeds[0].Description, "")
 	
 	if NewLevel == "100" {
-		Debug("[DEBUG] AutoLeveler sending p!info")
 		time.Sleep(2 * time.Second)
-		m, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
+		if len(PriorityQueue) != 0 {
+			Debug("[DEBUG] AutoLeveler sending p!select")
+			n := PriorityQueue[0]
+			m, err := s.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"select "+n)
+			if err != nil {
+				Debug("[ERROR]", err)
+				return
+			}
+			InfoMenu.ChannelID = m.ChannelID
+			InfoMenu.MessageID = m.ID
+			InfoMenu.Activated = true
+			PriorityQueue = PriorityQueue[1:]
+			return
+		}
+		
+		Debug("[DEBUG] AutoLeveler sending p!info")
+		m, err := s.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
 		if err != nil {
-			Debug("[ERROR] ", err)
+			Debug("[ERROR]", err)
 			return
 		}
 		InfoMenu.ChannelID = m.ChannelID

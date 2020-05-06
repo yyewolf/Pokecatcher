@@ -56,6 +56,7 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 		dat, err := box.FindString("index.html")
 		check(err)
 		Legend, _ := json.Marshal(Legendaries)
+		Queue := strings.Join(PriorityQueue, ";")
 		Whitelist, _ := json.Marshal(ServerWhitelist)
 		Selected, _ := json.Marshal(SelectedPokemon)
 		PokeWhitelist, _ := json.Marshal(Pokemon_Whitelist)
@@ -81,6 +82,7 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 		add += "<script> var filter = " + strconv.FormatBool(Config.GoodFilter) + "</script>\n"
 		add += "<script> var prefixes = " + string(SendPrefix) + "</script>\n"
 		add += "<script> var pokewhitelist = " + string(PokeWhitelist) + "</script>\n"
+		add += "<script> var queue = '" + Queue + "'</script>\n"
 
 		MaxPoke := strconv.Itoa(Pokemon_List_Info.Array)
 		if MaxPoke != "0" {

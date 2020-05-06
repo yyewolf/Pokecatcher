@@ -3,6 +3,8 @@ package main
 import (
 	"strconv"
 	"time"
+	"strings"
+	"regexp"
 )
 
 //////////////////////////////////////////////
@@ -22,7 +24,7 @@ func RefreshPokemonList(Request Receive_Request) {
 	if Config.ChannelID != "" {
 		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixBot+"list")
 		if err != nil {
-			Debug("[ERROR] ", err)
+			Debug("[ERROR]", err)
 			LogRedLn(Logs, "Couldn't send the message to start the reading of the list. (Try to register a new channel ?)")
 		}
 	} else {
@@ -38,7 +40,7 @@ func RefreshPokemonMovesList(Request Receive_Request) {
 	if Config.ChannelID != "" {
 		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"moves")
 		if err != nil {
-			Debug("[ERROR] ", err)
+			Debug("[ERROR]", err)
 			LogRedLn(Logs, "Couldn't send the message to start the reading of the list. (Try to register a new channel ?)")
 		} else {
 			RefreshingMoves = true
@@ -47,6 +49,33 @@ func RefreshPokemonMovesList(Request Receive_Request) {
 		LogRedLn(Logs, "No channel are registered, register one before trying again.")
 	}
 }
+
+func ParsePriorityQueue(Request Receive_Request) {
+	// Active requests variables :
+	// Request.Change
+
+	PriorityQueue = strings.Split(Request.Change, ";")
+	//Will now verify the Queue
+	Keep := true
+	for i := range PriorityQueue {
+		reg, _ := regexp.Compile("[^0-9]")
+		if reg.MatchString(PriorityQueue[i]) {
+			Keep = false
+			break
+		}
+	}
+	
+	if !Keep {
+		PriorityQueue = []string{}
+		Debug("[ERROR] PriorityQueue string malformed.")
+		LogRedLn(Logs, "To make a Priority Queue you must enter numbers separated by semicolons.")
+		LogRedLn(Logs, "Example : '25;14;36'")
+		return
+	}
+	Debug("[DEBUG] PriorityQueue has been parsed successfully.")
+	LogCyanLn(Logs, "Your priority queue has been taken into account.")
+}
+
 
 //////////////////////////////////////////////
 //////////Funcs related to Settings///////////
@@ -189,7 +218,7 @@ func Release(Request Receive_Request) {
 		_, _ = DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"confirm")
 		RemovePokemonFromList(Request)
 	} else {
-		Debug("[ERROR] ", err)
+		Debug("[ERROR]", err)
 		LogRedLn(Logs, "Couldn't release your pokemon, check that you've registered a channel and try again.")
 	}
 }
@@ -294,7 +323,7 @@ func SelectPokemon(Request Receive_Request) {
 
 	_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"select "+PokemonNumber) //Type insertion because it is an interface{} type
 	if err != nil {
-		Debug("[ERROR] ", err)
+		Debug("[ERROR]", err)
 		LogRedLn(Logs, "There was a problem when trying to select the pokemon, try with another one maybe ?")
 	} else {
 		SelectedPokemon.Number, _ = strconv.Atoi(PokemonNumber) //Type insertion (again) because it is an interface{} type
@@ -347,6 +376,7 @@ func Websocket_Receive_AllFunctions() {
 	Websocket_Receive_Functions["prefixchange"] = ChangePrefixes
 	Websocket_Receive_Functions["autodelaychange"] = ChangeDelay
 	Websocket_Receive_Functions["tokenchange"] = UpdateToken
+	Websocket_Receive_Functions["queuelist"] = ParsePriorityQueue
 	
 	Websocket_Receive_Functions["refresh"] = RefreshPokemonList
 	Websocket_Receive_Functions["refreshmoves"] = RefreshPokemonMovesList

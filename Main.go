@@ -73,6 +73,7 @@ var OStdout *os.File
 
 //AutoLeveler
 var InfoMenu InfoActivated
+var PriorityQueue []string
 
 func check(e error) {
 	if e != nil {
