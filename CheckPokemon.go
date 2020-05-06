@@ -100,7 +100,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Spawned_Pokemon_Name := ""
 	ImageDecoded, err := loadImg(ImageString)
 	if err != nil {
-		Debug("[ERROR] ", err)
+		Debug("[ERROR]", err)
 		return
 	}
 	ImageResized := resize.Resize(64, 64, ImageDecoded, resize.Bicubic)
@@ -142,12 +142,12 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 	Guild_Spawn, err := s.Guild(msg.GuildID)
 	if err != nil {
-		Debug("[ERROR] ", err)
+		Debug("[ERROR]", err)
 		return
 	}
 	Channel_Spawn, err := s.Channel(msg.ChannelID)
 	if err != nil {
-		Debug("[ERROR] ", err)
+		Debug("[ERROR]", err)
 		return
 	}
 	//Logs info into the console and sends a notification to the website.
@@ -196,16 +196,16 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		RandomNess := rand.Intn(422) - rand.Intn(221)
 		
 		
-		Debug("[DEBUG]", " Waiting to catch a ", OriginalName)
+		Debug("[DEBUG]", "Waiting to catch a", OriginalName)
 
 		time.Sleep(time.Duration(Config.Delay+RandomNess) * time.Millisecond)
 		LogBlueLn(Logs, "Tried to catch your : "+OriginalName)
 
 		_, err := s.ChannelMessageSend(msg.ChannelID, Command_To_Catch+" "+strings.ToLower(CatchName))
 		
-		Debug("[DEBUG]", " Sent message to catch a ", OriginalName)
+		Debug("[DEBUG]", "Sent message to catch a", OriginalName)
 		if err != nil {
-			Debug("[ERROR] ", err)
+			Debug("[ERROR]", err)
 			Notif_CatchingErr(OriginalName, Guild_Spawn.Name, Channel_Spawn.Name)
 			return
 		}
