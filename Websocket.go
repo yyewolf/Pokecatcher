@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-type Send_Request struct {
+type sendRequest struct {
 	Action         string `json:"action"`
 	Command        string `json:"command"`
 	Name           string `json:"name"`
@@ -20,7 +20,7 @@ type Send_Request struct {
 	LearnChannelID string `json:"channelmovesid"`
 }
 
-type Receive_Request struct {
+type receiveRequest struct {
 	Action         string `json:"action"`
 	State          bool   `json:"state"`
 	Nickname       string `json:"nickname"`
@@ -55,50 +55,50 @@ type Receive_Request struct {
 	Filters []customFilterStruct `json:"filters"`
 }
 
-func Websocket_Broadcast(msg string) {
-	for i := range Connections {
-		if i < len(Connections) {
-			err := Connections[i].WriteMessage(1, []byte(msg))
+func websocketBroadcast(msg string) {
+	for i := range connections {
+		if i < len(connections) {
+			err := connections[i].WriteMessage(1, []byte(msg))
 			if err != nil {
-				Debug("[ERROR]", err)
-				Connections = append(Connections[:i], Connections[i+1:]...)
+				logDebug("[ERROR]", err)
+				connections = append(connections[:i], connections[i+1:]...)
 				//Removes the connection if it's unable to send a message.
 			}
 		}
 	}
 }
 
-func Websocket_Connection(w http.ResponseWriter, r *http.Request) {
+func websocketConnection(w http.ResponseWriter, r *http.Request) {
 	//Check if the person is allowed
-	if !Config.IsAllowedToUse {
+	if !config.IsAllowedToUse {
 		return
 	}
 	conn, err := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
 	if err != nil {
-		Debug("[ERROR]", err)
+		logDebug("[ERROR]", err)
 		return
 	}
 	conn.SetCloseHandler(func(code int, text string) error {
-		for i := range Connections {
-			if Connections[i] == conn {
-				Connections = append(Connections[:i], Connections[i+1:]...)
+		for i := range connections {
+			if connections[i] == conn {
+				connections = append(connections[:i], connections[i+1:]...)
 			}
 		}
 		return nil
 	})
-	Connections = append(Connections, conn)
+	connections = append(connections, conn)
 
 	for {
 		// Read message from browser
-		rec := Receive_Request{}
+		rec := receiveRequest{}
 		err := conn.ReadJSON(&rec)
 		if err != nil {
-			Debug("[ERROR]", err)
+			logDebug("[ERROR]", err)
 			return
 		}
-		if _, ok := Websocket_Receive_Functions[rec.Action]; !ok {
+		if _, ok := websocketReceiveFunctions[rec.Action]; !ok {
 			return
 		}
-		Websocket_Receive_Functions[rec.Action](rec)
+		websocketReceiveFunctions[rec.Action](rec)
 	}
 }

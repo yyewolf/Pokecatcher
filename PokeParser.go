@@ -2,15 +2,16 @@ package main
 
 import (
 	"errors"
+	"image/png"
 	"regexp"
 	"strconv"
 	"strings"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/nfnt/resize"
-	"image/png"
 )
 
-type PokeInfoParsed struct {
+type pokeInfoParsed struct {
 	Name       string
 	Level      string
 	Number     string
@@ -20,42 +21,42 @@ type PokeInfoParsed struct {
 	ListNumber string
 	IVs        []int
 	TotalIV    float64
-	isShiny	   bool
+	isShiny    bool
 }
 
-func ParsePokemonInfo(msg *discordgo.MessageCreate) (PokeInfoParsed, error) {
-	Infos := PokeInfoParsed{}
+func parsePokemonInfo(msg *discordgo.MessageCreate) (pokeInfoParsed, error) {
+	Infos := pokeInfoParsed{}
 	//Check if there is an embed
 	if len(msg.Embeds) == 0 {
-		err := errors.New("InfoParser : Message doesn't contain any embeds.")
+		err := errors.New("infoparser : message doesn't contain any embeds")
 		return Infos, err
 	}
 	//Check if there is a title in the embed
 	if msg.Embeds[0].Title == "" {
-		err := errors.New("InfoParser : Embed doesn't contain any title.")
+		err := errors.New("infoparser : embed doesn't contain any title")
 		return Infos, err
 	}
 	//Check if there is a title in the embed
 	if msg.Embeds[0].Author == nil {
-		err := errors.New("InfoParser : Embed doesn't contain any title.")
+		err := errors.New("infoparser : embed doesn't contain any title")
 		return Infos, err
 	}
 	//Check if there it is a right title
 	if msg.Embeds[0].Author.Name != "Professor Oak" {
-		err := errors.New("InfoParser : Embed doesn't contain the right Author name. (" + msg.Embeds[0].Author.Name + ")")
+		err := errors.New("infoparser : embed doesn't contain the right author name (" + msg.Embeds[0].Author.Name + ")")
 		return Infos, err
 	}
 	//Check if there is a footer in the embed
 	if msg.Embeds[0].Footer == nil {
-		err := errors.New("InfoParser : Embed doesn't contain any footer.")
+		err := errors.New("infoparser : embed doesn't contain any footer")
 		return Infos, err
 	}
 	//Check if there is an image in the embed
 	if msg.Embeds[0].Image == nil {
-		err := errors.New("InfoParser : Embed doesn't contain any image.")
+		err := errors.New("infoparser : embed doesn't contain any image")
 		return Infos, err
 	}
-	
+
 	//Check if the pokemon is a shiny
 	if strings.Contains(msg.Embeds[0].Title, "star") {
 		Infos.isShiny = true
@@ -82,17 +83,17 @@ func ParsePokemonInfo(msg *discordgo.MessageCreate) (PokeInfoParsed, error) {
 		Infos.Last = true
 	}
 
-	for i := 0; i < Pokemon_List_Info.Realmax; i++ {
+	for i := 0; i < pokemonListInfo.Realmax; i++ {
 		n := strconv.Itoa(i)
-		if Infos.Number == Pokemon_List[n].NewNumber {
+		if Infos.Number == pokemonList[n].NewNumber {
 			Infos.isInList = true
 			Infos.ListNumber = n
 		}
 	}
-	
+
 	//Gets the name of the pokémon
 	ImageURL := msg.Embeds[0].Image.URL
-	ImageString := ImageToString(ImageURL)
+	ImageString := imageToString(ImageURL)
 	Infos.Name = ""
 	ImageDecoded, err := loadImg(ImageString)
 	if err != nil {
@@ -108,9 +109,9 @@ func ParsePokemonInfo(msg *discordgo.MessageCreate) (PokeInfoParsed, error) {
 		if strings.Contains(List[i], "img") {
 			//Gets rid of the path debris
 			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\", ""), ".png", "")
-			
-			ScanImage := DecodedImages[Name]
-			Accuracy := CompareIMG(ScanImage, ImageResized)
+
+			ScanImage := decodedImages[Name]
+			Accuracy := compareIMG(ScanImage, ImageResized)
 			if Accuracy < 0.35 {
 				Infos.Name = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
 				break
@@ -120,7 +121,7 @@ func ParsePokemonInfo(msg *discordgo.MessageCreate) (PokeInfoParsed, error) {
 
 	//Gets every IV and stores them
 	if !strings.Contains(msg.Embeds[0].Description, "IV") {
-		err := errors.New("InfoParser : IV not enabled.")
+		err := errors.New("infoparser : iv not enabled")
 		return Infos, err
 	}
 	reg, err = regexp.Compile("[^0-9.]")
@@ -139,6 +140,6 @@ func ParsePokemonInfo(msg *discordgo.MessageCreate) (PokeInfoParsed, error) {
 	Total := content[len(content)-1]
 	Total = reg.ReplaceAllString(Total, "")
 	Infos.TotalIV, _ = strconv.ParseFloat(Total, 8)
-	
+
 	return Infos, nil
 }

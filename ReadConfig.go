@@ -31,9 +31,9 @@ type ConfigStruct struct {
 	IsAllowedToUse bool                 `json:"-"`
 }
 
-func NoConfig() {
+func noConfig() {
 	//Creates the default config file
-	Config = ConfigStruct{
+	config = ConfigStruct{
 		Token:          "Put your token here (in case of problem add 'Bot' before your token)",
 		ChannelID:      "Put a channel ID here",
 		Delay:          3000,
@@ -54,44 +54,44 @@ func NoConfig() {
 		}
 	}
 	path, _ := filepath.Abs("./saves/config.json")
-	file, _ := json.MarshalIndent(Config, "", " ")
+	file, _ := json.MarshalIndent(config, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)
-	LogRedLn(Logs, "Enter your token in the window!")
+	logRedLn(logs, "Enter your token in the window!")
 }
 
-func LoadConfig() {
+func loadConfig() {
 	path, _ := filepath.Abs("./saves/config.json")
 	jsonFile, err := os.Open(path)
 	if err != nil {
-		NoConfig()
+		noConfig()
 		return
 	}
 	defer jsonFile.Close()
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-	json.Unmarshal(byteValue, &Config)
+	json.Unmarshal(byteValue, &config)
 	//Loads config.json into Config var
 }
 
-func NoAliases() {
-	LogRedLn(Logs, "Pokemon's aliases are missing, this might result in a blacklist!")
+func noAliases() {
+	logRedLn(logs, "Pokemon's aliases are missing, this might result in a blacklist!")
 }
 
-func LoadAliases() {
+func loadAliases() {
 	path, _ := filepath.Abs("./saves/aliases.json")
 	jsonFile, err := os.Open(path)
 	if err != nil {
-		NoAliases()
+		noAliases()
 		return
 	}
 	defer jsonFile.Close()
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-	json.Unmarshal(byteValue, &Aliases)
+	json.Unmarshal(byteValue, &aliases)
 	//Loads aliases.json into Aliases var
 }
 
-func SaveConfig() {
+func saveConfig() {
 	path, _ := filepath.Abs("./saves/config.json")
-	file, _ := json.MarshalIndent(Config, "", " ")
+	file, _ := json.MarshalIndent(config, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)
 	//Save Config var into config.json
 }

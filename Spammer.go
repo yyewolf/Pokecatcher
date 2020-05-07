@@ -8,17 +8,17 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func SpamFunc(Session *discordgo.Session, ChannelID string, interval int, message string) {
+func spamFunc(Session *discordgo.Session, ChannelID string, interval int, message string) {
 	defer func() {
 		if r := recover(); r != nil {
-			LogRedLn(Logs, "Error while spamming. Wait a bit and refresh the web page !")
+			logRedLn(logs, "Error while spamming. Wait a bit and refresh the web page !")
 		}
 	}()
-	SpamInterval = interval
-	SpamMessage = message
+	spamInterval = interval
+	spamMessage = message
 	for {
 		select {
-		case <-SpamChannel:
+		case <-spamChannel:
 			return
 		default:
 			break
@@ -29,10 +29,10 @@ func SpamFunc(Session *discordgo.Session, ChannelID string, interval int, messag
 		RandomInt := rand.Intn(len(MessageList))
 		_, err := Session.ChannelMessageSend(ChannelID, MessageList[RandomInt])
 		if err != nil {
-			Debug("[ERROR] ", err)
-			LogRedLn(Logs, "Error while spamming. (Try to register a new channel ?)")
+			logDebug("[ERROR] ", err)
+			logRedLn(logs, "Error while spamming. (Try to register a new channel ?)")
 			//If crash spam is now false.
-			SpamState = false
+			spamState = false
 		}
 		time.Sleep(time.Duration(interval) * time.Millisecond)
 	}

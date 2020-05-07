@@ -7,11 +7,11 @@ import (
 	"time"
 )
 
-func StartLogger() {
-	OStdout = os.Stdout
+func startLogger() {
+	stdoutKeeped = os.Stdout
 	// Will only log if asked to
-	if Config.Debug {
-	
+	if config.Debug {
+
 		t := time.Now()
 		formatted := fmt.Sprintf("%d-%02d-%02d %02d-%02d-%02d",
 			t.Year(), t.Month(), t.Day(),
@@ -27,7 +27,7 @@ func StartLogger() {
 		Path, _ := filepath.Abs("./crash/" + Name + ".txt")
 		logFile, err := os.OpenFile(Path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
 		if err != nil {
-			if Config.Debug {
+			if config.Debug {
 				fmt.Println(err)
 			}
 		}

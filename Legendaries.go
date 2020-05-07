@@ -1,6 +1,6 @@
 package main
 
-var Legendaries = []string{
+var legendaries = []string{
 	"Articuno",
 	"Zapdos",
 	"Moltres",

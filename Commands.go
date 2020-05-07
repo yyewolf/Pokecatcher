@@ -3,42 +3,42 @@ package main
 import (
 	"fmt"
 	"math"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
-	"regexp"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-type Pokemon struct {
+type pokemon struct {
 	Name      string `json:"name"`
 	Level     string `json:"level"`
 	IV        string `json:"iv"`
 	NewNumber string `json:"newnumber"`
 }
 
-type LatestPokemonType struct {
+type latestPokemonType struct {
 	ChannelID string
 	Command   string
 }
 
-func CatchLatest() {
-	_, err := DiscordSession.ChannelMessageSend(LatestPokemon.ChannelID, LatestPokemon.Command)
+func catchLatest() {
+	_, err := discordSession.ChannelMessageSend(latestPokemon.ChannelID, latestPokemon.Command)
 	if err != nil {
-		LogRedLn(Logs, "There was a problem when trying to catch that pokemon, try again next time maybe ?")
+		logRedLn(logs, "There was a problem when trying to catch that pokemon, try again next time maybe ?")
 	} else {
-		LogBlueLn(Logs, "Tried to catch latest Pokemon.")
+		logBlueLn(logs, "Tried to catch latest Pokemon.")
 	}
 }
 
-func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
+func checkForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	// Reload the session
-	if DiscordSession != s {
-		DiscordSession = s
+	if discordSession != s {
+		discordSession = s
 	}
 	//Check if the person is allowed
-	if !Config.IsAllowedToUse {
+	if !config.IsAllowedToUse {
 		return
 	}
 	//Check if the user is the one sending the command
@@ -46,28 +46,28 @@ func CheckForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 
-	if strings.HasPrefix(msg.Content, Config.PrefixBot+"register") {
+	if strings.HasPrefix(msg.Content, config.PrefixBot+"register") {
 
-		Config.ChannelID = msg.ChannelID
+		config.ChannelID = msg.ChannelID
 		ChannelRegistered, err := s.Channel(msg.ChannelID)
 		if err != nil {
-			Debug("[ERROR] ", err)
+			logDebug("[ERROR] ", err)
 			return
 		}
-		LogYellowLn(Logs, "Successfully registered channel : #"+ChannelRegistered.Name)
+		logYellowLn(logs, "Successfully registered channel : #"+ChannelRegistered.Name)
 	}
 
-	if strings.HasPrefix(msg.Content, Config.PrefixBot+"list") {
-		s.ChannelMessageSend(msg.ChannelID, Config.PrefixPokecord+"pokemon")
-		RefreshingList = true
-		RefreshingListChannelID = msg.ChannelID
+	if strings.HasPrefix(msg.Content, config.PrefixBot+"list") {
+		s.ChannelMessageSend(msg.ChannelID, config.PrefixPokecord+"pokemon")
+		refreshingList = true
+		refreshingListChannelID = msg.ChannelID
 	}
 
-	ListLoader(s, msg)
-	MovesLoader(s, msg)
+	listLoader(s, msg)
+	movesLoader(s, msg)
 }
 
-func MovesLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
+func movesLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if the user is the one sending the command
 	if msg.Author.ID != "365975655608745985" {
 		return
@@ -77,7 +77,7 @@ func MovesLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check that the refreshing is active.
-	if !RefreshingMoves {
+	if !refreshingMoves {
 		return
 	}
 	//Check if there is a footer in the embed
@@ -86,7 +86,7 @@ func MovesLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 	// Looking for the right message
 	if strings.Contains(msg.Embeds[0].Footer.Text, "Moves") {
-		RefreshingMoves = false
+		refreshingMoves = false
 		//Gets the level from the embed's title : "Level 99 Pokemon"
 		reg, _ := regexp.Compile("[^0-9/]")
 		PokeLevel := reg.ReplaceAllString(msg.Embeds[0].Title, "")
@@ -96,21 +96,21 @@ func MovesLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Moves = strings.ReplaceAll(Moves, " ;", ";")
 		RefreshingMovesChannelID := msg.ChannelID
 
-		Websocket_SendMoveList(PokemonName, Moves, RefreshingMovesChannelID)
+		websocketSendMoveList(PokemonName, Moves, RefreshingMovesChannelID)
 	}
 }
 
-func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
+func listLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Verifies that there's an embed
 	if len(msg.Embeds) == 0 {
 		return
 	}
 	//Check that the refreshing is active.
-	if !RefreshingList {
+	if !refreshingList {
 		return
 	}
 	//Check that it's the right channel.
-	if RefreshingListChannelID != msg.ChannelID {
+	if refreshingListChannelID != msg.ChannelID {
 		return
 	}
 	// Looking for the right message
@@ -121,8 +121,8 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		CurrentPage := math.Ceil(float64(CurrentPokemon) / 20)
 		FullMessage := strings.Split(msg.Embeds[0].Description, "\n")
 		//Values for the list
-		Pokemon_List_Info.Array = MaxPokemon
-		Pokemon_List_Info.Realmax = MaxPokemon
+		pokemonListInfo.Array = MaxPokemon
+		pokemonListInfo.Realmax = MaxPokemon
 		//Will go through each pokés
 		for i := range FullMessage {
 			CurrentInfos := strings.Replace(FullMessage[i], "Level: ", "", 1)
@@ -137,30 +137,30 @@ func ListLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 				CurrentPokemonIV = InfosSlice[3]
 			}
 
-			Pokemon_List[CurrentPokemonNumber] = Pokemon{
+			pokemonList[CurrentPokemonNumber] = pokemon{
 				Name:      CurrentPokemonName,
 				Level:     CurrentPokemonLevel,
 				IV:        CurrentPokemonIV,
 				NewNumber: CurrentPokemonNumber,
 			}
 
-			Pokemon_List_Info.Names = Pokemon_List_Info.Names + CurrentPokemonName + ","
+			pokemonListInfo.Names = pokemonListInfo.Names + CurrentPokemonName + ","
 		}
 
-		ProgressBar.Min, ProgressBar.Max = 0, MaxPage
-		ProgressBar.SetValue(CurrentPage)
-		ProgressBar.Refresh()
+		progressBar.Min, progressBar.Max = 0, MaxPage
+		progressBar.SetValue(CurrentPage)
+		progressBar.Refresh()
 		if CurrentPage != MaxPage {
 			//Goes to the next page
 			time.Sleep(4500 * time.Millisecond)
-			s.ChannelMessageSend(msg.ChannelID, Config.PrefixPokecord+"pokemon "+fmt.Sprintf("%.0f", (CurrentPage+1)))
+			s.ChannelMessageSend(msg.ChannelID, config.PrefixPokecord+"pokemon "+fmt.Sprintf("%.0f", (CurrentPage+1)))
 		} else {
-			RefreshingList = false
-			SavePokemonList()
-			LogYellowLn(Logs, "Your pokemon list has been loaded !")
-			Websocket_SendPokemonList()
-			ProgressBar.Min, ProgressBar.Max = 0, 1
-			ProgressBar.SetValue(0)
+			refreshingList = false
+			savePokemonList()
+			logYellowLn(logs, "Your pokemon list has been loaded !")
+			websocketSendPokemonList()
+			progressBar.Min, progressBar.Max = 0, 1
+			progressBar.SetValue(0)
 		}
 	}
 }

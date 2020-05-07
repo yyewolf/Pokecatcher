@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func PokeNames() string {
+func pokeNames() string {
 	List := box.List()
 	Names := []string{}
 	for i := range List {
@@ -21,40 +21,40 @@ func PokeNames() string {
 	return string(s)
 }
 
-func NoPokemonWhitelist() {
+func noPokemonWhitelist() {
 	//Creates the default list file
-	Pokemon_Whitelist = make(map[string]bool)
-	
+	pokemonWhitelist = make(map[string]bool)
+
 	List := box.List()
 	for i := range List {
 		if strings.Contains(List[i], "img") {
 			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\", ""), ".png", "")
-			Pokemon_Whitelist[Name] = true
+			pokemonWhitelist[Name] = true
 		}
 	}
-	
+
 	path, _ := filepath.Abs("./saves/pokemon_whitelist.json")
-	file, _ := json.MarshalIndent(Pokemon_Whitelist, "", " ")
+	file, _ := json.MarshalIndent(pokemonWhitelist, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)
 }
 
-func LoadPokemonWhitelist() {
+func loadPokemonWhitelist() {
 	path, _ := filepath.Abs("./saves/pokemon_whitelist.json")
 	jsonFile, err := os.Open(path)
 	if err != nil {
-		Debug("[ERROR] ", err)
-		NoPokemonWhitelist()
+		logDebug("[ERROR] ", err)
+		noPokemonWhitelist()
 		return
 	}
 	defer jsonFile.Close()
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-	json.Unmarshal(byteValue, &Pokemon_Whitelist)
+	json.Unmarshal(byteValue, &pokemonWhitelist)
 	//Loads pokemon_whitelist.json into Pokemon_Whitelist var
 }
 
-func SavePokemonWhitelist() {
+func savePokemonWhitelist() {
 	path, _ := filepath.Abs("./saves/pokemon_whitelist.json")
-	file, _ := json.MarshalIndent(Pokemon_Whitelist, "", " ")
+	file, _ := json.MarshalIndent(pokemonWhitelist, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)
 	//Save Pokemon_Whitelist var into pokemon_whitelist.json
 }

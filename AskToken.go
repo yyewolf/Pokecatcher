@@ -2,34 +2,34 @@ package main
 
 import (
 	"strings"
+
 	"fyne.io/fyne"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/widget"
 )
 
-//AskUserForToken will display a window to the user prompting them to enter their token
-func AskUserForToken(){
+//askUserForToken will display a window to the user prompting them to enter their token
+func askUserForToken() {
 	w := fyne.CurrentApp().NewWindow("Enter your token")
-	w.SetIcon(WindowIcon)
-	
-	TextInput := widget.NewEntry()
-	TextInput.SetPlaceHolder("Type in your token")
-	TextInput.OnChanged = func(text string) {
-		Config.Token = strings.ReplaceAll(text, "\"", "")
-		Config.Token = strings.ReplaceAll(Config.Token, "(", "")
-		Config.Token = strings.ReplaceAll(Config.Token, ")", "")
+	w.SetIcon(windowIcon)
+
+	textInput := widget.NewEntry()
+	textInput.SetPlaceHolder("Type in your token")
+	textInput.OnChanged = func(text string) {
+		config.Token = strings.ReplaceAll(text, "\"", "")
+		config.Token = strings.ReplaceAll(config.Token, "(", "")
+		config.Token = strings.ReplaceAll(config.Token, ")", "")
 	}
-	
+
 	empty := widget.NewLabel("")
-	
-	Btn := widget.NewButton("Done", func() {
-		go Login()
-		go SaveConfig()
+
+	btn := widget.NewButton("Done", func() {
+		go discordLogin()
+		go saveConfig()
 		w.Close()
 	})
-	
-	
-	w.SetContent(fyne.NewContainerWithLayout(layout.NewGridLayout(1), empty, TextInput, Btn))
+
+	w.SetContent(fyne.NewContainerWithLayout(layout.NewGridLayout(1), empty, textInput, btn))
 
 	w.Resize(fyne.NewSize(1000, 100))
 	w.Show()

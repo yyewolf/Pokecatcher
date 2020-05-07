@@ -8,10 +8,10 @@ import (
 	"strings"
 )
 
-var DecodedImages map[string]image.Image
+var decodedImages map[string]image.Image
 
-func DecodeKnown() {
-	DecodedImages = make(map[string]image.Image)
+func decodeKnown() {
+	decodedImages = make(map[string]image.Image)
 	List := box.List()
 	for i := range List {
 		if strings.Contains(List[i], "img") {
@@ -19,9 +19,9 @@ func DecodeKnown() {
 			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\", ""), ".png", "")
 			img, err := loadImg(c)
 			if err != nil {
-				Debug("[ERROR] ", err)
+				logDebug("[ERROR] ", err)
 			}
-			DecodedImages[Name] = img
+			decodedImages[Name] = img
 		}
 	}
 }
@@ -43,7 +43,7 @@ func diff(a, b uint32) int64 {
 	return int64(b - a)
 }
 
-func CompareIMG(f1 image.Image, f2 image.Image) float64 {
+func compareIMG(f1 image.Image, f2 image.Image) float64 {
 	//f1 => resized
 	//f2 => pokécord
 

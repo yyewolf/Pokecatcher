@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func NoWhitelist() {
+func noWhitelist() {
 	//Creates the default whitelist file, is empty
 	DefaultWhitelist := make(map[string]bool)
 	path, _ := filepath.Abs("./saves/server_whitelist.json")
@@ -15,23 +15,23 @@ func NoWhitelist() {
 	_ = ioutil.WriteFile(path, file, 0644)
 }
 
-func LoadWhitelist() {
+func loadWhitelist() {
 	path, _ := filepath.Abs("./saves/server_whitelist.json")
 	jsonFile, err := os.Open(path)
 	if err != nil {
-		Debug("[ERROR] ", err)
-		NoWhitelist()
+		logDebug("[ERROR] ", err)
+		noWhitelist()
 		return
 	}
 	defer jsonFile.Close()
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-	json.Unmarshal(byteValue, &ServerWhitelist)
+	json.Unmarshal(byteValue, &serverWhitelist)
 	//Loads server_whitelist.json into Whitelist var
 }
 
-func SaveWhitelist() {
+func saveWhitelist() {
 	path, _ := filepath.Abs("./saves/server_whitelist.json")
-	file, _ := json.MarshalIndent(ServerWhitelist, "", " ")
+	file, _ := json.MarshalIndent(serverWhitelist, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)
 	//Save Whitelist var into server_whitelist.json
 }

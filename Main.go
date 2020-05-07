@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"os/exec"
@@ -10,7 +11,7 @@ import (
 	"sync"
 	"syscall"
 	"time"
-	"fmt"
+
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/widget"
@@ -26,63 +27,63 @@ var upgrader = websocket.Upgrader{
 }
 
 //Window
-var Logs *widget.Box
-var LogScroll *widget.ScrollContainer
-var LastPokemonImg *canvas.Image
-var LastPokemonLabel *widget.Label
-var ProgressBar *widget.ProgressBar
-var App fyne.App
-var WindowIcon fyne.Resource 
+var logs *widget.Box
+var logScroll *widget.ScrollContainer
+var lastPokemonImg *canvas.Image
+var lastPokemonLabel *widget.Label
+var progressBar *widget.ProgressBar
+var appli fyne.App
+var windowIcon fyne.Resource
 
 //Important
-var Config ConfigStruct
-var Aliases map[string][]string
-var Pokemon_List map[string]Pokemon
-var Pokemon_Whitelist map[string]bool
-var Pokemon_List_Info PokeListInfoStruct
-var Connections []*websocket.Conn
-var Websocket_Receive_Functions map[string]func(request Receive_Request)
-var DiscordSession *discordgo.Session
-var LatestPokemon LatestPokemonType
+var config ConfigStruct
+var aliases map[string][]string
+var pokemonList map[string]pokemon
+var pokemonWhitelist map[string]bool
+var pokemonListInfo PokeListInfoStruct
+var connections []*websocket.Conn
+var websocketReceiveFunctions map[string]func(request receiveRequest)
+var discordSession *discordgo.Session
+var latestPokemon latestPokemonType
 
 // Refreshes
-var RefreshingMoves bool
-var RefreshingMovesChannelID string
-var RefreshingList bool
-var RefreshingListChannelID string
+var refreshingMoves bool
+var refreshingMovesChannelID string
+var refreshingList bool
+var refreshingListChannelID string
 
-var SelectedPokemon SelectedPoke
+var selectedPokemon SelectedPoke
 
 var wgPokeSpawn sync.WaitGroup
 
-//ServerWhitelist : map[guildID]State, meaning it will catch if State is true
-var ServerWhitelist map[string]bool
+//serverWhitelist : map[guildID]State, meaning it will catch if State is true
+var serverWhitelist map[string]bool
 
 // Spammer Variables
-var SpamInterval int
-var SpamMessage string
-var SpamState bool
-var SpamChannel chan (int)
+var spamInterval int
+var spamMessage string
+var spamState bool
+var spamChannel chan (int)
 
 // Readyness
-var Ready bool
+var isReady bool
 var isHosted bool
 
 //Stdout
-var OStdout *os.File
+var stdoutKeeped *os.File
 
 //AutoLeveler
-var InfoMenu InfoActivated
-var PriorityQueue []string
+var infoMenu infoActivated
+var priorityQueue []string
 
 func check(e error) {
 	if e != nil {
-		Debug("[ERROR] ", e)
+		logDebug("[ERROR] ", e)
 		return
 	}
 }
 
-func OpenBrowser(url string) {
+func openBrowser(url string) {
 	var err error
 	time.Sleep(2 * time.Second)
 	switch runtime.GOOS {
@@ -100,75 +101,75 @@ func OpenBrowser(url string) {
 	}
 }
 
-func GuildCreate(s *discordgo.Session, event *discordgo.GuildUpdate) {
-	if !Ready {
-		Ready = true
-		LogGreenLn(Logs, "The bot is ready to be used !")
+func guildCreate(s *discordgo.Session, event *discordgo.GuildUpdate) {
+	if !isReady {
+		isReady = true
+		logGreenLn(logs, "The bot is ready to be used !")
 	}
 
-	DiscordSession = s
+	discordSession = s
 	return
 }
 
-func UsefulVariables() {
-	LoadConfig()  // Will load config.json file into the program.
-	StartLogger() //Will log crashes if it happens.
-	LoadAliases() // Will load aliases.json file.
-	LogYellowLn(Logs, "Your config file has been successfully imported !")
-	Pokemon_List = make(map[string]Pokemon) //Where the Pokemon List of the user will be stored.
-	LoadPokemonList()                       // Will load the Users Pokémon list.
-	LoadPokemonWhitelist()					// Will load the Users Pokémon Whitelist
-	ServerWhitelist = make(map[string]bool) //Where the Whitelist of the servers will be stored.
-	LoadWhitelist()                         // Will load server_whitelist into ServerWhitelist.
-	LogYellowLn(Logs, "The server whitelist has been successfully imported !")
-	Websocket_Receive_Functions = make(map[string]func(request Receive_Request))
-	Websocket_Receive_AllFunctions()
-	Login() //Logins to discord
+func usefulVariables() {
+	loadConfig()  // Will load config.json file into the program.
+	startLogger() //Will log crashes if it happens.
+	loadAliases() // Will load aliases.json file.
+	logYellowLn(logs, "Your config file has been successfully imported !")
+	pokemonList = make(map[string]pokemon)  //Where the Pokemon List of the user will be stored.
+	loadPokemonList()                       // Will load the Users Pokémon list.
+	loadPokemonWhitelist()                  // Will load the Users Pokémon Whitelist
+	serverWhitelist = make(map[string]bool) //Where the Whitelist of the servers will be stored.
+	loadWhitelist()                         // Will load server_whitelist into ServerWhitelist.
+	logYellowLn(logs, "The server whitelist has been successfully imported !")
+	websocketReceiveFunctions = make(map[string]func(request receiveRequest))
+	websocketReceiveAllFunctions()
+	discordLogin() //Logins to discord
 }
 
 func main() {
 	box = packr.NewBox("./www")
-	Ready = false
+	isReady = false
 	isHosted = false
 	_ = os.Chdir("/storage/emulated/0/Android/data/org.golang.todo.Pokecatcher/files")
 	//Launches UI
-	UI()
+	startUI()
 }
 
-func Login() {
+func discordLogin() {
 	// Create a new Discord session using the provided bot token.
-	dg, err := discordgo.New(Config.Token)
+	dg, err := discordgo.New(config.Token)
 	check(err)
 	dg.LogLevel = -1
-	
+
 	//Ready event
 	dg.AddHandler(botReady)
-	
+
 	//Recognize pokemons
-	dg.AddHandler(CheckForPokemon)
-	
+	dg.AddHandler(checkForPokemon)
+
 	//Adds pokemon to list
-	dg.AddHandler(SuccessfulCatch)
-	
+	dg.AddHandler(successfulCatch)
+
 	//Recognize commands
-	dg.AddHandler(CheckForCommand)
-	
+	dg.AddHandler(checkForCommand)
+
 	//Updates Servers
-	dg.AddHandler(GuildCreate)
-	
+	dg.AddHandler(guildCreate)
+
 	//AutoLeveling Feature
 	dg.AddHandler(InfoVerifier)
 	dg.AddHandler(SelectVerifier)
 	dg.AddHandler(AutoLeveler)
-	
+
 	//AutoReleaser feature
 	dg.AddHandler(AutoRelease)
-	
+
 	err = dg.Open()
 	if err != nil {
-		Debug("[ERROR] ", err)
-		LogRedLn(Logs, "Cannot connect to discord, check your token !")
-		AskUserForToken()
+		logDebug("[ERROR] ", err)
+		logRedLn(logs, "Cannot connect to discord, check your token !")
+		askUserForToken()
 	}
 	// Wait here until CTRL-C or other term signal is received.
 	sc := make(chan os.Signal, 1)
@@ -180,13 +181,13 @@ func Login() {
 }
 
 func botReady(session *discordgo.Session, evt *discordgo.Ready) {
-	LogGreenLn(Logs, "Successfully connected to discord !")
-	CheckLicences(session)
+	logGreenLn(logs, "Successfully connected to discord !")
+	checkLicences(session)
 
 	if !isHosted {
 		isHosted = true
-		LogYellowLn(Logs, "The website is being hosted you can connect to it on : http://localhost:"+strconv.Itoa(Config.WebPort))
-		LogScroll.SetMinSize(LogScroll.MinSize())
-		Host_Website() // Starts hosting the website.
+		logYellowLn(logs, "The website is being hosted you can connect to it on : http://localhost:"+strconv.Itoa(config.WebPort))
+		logScroll.SetMinSize(logScroll.MinSize())
+		hostWebsite() // Starts hosting the website.
 	}
 }

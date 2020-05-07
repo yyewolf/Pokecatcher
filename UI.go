@@ -16,29 +16,29 @@ func makeCell() fyne.CanvasObject {
 	return rect
 }
 
-func UI() {
+func startUI() {
 
-	App = app.New()
-	w := App.NewWindow("Pokecatcher v2.5.0")
+	appli = app.New()
+	w := appli.NewWindow("Pokecatcher v2.5.0")
 	v, _ := box.Find("icon\\icons.png")
-	WindowIcon = fyne.NewStaticResource("pokecatcher.png", v)
-	w.SetIcon(WindowIcon)
+	windowIcon = fyne.NewStaticResource("pokecatcher.png", v)
+	w.SetIcon(windowIcon)
 
-	labellog := widget.NewLabel("Logs :")
+	labellog := widget.NewLabel("logs :")
 
-	Logs = widget.NewVBox()
-	LogScroll = widget.NewVScrollContainer(Logs)
-	ProgressBar = widget.NewProgressBar()
-	ProgressBar.Resize(fyne.NewSize(200, 20))
-	ProgressBar.Min, ProgressBar.Max = 0, 1
-	ProgressBar.SetValue(0)
+	logs = widget.NewVBox()
+	logScroll = widget.NewVScrollContainer(logs)
+	progressBar = widget.NewProgressBar()
+	progressBar.Resize(fyne.NewSize(200, 20))
+	progressBar.Min, progressBar.Max = 0, 1
+	progressBar.SetValue(0)
 
 	labelimg := widget.NewLabel("Last Pokemon Spawn :")
 	c, _ := box.FindString("icon\\nothing.png")
 	img, _ := loadImg(c)
-	LastPokemonImg = canvas.NewImageFromImage(img)
-	LastPokemonLabel = widget.NewLabelWithStyle("", fyne.TextAlignCenter, fyne.TextStyle{})
-	LastPokemonImg.FillMode = 2
+	lastPokemonImg = canvas.NewImageFromImage(img)
+	lastPokemonLabel = widget.NewLabelWithStyle("", fyne.TextAlignCenter, fyne.TextStyle{})
+	lastPokemonImg.FillMode = 2
 
 	bottom1 := makeCell()
 	left1 := makeCell()
@@ -54,20 +54,20 @@ func UI() {
 				bottom1,
 				left1,
 				right1,
-				LogScroll,
+				logScroll,
 			),
 		),
 		widget.NewHBox(
 			fyne.NewContainerWithLayout(layout.NewGridLayout(1),
-				widget.NewVBox(widget.NewLabel("Refresh Pokemon List :"), ProgressBar),
+				widget.NewVBox(widget.NewLabel("Refresh Pokemon List :"), progressBar),
 				widget.NewVBox(
-					widget.NewButton("Clear Logs", func() {
-						Logs.Children = []fyne.CanvasObject{}
-						Logs.Refresh()
-						LogBlueLn(Logs, "The console has been cleared successfully !")
+					widget.NewButton("Clear logs", func() {
+						logs.Children = []fyne.CanvasObject{}
+						logs.Refresh()
+						logBlueLn(logs, "The console has been cleared successfully !")
 					}),
 					widget.NewButton("Catch latest", func() {
-						CatchLatest()
+						catchLatest()
 					}),
 					fyne.NewContainerWithLayout(layout.NewBorderLayout(labelimg, bottom2, left2, right2),
 						labelimg,
@@ -75,12 +75,12 @@ func UI() {
 						left2,
 						right2,
 						fyne.NewContainerWithLayout(layout.NewGridLayout(1),
-							widget.NewVBox(LastPokemonImg, LastPokemonLabel)),
+							widget.NewVBox(lastPokemonImg, lastPokemonLabel)),
 					)),
 			))))
 	w.Resize(fyne.NewSize(500, 500))
 	w.SetFixedSize(true)
-	go UsefulVariables()
+	go usefulVariables()
 	w.ShowAndRun()
 
 }

@@ -5,10 +5,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
 	"github.com/bwmarrin/discordgo"
 )
 
-type InfoActivated struct {
+type infoActivated struct {
 	ChannelID   string
 	Activated   bool
 	MessageID   string
@@ -18,26 +19,26 @@ type InfoActivated struct {
 //SelectVerifier will verify the level of the selected pokemon
 func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if the person is allowed
-	if !Config.IsAllowedToUse {
+	if !config.IsAllowedToUse {
 		return
 	}
 	//Check if the author is pokecord
 	if msg.Author.ID != "365975655608745985" {
 		return
 	}
-	if !InfoMenu.Activated {
+	if !infoMenu.Activated {
 		return
 	}
-	if InfoMenu.AutoRelease {
+	if infoMenu.AutoRelease {
 		return
 	}
-	if msg.ChannelID != InfoMenu.ChannelID {
+	if msg.ChannelID != infoMenu.ChannelID {
 		return
 	}
 	msgs, _ := s.ChannelMessages(msg.ChannelID, 5, msg.ID, "", "")
 	ok := false
 	for i := range msgs {
-		if msgs[i].ID == InfoMenu.MessageID {
+		if msgs[i].ID == infoMenu.MessageID {
 			ok = true
 			break
 		}
@@ -45,7 +46,7 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !ok {
 		return
 	}
-	
+
 	reg, err := regexp.Compile("[^0-9]")
 	if err != nil {
 		return
@@ -54,45 +55,45 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Level = reg.ReplaceAllString(Level, "")
 
 	if Level == "100" {
-		Debug("[DEBUG] AutoLeveler is searching for a new pokemon.")
+		logDebug("[DEBUG] AutoLeveler is searching for a new pokemon.")
 		time.Sleep(3 * time.Second)
 		//Will verify the next pokemon's level
-		m, err := s.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
+		m, err := s.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"info")
 		if err != nil {
-			Debug("[ERROR] ", err)
+			logDebug("[ERROR] ", err)
 			return
 		}
-		InfoMenu.ChannelID = m.ChannelID
-		InfoMenu.MessageID = m.ID
-		InfoMenu.Activated = true
+		infoMenu.ChannelID = m.ChannelID
+		infoMenu.MessageID = m.ID
+		infoMenu.Activated = true
 	} else {
-		LogCyanLn(Logs, "Autoleveler selected a new Pokemon.")
+		logCyanLn(logs, "Autoleveler selected a new Pokemon.")
 	}
 }
 
 //InfoVerifier will verify the infos of the current pokemon
 func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if the person is allowed
-	if !Config.IsAllowedToUse {
+	if !config.IsAllowedToUse {
 		return
 	}
 	//Check if the author is pokecord
 	if msg.Author.ID != "365975655608745985" {
 		return
 	}
-	if !InfoMenu.Activated {
+	if !infoMenu.Activated {
 		return
 	}
-	if InfoMenu.AutoRelease {
+	if infoMenu.AutoRelease {
 		return
 	}
-	if msg.ChannelID != InfoMenu.ChannelID {
+	if msg.ChannelID != infoMenu.ChannelID {
 		return
 	}
 	msgs, _ := s.ChannelMessages(msg.ChannelID, 5, msg.ID, "", "")
 	ok := false
 	for i := range msgs {
-		if msgs[i].ID == InfoMenu.MessageID {
+		if msgs[i].ID == infoMenu.MessageID {
 			ok = true
 			break
 		}
@@ -101,15 +102,15 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if it's a p!info response
-	Infos, err := ParsePokemonInfo(msg)
+	Infos, err := parsePokemonInfo(msg)
 	if err != nil {
 		return
 	}
 
-	InfoMenu.Activated = false
+	infoMenu.Activated = false
 
 	if Infos.Level == "100" {
-		Debug("[DEBUG] AutoLeveler sending p!select")
+		logDebug("[DEBUG] AutoLeveler sending p!select")
 		Number := 1
 		if !Infos.Last {
 			Number, _ = strconv.Atoi(Infos.Number)
@@ -118,21 +119,21 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		time.Sleep(2 * time.Second)
 		//Select the next pokemon
 		n := strconv.Itoa(Number)
-		m, err := s.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"select "+n)
+		m, err := s.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"select "+n)
 		if err != nil {
-			Debug("[ERROR]", err)
+			logDebug("[ERROR]", err)
 			return
 		}
-		InfoMenu.ChannelID = m.ChannelID
-		InfoMenu.MessageID = m.ID
-		InfoMenu.Activated = true
+		infoMenu.ChannelID = m.ChannelID
+		infoMenu.MessageID = m.ID
+		infoMenu.Activated = true
 	}
 }
 
 //AutoLeveler allows the bot to automatically level every pokemon possible.
 func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if the person is allowed
-	if !Config.IsAllowedToUse {
+	if !config.IsAllowedToUse {
 		return
 	}
 	//Check if the author is pokecord
@@ -156,34 +157,32 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	NewLevel := reg.ReplaceAllString(msg.Embeds[0].Description, "")
-	
+
 	if NewLevel == "100" {
 		time.Sleep(2 * time.Second)
-		if len(PriorityQueue) != 0 {
-			Debug("[DEBUG] AutoLeveler sending p!select")
-			n := PriorityQueue[0]
-			m, err := s.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"select "+n)
+		if len(priorityQueue) != 0 {
+			logDebug("[DEBUG] AutoLeveler sending p!select")
+			n := priorityQueue[0]
+			m, err := s.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"select "+n)
 			if err != nil {
-				Debug("[ERROR]", err)
+				logDebug("[ERROR]", err)
 				return
 			}
-			InfoMenu.ChannelID = m.ChannelID
-			InfoMenu.MessageID = m.ID
-			InfoMenu.Activated = true
-			PriorityQueue = PriorityQueue[1:]
+			infoMenu.ChannelID = m.ChannelID
+			infoMenu.MessageID = m.ID
+			infoMenu.Activated = true
+			priorityQueue = priorityQueue[1:]
 			return
 		}
-		
-		Debug("[DEBUG] AutoLeveler sending p!info")
-		m, err := s.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info")
+
+		logDebug("[DEBUG] AutoLeveler sending p!info")
+		m, err := s.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"info")
 		if err != nil {
-			Debug("[ERROR]", err)
+			logDebug("[ERROR]", err)
 			return
 		}
-		InfoMenu.ChannelID = m.ChannelID
-		InfoMenu.MessageID = m.ID
-		InfoMenu.Activated = true
+		infoMenu.ChannelID = m.ChannelID
+		infoMenu.MessageID = m.ID
+		infoMenu.Activated = true
 	}
 }
-
-

@@ -2,12 +2,12 @@ package main
 
 import "encoding/json"
 
-func Notif_DuplicateErr(PokemonName string, GuildName string, ChannelName string) {
+func notifDuplicateErr(PokemonName string, GuildName string, ChannelName string) {
 	// Message in websocket :
 	// action = warn
 	// message = couldnt-duplicate
 
-	Notification, err := json.Marshal(Send_Request{
+	Notification, err := json.Marshal(sendRequest{
 		Action:      "warn",
 		Message:     "couldnt-duplicate",
 		Name:        PokemonName,
@@ -15,18 +15,18 @@ func Notif_DuplicateErr(PokemonName string, GuildName string, ChannelName string
 		ChannelName: ChannelName,
 	})
 	if err != nil {
-		Debug("[ERROR] ", err)
+		logDebug("[ERROR]", err)
 		return
 	}
-	Websocket_Broadcast(string(Notification))
+	websocketBroadcast(string(Notification))
 }
 
-func Notif_CatchingErr(PokemonName string, GuildName string, ChannelName string) {
+func notifCatchingErr(PokemonName string, GuildName string, ChannelName string) {
 	// Message in websocket :
 	// action = warn
 	// message = couldnt-normal
 
-	Notification, err := json.Marshal(Send_Request{
+	Notification, err := json.Marshal(sendRequest{
 		Action:      "notification",
 		Message:     "couldnt-normal",
 		Name:        PokemonName,
@@ -34,17 +34,17 @@ func Notif_CatchingErr(PokemonName string, GuildName string, ChannelName string)
 		ChannelName: ChannelName,
 	})
 	if err != nil {
-		Debug("[ERROR] ", err)
+		logDebug("[ERROR]", err)
 		return
 	}
-	Websocket_Broadcast(string(Notification))
+	websocketBroadcast(string(Notification))
 }
 
-func Notif_PokeSpawn(PokemonName string, GuildName string, Command string, ChannelName string, ChannelID string) {
+func notifPokeSpawn(PokemonName string, GuildName string, Command string, ChannelName string, ChannelID string) {
 	// Message in websocket :
 	// action = notification
 
-	Notification, err := json.Marshal(Send_Request{
+	Notification, err := json.Marshal(sendRequest{
 		Action:      "notification",
 		Command:     Command,
 		Name:        PokemonName,
@@ -53,18 +53,18 @@ func Notif_PokeSpawn(PokemonName string, GuildName string, Command string, Chann
 		ChannelID:   ChannelID,
 	})
 	if err != nil {
-		Debug("[ERROR] ", err)
+		logDebug("[ERROR]", err)
 		return
 	}
-	Websocket_Broadcast(string(Notification))
+	websocketBroadcast(string(Notification))
 }
 
-func Notif_PokeCaught(PokemonName string, GuildName string, ChannelName string) {
+func notifPokeCaught(PokemonName string, GuildName string, ChannelName string) {
 	// Message in websocket :
 	// action = warn
 	// message = could
 
-	Notification, err := json.Marshal(Send_Request{
+	Notification, err := json.Marshal(sendRequest{
 		Action:      "warn",
 		Message:     "could",
 		Name:        PokemonName,
@@ -72,56 +72,56 @@ func Notif_PokeCaught(PokemonName string, GuildName string, ChannelName string) 
 		ChannelName: ChannelName,
 	})
 	if err != nil {
-		Debug("[ERROR] ", err)
+		logDebug("[ERROR]", err)
 		return
 	}
-	Websocket_Broadcast(string(Notification))
+	websocketBroadcast(string(Notification))
 }
 
-func Notif_ChannelRegistered() {
+func notifChannelRegistered() {
 	// Message in websocket :
 	// action = registered
 
-	Notification, err := json.Marshal(Send_Request{
+	Notification, err := json.Marshal(sendRequest{
 		Action: "registered",
 	})
 	if err != nil {
-		Debug("[ERROR] ", err)
+		logDebug("[ERROR]", err)
 		return
 	}
-	Websocket_Broadcast(string(Notification))
+	websocketBroadcast(string(Notification))
 }
 
-func Notif_RenameSuccess(Nickname string) {
+func notifRenameSuccess(Nickname string) {
 	// Message in websocket :
 	// action = warn
 	// message = nickname-success
 
-	Notification, err := json.Marshal(Send_Request{
+	Notification, err := json.Marshal(sendRequest{
 		Action:   "warn",
 		Message:  "nickname-success",
 		Nickname: Nickname,
 	})
 	if err != nil {
-		Debug("[ERROR] ", err)
+		logDebug("[ERROR]", err)
 		return
 	}
-	Websocket_Broadcast(string(Notification))
+	websocketBroadcast(string(Notification))
 }
 
-func Notif_RenameFailed(Nickname string) {
+func notifRenameFailed(Nickname string) {
 	// Message in websocket :
 	// action = warn
 	// message = nickname-failed
 
-	Notification, err := json.Marshal(Send_Request{
+	Notification, err := json.Marshal(sendRequest{
 		Action:   "warn",
 		Message:  "nickname-failed",
 		Nickname: Nickname,
 	})
 	if err != nil {
-		Debug("[ERROR] ", err)
+		logDebug("[ERROR]", err)
 		return
 	}
-	Websocket_Broadcast(string(Notification))
+	websocketBroadcast(string(Notification))
 }

@@ -15,22 +15,22 @@ type PokeListInfoStruct struct {
 	Names   string `json:"names"`
 }
 
-func PokeListForWebsite() string {
-	List, _ := json.Marshal(Pokemon_List)
-	if Pokemon_List_Info.Realmax == 0 {
+func pokeListForWebsite() string {
+	List, _ := json.Marshal(pokemonList)
+	if pokemonListInfo.Realmax == 0 {
 		return ""
 	}
 	ListString := string(List)
 	ListString = strings.TrimSuffix(ListString, "}")
 	ListString += ","
-	Infos, _ := json.Marshal(Pokemon_List_Info)
+	Infos, _ := json.Marshal(pokemonListInfo)
 	InfoString := string(Infos)
 	InfoString = strings.TrimPrefix(InfoString, "{")
 	ListString += InfoString
 	return ListString
 }
 
-func NoPokemonList() {
+func noPokemonList() {
 	//Creates the default list file
 	DefaultList := make(map[string]interface{})
 	path, _ := filepath.Abs("./saves/your_pokemon_list.json")
@@ -48,40 +48,40 @@ func NoPokemonList() {
 	_ = ioutil.WriteFile(path, file, 0644)
 }
 
-func LoadPokemonList() {
+func loadPokemonList() {
 	path, _ := filepath.Abs("./saves/your_pokemon_list.json")
 	jsonFile, err := os.Open(path)
 	if err != nil {
-		Debug("[ERROR] ", err)
-		NoPokemonList()
+		logDebug("[ERROR] ", err)
+		noPokemonList()
 		return
 	}
 	defer jsonFile.Close()
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-	json.Unmarshal(byteValue, &Pokemon_List)
+	json.Unmarshal(byteValue, &pokemonList)
 	//Loads your_pokemon_list.json into Pokemon_List var
 
 	path, _ = filepath.Abs("./saves/your_pokemon_list_info.json")
 	jsonFile, err = os.Open(path)
 	if err != nil {
-		Debug("[ERROR] ", err)
-		NoPokemonList()
+		logDebug("[ERROR] ", err)
+		noPokemonList()
 		return
 	}
 	defer jsonFile.Close()
 	byteValue, _ = ioutil.ReadAll(jsonFile)
-	json.Unmarshal(byteValue, &Pokemon_List_Info)
+	json.Unmarshal(byteValue, &pokemonListInfo)
 	//Loads your_pokemon_list_info.json into Pokemon_List_Info var
 }
 
-func SavePokemonList() {
+func savePokemonList() {
 	path, _ := filepath.Abs("./saves/your_pokemon_list.json")
-	file, _ := json.MarshalIndent(Pokemon_List, "", " ")
+	file, _ := json.MarshalIndent(pokemonList, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)
 	//Save Pokemon_List var into your_pokemon_list.json
 
 	path, _ = filepath.Abs("./saves/your_pokemon_list_info.json")
-	file, _ = json.MarshalIndent(Pokemon_List_Info, "", " ")
+	file, _ = json.MarshalIndent(pokemonListInfo, "", " ")
 	_ = ioutil.WriteFile(path, file, 0644)
 	//Save Pokemon_List_Info var into your_pokemon_list_info.json
 }

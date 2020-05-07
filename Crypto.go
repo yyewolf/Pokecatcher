@@ -13,14 +13,14 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func CreateHash(key string) string {
+func createHash(key string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(key))
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
-func Decrypt(data []byte, passphrase string) []byte {
-	key := []byte(CreateHash(passphrase))
+func decrypt(data []byte, passphrase string) []byte {
+	key := []byte(createHash(passphrase))
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		panic(err.Error())
@@ -38,21 +38,20 @@ func Decrypt(data []byte, passphrase string) []byte {
 	return plaintext
 }
 
-func CheckLicences(s *discordgo.Session) {
+func checkLicences(s *discordgo.Session) {
 	directory, _ := filepath.Abs("./licences")
 
 	d, err := os.Open(directory)
 	if err != nil {
-		LogRedLn(Logs, "You don't have a folder named 'licences', cannot check for authenticity.")
+		logRedLn(logs, "You don't have a folder named 'licences', cannot check for authenticity.")
 	}
 	defer d.Close()
 
 	files, err := d.Readdir(-1)
 	if err != nil {
-		LogRedLn(Logs, "You don't have any files in the folder 'licences', cannot check for authenticity.")
+		logRedLn(logs, "You don't have any files in the folder 'licences', cannot check for authenticity.")
 	}
-	
-	
+
 	_, err = os.Stat("licences")
 	if os.IsNotExist(err) {
 		errDir := os.MkdirAll("licences", 0755)
@@ -66,17 +65,17 @@ func CheckLicences(s *discordgo.Session) {
 			if filepath.Ext(file.Name()) == ".lic" {
 				data, err := ioutil.ReadFile(directory + "/" + file.Name()) // For read access.
 				if err != nil {
-					LogRedLn(Logs, "Couldn't open : '" + file.Name() + "'")
+					logRedLn(logs, "Couldn't open : '"+file.Name()+"'")
 				}
-				result := Decrypt([]byte(data), "854E4DCDDCBA9DDA0A32139B36A14953D7269EC0346235E0D6DBF4E916AFFE8A")
+				result := decrypt([]byte(data), "854E4DCDDCBA9DDA0A32139B36A14953D7269EC0346235E0D6DBF4E916AFFE8A")
 				if strings.Contains(string(result), s.State.User.ID) {
-					LogMagentaLn(Logs, "Your licence has been validated, have fun !")
-					Config.IsAllowedToUse = true
+					logMagentaLn(logs, "Your licence has been validated, have fun !")
+					config.IsAllowedToUse = true
 				}
 			}
 		}
 	}
-	if !Config.IsAllowedToUse {
-		LogRedLn(Logs, "If you didn't buy the bot, consider buying it, if you did, send a DM to Yewolf to solve the issue, or put your licence file in the 'licences' folder.")
+	if !config.IsAllowedToUse {
+		logRedLn(logs, "If you didn't buy the bot, consider buying it, if you did, send a DM to Yewolf to solve the issue, or put your licence file in the 'licences' folder.")
 	}
 }

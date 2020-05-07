@@ -10,9 +10,8 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-
-func Debug(a ...interface{}) {
-	if Config.Debug {
+func logDebug(a ...interface{}) {
+	if config.Debug {
 		fmt.Println(a...)
 	}
 }
@@ -21,7 +20,7 @@ func scaleString(c fyne.Canvas) string {
 	return fmt.Sprintf("%0.2f", c.Scale())
 }
 
-func LogBlueLn(g *widget.Box, s string) {
+func logBlueLn(g *widget.Box, s string) {
 	t := canvas.NewText(s, color.RGBA{
 		R: 88,
 		G: 127,
@@ -29,12 +28,12 @@ func LogBlueLn(g *widget.Box, s string) {
 		A: 255,
 	})
 	g.Append(t)
-	adjust := Logs.MinSize().Height
-	LogScroll.Offset = fyne.NewPos(0, adjust)
-	LogScroll.Refresh()
+	adjust := logs.MinSize().Height
+	logScroll.Offset = fyne.NewPos(0, adjust)
+	logScroll.Refresh()
 }
 
-func LogRedLn(g *widget.Box, s string) {
+func logRedLn(g *widget.Box, s string) {
 	t := canvas.NewText(s, color.RGBA{
 		R: 255,
 		G: 0,
@@ -42,12 +41,12 @@ func LogRedLn(g *widget.Box, s string) {
 		A: 255,
 	})
 	g.Append(t)
-	adjust := Logs.MinSize().Height
-	LogScroll.Offset = fyne.NewPos(0, adjust)
-	LogScroll.Refresh()
+	adjust := logs.MinSize().Height
+	logScroll.Offset = fyne.NewPos(0, adjust)
+	logScroll.Refresh()
 }
 
-func LogYellowLn(g *widget.Box, s string) {
+func logYellowLn(g *widget.Box, s string) {
 	t := canvas.NewText(s, color.RGBA{
 		R: 255,
 		G: 255,
@@ -55,12 +54,12 @@ func LogYellowLn(g *widget.Box, s string) {
 		A: 255,
 	})
 	g.Append(t)
-	adjust := Logs.MinSize().Height
-	LogScroll.Offset = fyne.NewPos(0, adjust)
-	LogScroll.Refresh()
+	adjust := logs.MinSize().Height
+	logScroll.Offset = fyne.NewPos(0, adjust)
+	logScroll.Refresh()
 }
 
-func LogCyanLn(g *widget.Box, s string) {
+func logCyanLn(g *widget.Box, s string) {
 	t := canvas.NewText(s, color.RGBA{
 		R: 0,
 		G: 255,
@@ -68,12 +67,12 @@ func LogCyanLn(g *widget.Box, s string) {
 		A: 255,
 	})
 	g.Append(t)
-	adjust := Logs.MinSize().Height
-	LogScroll.Offset = fyne.NewPos(0, adjust)
-	LogScroll.Refresh()
+	adjust := logs.MinSize().Height
+	logScroll.Offset = fyne.NewPos(0, adjust)
+	logScroll.Refresh()
 }
 
-func LogGreenLn(g *widget.Box, s string) {
+func logGreenLn(g *widget.Box, s string) {
 	t := canvas.NewText(s, color.RGBA{
 		R: 0,
 		G: 255,
@@ -81,12 +80,12 @@ func LogGreenLn(g *widget.Box, s string) {
 		A: 255,
 	})
 	g.Append(t)
-	adjust := Logs.MinSize().Height
-	LogScroll.Offset = fyne.NewPos(0, adjust)
-	LogScroll.Refresh()
+	adjust := logs.MinSize().Height
+	logScroll.Offset = fyne.NewPos(0, adjust)
+	logScroll.Refresh()
 }
 
-func LogMagentaLn(g *widget.Box, s string) {
+func logMagentaLn(g *widget.Box, s string) {
 	t := canvas.NewText(s, color.RGBA{
 		R: 255,
 		G: 0,
@@ -94,12 +93,12 @@ func LogMagentaLn(g *widget.Box, s string) {
 		A: 255,
 	})
 	g.Append(t)
-	adjust := Logs.MinSize().Height
-	LogScroll.Offset = fyne.NewPos(0, adjust)
-	LogScroll.Refresh()
+	adjust := logs.MinSize().Height
+	logScroll.Offset = fyne.NewPos(0, adjust)
+	logScroll.Refresh()
 }
 
-func GreenTXT(s string) *canvas.Text {
+func greenTXT(s string) *canvas.Text {
 	return canvas.NewText(s, color.RGBA{
 		R: 0,
 		G: 255,
@@ -108,7 +107,7 @@ func GreenTXT(s string) *canvas.Text {
 	})
 }
 
-func BlueTXT(s string) *canvas.Text {
+func blueTXT(s string) *canvas.Text {
 	return canvas.NewText(s, color.RGBA{
 		R: 255,
 		G: 183,
