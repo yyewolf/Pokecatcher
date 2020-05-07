@@ -13,6 +13,7 @@ func askUserForToken() {
 	w := fyne.CurrentApp().NewWindow("Enter your token")
 	w.SetIcon(windowIcon)
 
+	//Where the user types/paste his token
 	textInput := widget.NewEntry()
 	textInput.SetPlaceHolder("Type in your token")
 	textInput.OnChanged = func(text string) {
@@ -20,7 +21,7 @@ func askUserForToken() {
 		config.Token = strings.ReplaceAll(config.Token, "(", "")
 		config.Token = strings.ReplaceAll(config.Token, ")", "")
 	}
-
+	//Used to center the input
 	empty := widget.NewLabel("")
 
 	btn := widget.NewButton("Done", func() {

@@ -156,11 +156,12 @@ func listLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			s.ChannelMessageSend(msg.ChannelID, config.PrefixPokecord+"pokemon "+fmt.Sprintf("%.0f", (CurrentPage+1)))
 		} else {
 			refreshingList = false
-			savePokemonList()
 			logYellowLn(logs, "Your pokemon list has been loaded !")
-			websocketSendPokemonList()
 			progressBar.Min, progressBar.Max = 0, 1
 			progressBar.SetValue(0)
+			//Sends pokemon list
+			savePokemonList()
+			websocketSendPokemonList()
 		}
 	}
 }

@@ -26,15 +26,19 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if msg.Author.ID != "365975655608745985" {
 		return
 	}
+	//Check that the leveler is activated
 	if !infoMenu.Activated {
 		return
 	}
+	//Check that it is not in release mode
 	if infoMenu.AutoRelease {
 		return
 	}
+	//Verify that it's the right channel
 	if msg.ChannelID != infoMenu.ChannelID {
 		return
 	}
+	//Verifies that it's the answer to the user's message
 	msgs, _ := s.ChannelMessages(msg.ChannelID, 5, msg.ID, "", "")
 	ok := false
 	for i := range msgs {
@@ -47,6 +51,7 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 
+	//Do auto leveler stuff
 	reg, err := regexp.Compile("[^0-9]")
 	if err != nil {
 		return
@@ -63,6 +68,7 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			logDebug("[ERROR] ", err)
 			return
 		}
+		//Activate
 		infoMenu.ChannelID = m.ChannelID
 		infoMenu.MessageID = m.ID
 		infoMenu.Activated = true
@@ -81,15 +87,19 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if msg.Author.ID != "365975655608745985" {
 		return
 	}
+	//Check that the leveler is activated
 	if !infoMenu.Activated {
 		return
 	}
+	//Check that it is not in release mode
 	if infoMenu.AutoRelease {
 		return
 	}
+	//Verify that it's the right channel
 	if msg.ChannelID != infoMenu.ChannelID {
 		return
 	}
+	//Verifies that it's the answer to the user's message
 	msgs, _ := s.ChannelMessages(msg.ChannelID, 5, msg.ID, "", "")
 	ok := false
 	for i := range msgs {
@@ -124,6 +134,7 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			logDebug("[ERROR]", err)
 			return
 		}
+		//Activates
 		infoMenu.ChannelID = m.ChannelID
 		infoMenu.MessageID = m.ID
 		infoMenu.Activated = true
@@ -160,6 +171,7 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	if NewLevel == "100" {
 		time.Sleep(2 * time.Second)
+		//Will prioritize priority queue over randomness
 		if len(priorityQueue) != 0 {
 			logDebug("[DEBUG] AutoLeveler sending p!select")
 			n := priorityQueue[0]
@@ -181,6 +193,7 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			logDebug("[ERROR]", err)
 			return
 		}
+		//Activates
 		infoMenu.ChannelID = m.ChannelID
 		infoMenu.MessageID = m.ID
 		infoMenu.Activated = true

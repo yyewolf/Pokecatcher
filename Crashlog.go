@@ -21,7 +21,7 @@ func startLogger() {
 		if os.IsNotExist(err) {
 			errDir := os.MkdirAll("crash", 0755)
 			if errDir != nil {
-				//
+				//Ignores error
 			}
 		}
 		Path, _ := filepath.Abs("./crash/" + Name + ".txt")

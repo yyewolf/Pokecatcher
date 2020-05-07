@@ -53,6 +53,7 @@ func filterPokemon(Pkmn pokeInfoParsed) bool {
 	if config.GoodFilter {
 		r = IsAGoodPokemon(Pkmn)
 	}
+	//This is a logic OR
 	if config.CustomFilters {
 		r = allFilters(Pkmn)
 	}
@@ -70,12 +71,15 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if msg.Author.ID != "365975655608745985" {
 		return
 	}
+	//Check that the function is activated
 	if !infoMenu.Activated {
 		return
 	}
+	//Check that the channel is the right one
 	if msg.ChannelID != infoMenu.ChannelID {
 		return
 	}
+	//Verify that it's an answer to the user
 	msgs, err := s.ChannelMessages(msg.ChannelID, 5, msg.ID, "", "")
 	if err != nil {
 		logDebug("[ERROR]", err)
@@ -99,14 +103,17 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 
+	//Sends it to website
 	if Infos.isInList {
 		Current := pokemonList[Infos.ListNumber]
 		Current.Level = Infos.Level
 		Current.IV = "IV: " + fmt.Sprintf("%.2f", Infos.TotalIV)
 		pokemonList[Infos.ListNumber] = Current
 		savePokemonList()
+		websocketSendPokemonList()
 	}
 
+	//Verify that it should release it
 	if !infoMenu.AutoRelease {
 		return
 	}
