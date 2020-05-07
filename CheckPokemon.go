@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"image/png"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -10,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"image/png"
+
 	"fyne.io/fyne"
 
 	"fyne.io/fyne/widget"
@@ -35,7 +36,7 @@ func ImageToString(URL string) string {
 func LogPokemonSpawn(PokemonName string, GuildName string, ChannelName string, Accuracy float64, AliasUsed string) {
 	wgPokeSpawn.Wait()
 	wgPokeSpawn.Add(1)
-	
+
 	if len(Logs.Children)+6 > 150 {
 		Logs.Children = []fyne.CanvasObject{}
 		Logs.Refresh()
@@ -94,7 +95,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//STARTS DETECTING HERE
-	
+
 	ImageURL := msg.Embeds[0].Image.URL
 	ImageString := ImageToString(ImageURL)
 	Spawned_Pokemon_Name := ""
@@ -115,7 +116,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		if strings.Contains(List[i], "img") {
 			//Gets rid of the path debris
 			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\", ""), ".png", "")
-			
+
 			ScanImage := DecodedImages[Name]
 			Accuracy = CompareIMG(ScanImage, ImageResized)
 			if Accuracy < 0.35 {
@@ -132,7 +133,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			}
 		}
 	}
-	
+
 	//STOPS DETECTING HERE
 
 	Accuracy = 100.0 - Accuracy
@@ -179,7 +180,7 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Command:   Command_To_Catch + " " + strings.ToLower(CatchName),
 	}
 
-	if Config.AutoCatching && isInWhitelist{
+	if Config.AutoCatching && isInWhitelist {
 		//Verifies that it isn't a duplicate if it's ON
 		if Config.Duplicate {
 			if !strings.Contains(Pokemon_List_Info.Names, OriginalName) {
@@ -194,15 +195,14 @@ func CheckForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 		rand.Seed(time.Now().UnixNano())
 		RandomNess := rand.Intn(422) - rand.Intn(221)
-		
-		
+
 		Debug("[DEBUG]", "Waiting to catch a", OriginalName)
 
 		time.Sleep(time.Duration(Config.Delay+RandomNess) * time.Millisecond)
 		LogBlueLn(Logs, "Tried to catch your : "+OriginalName)
 
 		_, err := s.ChannelMessageSend(msg.ChannelID, Command_To_Catch+" "+strings.ToLower(CatchName))
-		
+
 		Debug("[DEBUG]", "Sent message to catch a", OriginalName)
 		if err != nil {
 			Debug("[ERROR]", err)
@@ -264,7 +264,7 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Pokemon_List_Info.Names += PokemonName + ","
 	Pokemon_List_Info.Realmax++
 	Pokemon_List_Info.Array++
-	
+
 	PokemonNumber := strconv.Itoa(Pokemon_List_Info.Realmax)
 
 	Pokemon_List[PokemonNumber] = Pokemon{
@@ -273,39 +273,39 @@ func SuccessfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		IV:        "-",
 		NewNumber: PokemonNumber,
 	}
-	
+
 	SavePokemonList()
 	Websocket_SendPokemonList()
 
 	GuildSpawn, err := s.Guild(msg.GuildID)
 	if err != nil {
-		Debug("[ERROR] ", err)
+		Debug("[ERROR]", err)
 		return
 	}
 	ChannelSpawn, err := s.Channel(msg.ChannelID)
 	if err != nil {
-		Debug("[ERROR] ", err)
+		Debug("[ERROR]", err)
 		return
 	}
 	LogCyanLn(Logs, "You caught a "+PokemonName+" !")
 	Notif_PokeCaught(PokemonName, GuildSpawn.Name, ChannelSpawn.Name)
-	
-	if !Config.GoodFilter {
+
+	if !Config.GoodFilter && !Config.CustomFilters {
 		return
 	}
-	
+
 	Debug("[DEBUG] Will verify a ", PokemonName)
-	
+
 	time.Sleep(3 * time.Second)
 	//Will release the pokémon if it is bad
-	m, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info latest")
-	if err != nil {
-		Debug("[ERROR] ", err)
-		return
-	}
-	InfoMenu.ChannelID = m.ChannelID
-	InfoMenu.MessageID = m.ID
 	InfoMenu.Activated = true
 	InfoMenu.AutoRelease = true
-	
+	InfoMenu.ChannelID = Config.ChannelID
+	m, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixPokecord+"info latest")
+	if err != nil {
+		Debug("[ERROR]", err)
+		return
+	}
+	InfoMenu.MessageID = m.ID
+
 }

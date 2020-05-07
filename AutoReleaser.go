@@ -1,13 +1,15 @@
 package main
 
 import (
-	"github.com/bwmarrin/discordgo"
+	"fmt"
 	"strconv"
 	"time"
-	"fmt"
+
+	"github.com/bwmarrin/discordgo"
 )
 
-func IsAGoodPokemon(Pokemons PokeInfoParsed) (bool) {
+//IsAGoodPokemon will verify the pokémon using the default filter
+func IsAGoodPokemon(Pokemons PokeInfoParsed) bool {
 	if len(Pokemons.IVs) == 0 {
 		return false
 	}
@@ -20,7 +22,7 @@ func IsAGoodPokemon(Pokemons PokeInfoParsed) (bool) {
 	for i := range Pokemons.IVs {
 		c := Pokemons.IVs[i]
 		if c == 31 {
-			c1++ 
+			c1++
 		} else if c == 0 {
 			c2++
 		}
@@ -46,6 +48,18 @@ func IsAGoodPokemon(Pokemons PokeInfoParsed) (bool) {
 	return false
 }
 
+func filterPokemon(Pkmn PokeInfoParsed) bool {
+	r := true
+	if Config.GoodFilter {
+		r = IsAGoodPokemon(Pkmn)
+	}
+	if Config.CustomFilters {
+		r = allFilters(Pkmn)
+	}
+	Debug("[DEBUG] Finished checking r = ", r)
+	return r
+}
+
 //AutoRelease will verify the infos of the current pokemon and release it if it's bad
 func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if the person is allowed
@@ -62,7 +76,11 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if msg.ChannelID != InfoMenu.ChannelID {
 		return
 	}
-	msgs, _ := s.ChannelMessages(msg.ChannelID, 5, msg.ID, "", "")
+	msgs, err := s.ChannelMessages(msg.ChannelID, 5, msg.ID, "", "")
+	if err != nil {
+		Debug("[ERROR]", err)
+		return
+	}
 	ok := false
 	for i := range msgs {
 		if msgs[i].ID == InfoMenu.MessageID {
@@ -73,13 +91,14 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !ok {
 		return
 	}
+	Debug("[Debug] Entered Auto Releaser.")
 	//Check if it's a p!info response
 	Infos, err := ParsePokemonInfo(msg)
 	if err != nil {
-		Debug("[ERROR] ", err)
+		Debug("[ERROR]", err)
 		return
 	}
-	
+
 	if Infos.isInList {
 		Current := Pokemon_List[Infos.ListNumber]
 		Current.Level = Infos.Level
@@ -87,24 +106,24 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		Pokemon_List[Infos.ListNumber] = Current
 		SavePokemonList()
 	}
-	
+
 	if !InfoMenu.AutoRelease {
 		return
 	}
 
 	InfoMenu.Activated = false
 	InfoMenu.AutoRelease = false
-	
-	//Won't release it if it's a good pokémon
-	if IsAGoodPokemon(Infos) {
+
+	//Won't release it if it's a good pokémon (decided by every filter)
+	if filterPokemon(Infos) {
 		LogCyanLn(Logs, "You caught a good Pokémon !")
 		return
 	}
-	
+
 	Debug("[DEBUG] Will release a ", Infos.Name)
-	
-	time.Sleep(3*time.Second)
-	
+
+	time.Sleep(3 * time.Second)
+
 	//Release the pokémon and removes it from list
 	n, _ := strconv.Atoi(Infos.Number)
 	Release(Receive_Request{

@@ -1,37 +1,41 @@
 var page = 1;
 		
-function pagenext(){
-	page += 1;
-	if(page == 4){
-		page = 1;
-		document.getElementById("firstPage").style["display"] = "contents";
-		document.getElementById("secondPage").style["display"] = "none";
-		document.getElementById("thirdPage").style["display"] = "none";
-	}else if(page == 3){
-		document.getElementById("firstPage").style["display"] = "none";
-		document.getElementById("secondPage").style["display"] = "none";
-		document.getElementById("thirdPage").style["display"] = "contents";
-	}else if(page == 2){
-		document.getElementById("firstPage").style["display"] = "none";
-		document.getElementById("secondPage").style["display"] = "contents";
-		document.getElementById("thirdPage").style["display"] = "none";
+function pages(nb){
+	switch (nb) {
+		case 1:
+			document.getElementById("Pkmn").style["display"] = "contents";
+			document.getElementById("SpammerP").style["display"] = "none";
+			document.getElementById("PkmnWhitelist").style["display"] = "none";
+			document.getElementById("CustomFilterP").style["display"] = "none";
+			document.getElementById("OptionsP").style["display"] = "none";
+			break;
+		case 2:
+			document.getElementById("Pkmn").style["display"] = "none";
+			document.getElementById("SpammerP").style["display"] = "contents";
+			document.getElementById("PkmnWhitelist").style["display"] = "none";
+			document.getElementById("CustomFilterP").style["display"] = "none";
+			document.getElementById("OptionsP").style["display"] = "none";
+			break;
+		case 3:
+			document.getElementById("Pkmn").style["display"] = "none";
+			document.getElementById("SpammerP").style["display"] = "none";
+			document.getElementById("PkmnWhitelist").style["display"] = "contents";
+			document.getElementById("CustomFilterP").style["display"] = "none";
+			document.getElementById("OptionsP").style["display"] = "none";
+			break;
+		case 4:
+			document.getElementById("Pkmn").style["display"] = "none";
+			document.getElementById("SpammerP").style["display"] = "none";
+			document.getElementById("PkmnWhitelist").style["display"] = "none";
+			document.getElementById("CustomFilterP").style["display"] = "contents";
+			document.getElementById("OptionsP").style["display"] = "none";
+			break;
+		case 5:
+			document.getElementById("Pkmn").style["display"] = "none";
+			document.getElementById("SpammerP").style["display"] = "none";
+			document.getElementById("PkmnWhitelist").style["display"] = "none";
+			document.getElementById("CustomFilterP").style["display"] = "none";
+			document.getElementById("OptionsP").style["display"] = "contents";
+			break;
 	}
-};
-
-function pageprevious(){
-	page -= 1;
-	if(page == 0){
-		page = 3;
-		document.getElementById("firstPage").style["display"] = "none";
-		document.getElementById("secondPage").style["display"] = "none";
-		document.getElementById("thirdPage").style["display"] = "contents";
-	}else if(page == 2){
-		document.getElementById("firstPage").style["display"] = "none";
-		document.getElementById("secondPage").style["display"] = "contents";
-		document.getElementById("thirdPage").style["display"] = "none";
-	}else if(page == 1){
-		document.getElementById("firstPage").style["display"] = "contents";
-		document.getElementById("secondPage").style["display"] = "none";
-		document.getElementById("thirdPage").style["display"] = "none";
-	};
 };

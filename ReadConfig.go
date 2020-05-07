@@ -15,18 +15,20 @@ type SelectedPoke struct {
 
 //ConfigStruct = JSON file where the config will be saved
 type ConfigStruct struct {
-	Token          string `json:"Token"`
-	ChannelID      string `json:"Channel_Registered_ID"`
-	Delay          int    `json:"Delay_For_Autocatcher"`
-	Duplicate      bool   `json:"Do_I_Ignore_Duplicate"`
-	Aliases        bool   `json:"Do_I_Catch_With_Aliases"`
-	GoodFilter	   bool   `json:"Do_I_Release_Bad_Pokemons"`
-	AutoCatching   bool   `json:"-"`
-	WebPort        int    `json:"Port_For_Webserver"`
-	PrefixPokecord string `json:"Pokecord_Prefix_On_Your_Server"`
-	PrefixBot      string `json:"Prefix_For_This_Bot"`
-	Debug          bool   `json:"Debug"`
-	IsAllowedToUse bool   `json:"-"`
+	Token          string               `json:"Token"`
+	ChannelID      string               `json:"Channel_Registered_ID"`
+	Delay          int                  `json:"Delay_For_Autocatcher"`
+	Duplicate      bool                 `json:"Do_I_Ignore_Duplicate"`
+	Aliases        bool                 `json:"Do_I_Catch_With_Aliases"`
+	GoodFilter     bool                 `json:"Do_I_Release_Bad_Pokemons"`
+	EveryFilters   []customFilterStruct `json:"Custom_Filters"`
+	CustomFilters  bool                 `json:"Do_I_Use_Custom_Filters"`
+	AutoCatching   bool                 `json:"-"`
+	WebPort        int                  `json:"Port_For_Webserver"`
+	PrefixPokecord string               `json:"Pokecord_Prefix_On_Your_Server"`
+	PrefixBot      string               `json:"Prefix_For_This_Bot"`
+	Debug          bool                 `json:"Debug"`
+	IsAllowedToUse bool                 `json:"-"`
 }
 
 func NoConfig() {
@@ -37,6 +39,8 @@ func NoConfig() {
 		Delay:          3000,
 		Duplicate:      false,
 		Aliases:        true,
+		CustomFilters:  false,
+		EveryFilters:   []customFilterStruct{},
 		WebPort:        3000,
 		PrefixPokecord: "p!",
 		PrefixBot:      "p^",
@@ -69,7 +73,7 @@ func LoadConfig() {
 }
 
 func NoAliases() {
-	LogRedLn(Logs, "Pokemon's aliases are missing, this might result in a blacklist !")
+	LogRedLn(Logs, "Pokemon's aliases are missing, this might result in a blacklist!")
 }
 
 func LoadAliases() {

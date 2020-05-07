@@ -55,6 +55,10 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 	if Path == "" {
 		dat, err := box.FindString("index.html")
 		check(err)
+		Filters, _ := json.Marshal(Config.EveryFilters)
+		if string(Filters) == "null" {
+			Filters = []byte("[]")
+		}
 		Legend, _ := json.Marshal(Legendaries)
 		Queue := strings.Join(PriorityQueue, ";")
 		Whitelist, _ := json.Marshal(ServerWhitelist)
@@ -68,6 +72,7 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 		SendPrefix, _ := json.Marshal(Prefix)
 		add := "<script> var websocket = '" + strconv.Itoa(Config.WebPort) + "/ws';</script>\n"
 		add += "<script> var autocatchdelay = '" + strconv.Itoa(Config.Delay) + "';</script>\n"
+		add += "<script> var customfilters = " + strconv.FormatBool(Config.CustomFilters) + ";</script>\n"
 		add += "<script> var whitelist = '" + string(Whitelist) + "';</script>\n"
 		add += "<script> var legendaries = " + string(Legend) + ";</script>\n"
 		add += "<script> var serverid = '" + ServerIDs + "';</script>\n"
@@ -83,6 +88,7 @@ func Website_Handler(w http.ResponseWriter, r *http.Request) {
 		add += "<script> var prefixes = " + string(SendPrefix) + "</script>\n"
 		add += "<script> var pokewhitelist = " + string(PokeWhitelist) + "</script>\n"
 		add += "<script> var queue = '" + Queue + "'</script>\n"
+		add += "<script> var filters = " + string(Filters) + "</script>\n"
 
 		MaxPoke := strconv.Itoa(Pokemon_List_Info.Array)
 		if MaxPoke != "0" {

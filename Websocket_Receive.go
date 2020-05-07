@@ -1,10 +1,10 @@
 package main
 
 import (
-	"strconv"
-	"time"
-	"strings"
 	"regexp"
+	"strconv"
+	"strings"
+	"time"
 )
 
 //////////////////////////////////////////////
@@ -14,12 +14,12 @@ import (
 func RefreshPokemonList(Request Receive_Request) {
 	// Active requests variables :
 	// #######
-	
+
 	//Resets everything
 	Pokemon_List = make(map[string]Pokemon) //Where the Pokemon List of the user will be stored.
 	NoPokemonList()
 	LoadPokemonList()
-	
+
 	LogYellowLn(Logs, "Refreshing your pokemon list...")
 	if Config.ChannelID != "" {
 		_, err := DiscordSession.ChannelMessageSend(Config.ChannelID, Config.PrefixBot+"list")
@@ -64,7 +64,7 @@ func ParsePriorityQueue(Request Receive_Request) {
 			break
 		}
 	}
-	
+
 	if !Keep {
 		PriorityQueue = []string{}
 		Debug("[ERROR] PriorityQueue string malformed.")
@@ -75,7 +75,6 @@ func ParsePriorityQueue(Request Receive_Request) {
 	Debug("[DEBUG] PriorityQueue has been parsed successfully.")
 	LogCyanLn(Logs, "Your priority queue has been taken into account.")
 }
-
 
 //////////////////////////////////////////////
 //////////Funcs related to Settings///////////
@@ -197,6 +196,25 @@ func FilterOnOff(Request Receive_Request) {
 	Config.GoodFilter = Request.State
 	SaveConfig()
 	LogYellowLn(Logs, "Filter active : "+strconv.FormatBool(Config.GoodFilter))
+}
+
+func UpdateFilters(Request Receive_Request) {
+	// Active requests variables :
+	// Request.Filters
+
+	Config.EveryFilters = Request.Filters
+	SaveConfig()
+	LogYellowLn(Logs, "Custom filters were successfully registered !")
+	//Will save the configuration to file
+}
+
+func CustomFilterOnOff(Request Receive_Request) {
+	// Active requests variables :
+	// Request.State
+
+	Config.CustomFilters = Request.State
+	SaveConfig()
+	LogYellowLn(Logs, "Custom filters active : "+strconv.FormatBool(Config.CustomFilters))
 }
 
 //////////////////////////////////////////////
@@ -334,8 +352,8 @@ func SelectPokemon(Request Receive_Request) {
 
 func WhitelistAllChecked(Request Receive_Request) {
 	// Active requests variables :
-	// 
-	
+	//
+
 	for current := range Pokemon_Whitelist {
 		Pokemon_Whitelist[current] = true
 	}
@@ -344,8 +362,8 @@ func WhitelistAllChecked(Request Receive_Request) {
 
 func WhitelistAllUnchecked(Request Receive_Request) {
 	// Active requests variables :
-	// 
-	
+	//
+
 	for current := range Pokemon_Whitelist {
 		Pokemon_Whitelist[current] = false
 	}
@@ -354,8 +372,8 @@ func WhitelistAllUnchecked(Request Receive_Request) {
 
 func WhitelistLegendChecked(Request Receive_Request) {
 	// Active requests variables :
-	// 
-	
+	//
+
 	for current := range Pokemon_Whitelist {
 		//Pokemon is legendary
 		for i := range Legendaries {
@@ -377,20 +395,22 @@ func Websocket_Receive_AllFunctions() {
 	Websocket_Receive_Functions["autodelaychange"] = ChangeDelay
 	Websocket_Receive_Functions["tokenchange"] = UpdateToken
 	Websocket_Receive_Functions["queuelist"] = ParsePriorityQueue
-	
+	Websocket_Receive_Functions["customfilters"] = CustomFilterOnOff
+	Websocket_Receive_Functions["filterschange"] = UpdateFilters
+
 	Websocket_Receive_Functions["refresh"] = RefreshPokemonList
 	Websocket_Receive_Functions["refreshmoves"] = RefreshPokemonMovesList
 	Websocket_Receive_Functions["whitelist"] = UpdateServerWhitelist
 	Websocket_Receive_Functions["pokemonwhitelist"] = UpdatePokemonWhitelist
 	Websocket_Receive_Functions["spam"] = UpdateSpammerSettings
-	
+
 	Websocket_Receive_Functions["release"] = Release
 	Websocket_Receive_Functions["select"] = SelectPokemon
 	Websocket_Receive_Functions["remove"] = RemovePokemonFromList
 	Websocket_Receive_Functions["nickname"] = RenamePokemon
 	Websocket_Receive_Functions["catch"] = CatchAPokemon
 	Websocket_Receive_Functions["learn"] = LearnNewMove
-	
+
 	Websocket_Receive_Functions["pkmnwhitelistallchecked"] = WhitelistAllChecked
 	Websocket_Receive_Functions["pkmnwhitelistallunchecked"] = WhitelistAllUnchecked
 	Websocket_Receive_Functions["pkmnwhitelistlegendchecked"] = WhitelistLegendChecked

@@ -45,11 +45,14 @@ type Receive_Request struct {
 	Prefix string `json:"prefix"`
 
 	//When changing priority queue.
-	Change   string `json:"change"`
+	Change string `json:"change"`
 
 	//When adding/removing from Whitelist
 	GuildID    string `json:"serverid"`
 	GuildState bool   `json:"serverstate"`
+
+	//When updating custom filters
+	Filters []customFilterStruct `json:"filters"`
 }
 
 func Websocket_Broadcast(msg string) {

@@ -23,6 +23,11 @@ window.onload = function() {
 			document.getElementById("filter").checked = true;
 		};
 	};
+	if (typeof customfilters !== 'undefined') {
+		if (customfilters == true) {
+			document.getElementById("customfilter").checked = true;
+		};
+	};
 	if (token !== '') {
 		document.getElementById("tokentext").placeholder = token;
 	};
@@ -80,4 +85,5 @@ window.onload = function() {
 		document.getElementById("listeserver").innerHTML = noservers;
 	};
 	LoadPokemons()
+	FilterToHTML(filters)
 };

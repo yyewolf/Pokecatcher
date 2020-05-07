@@ -26,10 +26,22 @@ function filterchange(){
 	filter = document.getElementById("filter").checked;
 	ws.send('{"action":"filter","state":'+filter+'}');
 	if(filter){
-		NotifTitle = 'I will now filter every pokemons!';
+		NotifTitle = 'I will now filter every pokemons (using pre-made filter)!';
 		notify('info', NotifTitle);
 	}else{
-		NotifTitle = 'I won\'t filter every pokemons !';
+		NotifTitle = 'I won\'t filter every pokemons (using pre-made filter)!';
+		notify('info', NotifTitle);
+	};
+};
+
+function customfilterchange(){
+	customfilters = document.getElementById("customfilter").checked;
+	ws.send('{"action":"customfilters","state":'+customfilters+'}');
+	if(customfilters){
+		NotifTitle = 'I will now filter every pokemons (using custom filters)!';
+		notify('info', NotifTitle);
+	}else{
+		NotifTitle = 'I won\'t filter every pokemons (using custom filters)!';
 		notify('info', NotifTitle);
 	};
 };
@@ -185,4 +197,10 @@ function changeprefix(type,prefix){
 	NotifTitle = 'This prefix has been changed!';
 	notify('info', NotifTitle);
 	ws.send('{"action":"prefixchange","type":"'+type+'","prefix":"'+prefix+'"}');
+};
+
+function SaveFilters(){
+	NotifTitle = 'Your custom filters have been changed!';
+	notify('info', NotifTitle);
+	ws.send('{"action":"filterschange","filters":'+JSON.stringify(filters)+'}');
 };

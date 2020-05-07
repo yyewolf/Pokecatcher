@@ -24,51 +24,48 @@
 	<script src="./src/websocket.js"></script>
 	<script src="./src/changes.js"></script>
 	<script src="./src/whitelist.js"></script>
+	<script src="./src/filters.js"></script>
 	<!--- ---->
     <link rel="shortcut icon" href="./icon/favicon.ico" type="image/x-icon">
 	<link rel="icon" href="./icon/favicon.ico" type="image/x-icon">
 </head>
-
 <body style="text-align: center;">
-    <div class="notifyjs-corner" id="corner" style="top: 0px; left: 0px;"></div>
-    <div class="jumbotron">
-        <h1 class="display-4" style="text-align: center;">Pokécord Helper</h1>
-    </div>
-    <div class="container" id="firstPage">
+	<div class="notifyjs-corner" id="corner" style="top: 0px; left: 0px;"></div>
+	<header class="navbar navbar-expand navbar-dark navbar-static-top flex-column flex-md-row bd-navbar bg-secondary justify-content-center">
+	  <div class="navbar-nav">
+		<div class="nav-item" style="padding-right:10px">
+		  <a href="javascript:void(0)" onclick="pages(1);" style="background-color: #17a2b8; color: white; padding: 8px; border-radius: 10%;">
+			Pokémon
+		  </a> 
+		</div>
+		<div class="nav-item" style="padding-right:10px">
+		  <a href="javascript:void(0)" onclick="pages(2);" style="background-color: #17a2b8; color: white; padding: 8px; border-radius: 10%;">
+			Spammer
+		  </a> 
+		</div>
+		<div class="nav-item" style="padding-right:10px">
+		  <a href="javascript:void(0)" onclick="pages(3);" style="background-color: #17a2b8; color: white; padding: 8px; border-radius: 10%;">
+			Pokémon Whitelist
+		  </a> 
+		</div>
+		<div class="nav-item" style="padding-right:10px">
+		  <a href="javascript:void(0)" onclick="pages(4);" style="background-color: #17a2b8; color: white; padding: 8px; border-radius: 10%;">
+			Custom Filters
+		  </a> 
+		</div>
+		<div class="nav-item" style="padding-right:10px">
+		  <a href="javascript:void(0)" onclick="pages(5);" style="background-color: #17a2b8; color: white; padding: 8px; border-radius: 10%;">
+			Options
+		  </a> 
+		</div>
+	  </div>
+	</header>
+	<img src="./icon/icons.png" style="position:fixed; bottom: 8px; right: 16px;" width="150" height="150"/>
+	<br />
+    <div class="container" id="Pkmn">
         <div class="container">
             <div class="row">
-                <div class="col-lg-4" style="border:1px solid #cecece;">
-                    <h2>Options :</h2>
-                    <div class="form-check">
-                        <label>
-                            <form id="formautocatcher">
-                                <input onchange="autochange();" type="checkbox" id="catcher"> <span class="label-text">Auto-catcher</span>
-                            </form>
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <label>
-                            <form id="formnoduplicate">
-                                <input onchange="duplichange();" type="checkbox" id="duplicate"> <span class="label-text">No duplicate</span>
-                            </form>
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <label>
-                            <form id="formaliases">
-                                <input onchange="aliaschange();" type="checkbox" id="aliases"> <span class="label-text">Aliases</span>
-                            </form>
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <label>
-                            <form id="formaliases">
-                                <input onchange="filterchange();" type="checkbox" id="filter"> <span class="label-text">Good Filter</span>
-                            </form>
-                        </label>
-                    </div>
-                </div>
-                <div class="col-lg-8 pre-scrollable list_container" id="PokeScroll" class="clusterize-scroll" style="border:1px solid #cecece; max-height: 400px;">
+                <div class="col-lg-12 pre-scrollable list_container" id="PokeScroll" class="clusterize-scroll" style="border:1px solid #cecece; max-height: 400px;">
                     <h2 style="direction:ltr;">Pokemon list : <button onclick="refresh();" style="font-size:24px; border:none; background:none;"><i class="fa fa-refresh"></i></button></h2>
 					<div id="PokeContent" class="clusterize-content">
 						<div class="clusterize-no-data">Loading…</div>
@@ -76,11 +73,16 @@
                 </div>
             </div>
         </div>
-        <div class="container col-md-8" id="alertbox" style="margin-top: 25px; text-align: center;">
+        <div class="container" id="learnmoves" style="margin-top: 25px; text-align: center; border:1px solid #cecece;">
+            <h2 style="direction:ltr;">Learn moves : <button onclick="refreshmoves();" style="font-size:24px; border:none; background:none;"><i class="fa fa-refresh"></i></button></h2>
+            <div id="moveslist">
+            </div>
         </div>
-        <div class="container" id="tokenrename" style="margin-top: 25px; text-align: center;">
+    </div>
+    <div class="container" id="SpammerP" style="display: none;">
+        <div class="container">
             <div class="row">
-                <div class="col-lg-6" style="border:1px solid #cecece;">
+                <div class="col-lg-12" style="border:1px solid #cecece;">
                     <h2>Spammer settings :</h2>
                     <div class="form-check">
                         <label style="display:inline-block;">
@@ -105,91 +107,12 @@
                         </label>
                     </div>
                 </div>
-                <div class="col-lg-6" style="border:1px solid #cecece;">
-                    <label>
-                        <div class="container">
-                            <p style="display:inline-block;">
-                                <form id="form" style="float: left; padding: 8px;">
-                                    <input type="text" style="width:500px;" class="form-control" id="tokentext" name="tokentext" placeholder="Your self-token here" />
-                                </form>
-                                <form id="form" style="float: left; padding: 8px;">
-                                    <input type="button" onclick="dothis('tokenchange',0,0);" class="btn btn-validate" id="token" name="token" value="Update" />
-                                </form>
-                            </p>
-                            <p style="display:inline-block;">
-                                <form id="form" style="float: left; padding: 8px;">
-                                    <input type="text" style="width:500px;" class="form-control" id="nicknametext" name="nicknametext" placeholder="Nickname to set" />
-                                </form>
-                                <form id="form" style="float: left; padding: 8px;">
-                                    <input type="button" onclick="dothis('nickname',selected['number'],ClearAll(selected['name']));" class="btn btn-validate" id="nickname" name="nickname" value="Change Nickname of" />
-                                </form>
-                                <div id="img" style="float: left; padding: 8px;">
-                                </div>
-                            </p>
-                            <p style="display:inline-block;">
-								<form id="form" style="float: left; padding: 8px;">
-									<input type="text" style="width:500px;" class="form-control" id="alt" name="alt" placeholder="Autoleveler priority queue">
-								</form>
-                                <form id="form" style="float: left; padding: 8px;">
-                                    <input type="button" onclick="dothis('queue',0,0);" class="btn btn-validate" id="altv" name="altv" value="Update Priority Queue (Ex: 1;5;2)" />
-                                </form>
-                            </p>
-                        </div>
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="container" id="learnmoves" style="margin-top: 25px; text-align: center; border:1px solid #cecece;">
-            <h2 style="direction:ltr;">Learn moves : <button onclick="refreshmoves();" style="font-size:24px; border:none; background:none;"><i class="fa fa-refresh"></i></button></h2>
-            <div id="moveslist">
-            </div>
-        </div>
-    </div>
-    <div class="container" id="secondPage" style="display: none;">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4" style="border:1px solid #cecece;">
-                    <h2>More Options :</h2>
-                    <div class="form-check">
-                        <label>
-                            <div style="display:inline-block;">
-                                <input type="number" style="width:100px; display:inline-block;" class="form-control" id="delayms" name="delayms" placeholder="3000" />
-                                <span style="font-size: 20px; display:inline-block;" class="label-text">Auto-Catch delay</span>
-                                <button onclick="dothis('autodelay',0,0);" class="btn btn-validate" id="updatedelay" name="updatedelay"><span class="fa fa-check"></span></button>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <label>
-                            <div style="display:inline-block;">
-                                <input type="text" style="width:100px; display:inline-block;" class="form-control" id="pcprefix" name="pcprefix" placeholder="p!" />
-                                <span style="font-size: 20px; display:inline-block;" class="label-text">PokeCord Prefix</span>
-                                <button onclick="changeprefix('pc', document.getElementById('pcprefix').value);" class="btn btn-validate" id="updatepcprefix" name="updatepcprefix"><span class="fa fa-check"></span></button>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <label>
-                            <div style="display:inline-block;">
-                                <input type="text" style="width:100px; display:inline-block;" class="form-control" id="sbprefix" name="sbprefix" placeholder="p^" />
-                                <span style="font-size: 20px; display:inline-block;" class="label-text">Self-Bot Prefix</span>
-                                <button onclick="changeprefix('sb', document.getElementById('sbprefix').value);" class="btn btn-validate" id="updatesbprefix" name="updatesbprefix"><span class="fa fa-check"></span></button>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-                <div class="col-lg-8 pre-scrollable list_container" id="style-6" style="border:1px solid #cecece; max-height: 400px;">
-                    <h2 style="direction:ltr;">Server White List : </h2>
-                    <h6 style="direction:ltr;">(checked = will catch in)</h6>
-                    <div id="listeserver">
-                    </div>
-                </div>
             </div>
         </div>
         <div class="container col-md-8" id="alertbox" style="margin-top: 25px; text-align: center;">
         </div>
     </div>
-    <div class="container" id="thirdPage" style="display: none;">
+    <div class="container" id="PkmnWhitelist" style="display: none;">
         <div class="col-lg" style="border:1px solid #cecece;">
             <input type="text" style="width:400px; display:inline-block;" onkeyup="Search(this.value)" onchange="Search(this.value)" class="form-control" placeholder="Search a Pokémon" />
         </div>
@@ -213,16 +136,141 @@
 			</div>
         </div>
     </div>
-    <br />
-    <div class="row">
-        <div class="col-lg-1" style="float: none; margin: 0 auto;">
-            <a href="javascript:void(0)" onclick="pageprevious();" style="background-color: #4CAF50; color: white; display: inline-block; padding: 8px; border-radius: 10%;">
-				<
-            </a> 
-			<a href="javascript:void(0)" onclick="pagenext();" style="background-color: #4CAF50; color: white; display: inline-block; padding: 8px; border-radius: 10%;">
-				>
-            </a>
+	
+    <div class="container" id="CustomFilterP" style="display: none;">
+        <div class="container">
+            <div class="row">
+				<h1> Filters : </h1>
+                <div class="col-lg-12" style="border:1px solid #cecece;">
+					<input type="button" onclick="AddFilter();" class="btn btn-validate float-left" id="achecked" name="achecked" value="Add Filter" />
+					<input type="button" onclick="SaveFilters();" class="btn btn-validate float-right" id="achecked" name="achecked" value="Save" />
+					<label class="label" style="display:inline-block;" >Don't release pokémon if it corresponds to :</label>
+					<div id="FilterGoesHere">
+					</div>
+                </div>
+            </div>
         </div>
+        <div class="container col-md-8" id="alertbox" style="margin-top: 25px; text-align: center;">
+        </div>
+    </div>
+    <div class="container" id="OptionsP" style="display: none;">
+        <div class="container">
+            <div class="row">
+				<h1> Options : </h1>
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-6" style="border:1px solid #cecece;">
+							<div class="form-check">
+								<label>
+									<form id="formautocatcher">
+										<input onchange="autochange();" type="checkbox" id="catcher"> <span class="label-text">Auto-catcher</span>
+									</form>
+								</label>
+							</div>
+							<div class="form-check">
+								<label>
+									<form id="formnoduplicate">
+										<input onchange="duplichange();" type="checkbox" id="duplicate"> <span class="label-text">No duplicate</span>
+									</form>
+								</label>
+							</div>
+							<div class="form-check">
+								<label>
+									<form id="formaliases">
+										<input onchange="aliaschange();" type="checkbox" id="aliases"> <span class="label-text">Aliases</span>
+									</form>
+								</label>
+							</div>
+							<div class="form-check">
+								<label>
+									<form id="formaliases">
+										<input onchange="filterchange();" type="checkbox" id="filter"> <span class="label-text">Good Filter</span>
+									</form>
+								</label>
+							</div>
+							<div class="form-check">
+								<label>
+									<form id="formaliases">
+										<input onchange="customfilterchange();" type="checkbox" id="customfilter"> <span class="label-text">Custom Filters</span>
+									</form>
+								</label>
+							</div>
+						</div>
+						<div class="col-lg-6" style="border:1px solid #cecece;">
+							<div class="form-check">
+								<label>
+									<div style="display:inline-block;">
+										<input type="number" style="width:100px; display:inline-block;" class="form-control" id="delayms" name="delayms" placeholder="3000" />
+										<span style="font-size: 20px; display:inline-block;" class="label-text">Auto-Catch delay</span>
+										<button onclick="dothis('autodelay',0,0);" class="btn btn-validate" id="updatedelay" name="updatedelay"><span class="fa fa-check"></span></button>
+									</div>
+								</label>
+							</div>
+							<div class="form-check">
+								<label>
+									<div style="display:inline-block;">
+										<input type="text" style="width:100px; display:inline-block;" class="form-control" id="pcprefix" name="pcprefix" placeholder="p!" />
+										<span style="font-size: 20px; display:inline-block;" class="label-text">PokeCord Prefix</span>
+										<button onclick="changeprefix('pc', document.getElementById('pcprefix').value);" class="btn btn-validate" id="updatepcprefix" name="updatepcprefix"><span class="fa fa-check"></span></button>
+									</div>
+								</label>
+							</div>
+							<div class="form-check">
+								<label>
+									<div style="display:inline-block;">
+										<input type="text" style="width:100px; display:inline-block;" class="form-control" id="sbprefix" name="sbprefix" placeholder="p^" />
+										<span style="font-size: 20px; display:inline-block;" class="label-text">Self-Bot Prefix</span>
+										<button onclick="changeprefix('sb', document.getElementById('sbprefix').value);" class="btn btn-validate" id="updatesbprefix" name="updatesbprefix"><span class="fa fa-check"></span></button>
+									</div>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>
+        </div>
+        <div class="container col-md-8" id="alertbox" style="margin-top: 25px; text-align: center;">
+        </div>
+        <div class="container" id="tokenrename" style="margin-top: 25px; text-align: center;">
+            <div class="row">
+                <div class="col-lg-12" style="border:1px solid #cecece;">
+                    <label>
+                        <div class="container">
+                            <p style="display:inline-block;">
+                                <form id="form" style="float: left; padding: 8px;">
+                                    <input type="text" style="width:500px; display:inline-block;" class="form-control" id="tokentext" name="tokentext" placeholder="Your self-token here" />
+                                    <input type="button" onclick="dothis('tokenchange',0,0);" class="btn btn-validate" id="token" name="token" value="Update" />
+                                </form>
+                            </p>
+                            <p style="display:inline-block;">
+                                <form id="form" style="float: left; padding: 8px;">
+                                    <input type="text" style="width:500px; display:inline-block;" class="form-control" id="nicknametext" name="nicknametext" placeholder="Nickname to set" />
+                                    <input type="button" onclick="dothis('nickname',selected['number'],ClearAll(selected['name']));" class="btn btn-validate" id="nickname" name="nickname" value="Change Nickname of" />
+                                </form>
+                                <div id="img" style="float: left; padding: 8px;">
+                                </div>
+                            </p>
+                            <p style="display:inline-block;">
+								<form id="form" style="float: left; padding: 8px;">
+									<input type="text" style="width:500px; display:inline-block;" class="form-control" id="alt" name="alt" placeholder="Autoleveler priority queue">
+                                    <input type="button" onclick="dothis('queue',0,0);" class="btn btn-validate" id="altv" name="altv" value="Update Priority Queue (Ex: 1;5;2)" />
+                                </form>
+                            </p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+		<div class="container" id="serverwhitelist" style="margin-top: 25px; text-align: center;">
+            <div class="row">
+				<div class="col-lg-12 pre-scrollable list_container" id="style-6" style="border:1px solid #cecece; max-height: 400px;">
+					<h2 style="direction:ltr;">Server White List : </h2>
+					<h6 style="direction:ltr;">(checked = will catch in)</h6>
+					<div id="listeserver">
+					</div>
+				</div>
+			</div>
+		</div>
     </div>
 </body>
 
