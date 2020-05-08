@@ -3,16 +3,18 @@ package main
 import "strconv"
 
 const (
-	filterLevel      = iota //0
-	filterHP                //1
-	filterAttack            //2
-	filterDefense           //3
-	filterSpAttack          //4
-	filterSpDef             //5
-	filterSpeed             //6
-	filterIV                //7
-	filterIsAlolan          //8
-	filterIsGalarian        //9
+	filterLevel       = iota //0
+	filterHP                 //1
+	filterAttack             //2
+	filterDefense            //3
+	filterSpAttack           //4
+	filterSpDef              //5
+	filterSpeed              //6
+	filterIV                 //7
+	filterIsAlolan           //8
+	filterIsGalarian         //9
+	filterIsLegendary        //10
+	filterIsShiny            //11
 )
 
 const (
@@ -68,6 +70,17 @@ func filterDo(t, c int, n float64, infos pokeInfoParsed) bool {
 		return infos.isAlolan
 	case filterIsGalarian:
 		return infos.isGalarian
+	case filterIsLegendary:
+		//Searches in the name list
+		ok := false
+		for i := range legendaries {
+			if infos.Name == legendaries[i] {
+				return !ok
+			}
+		}
+		return ok
+	case filterIsShiny:
+		return infos.isShiny
 	}
 	return false
 }

@@ -67,6 +67,8 @@ function FilterToHTML(filters) {
 									<option value="7">IV</option>
 									<option value="8">is Alolan</option>
 									<option value="9">is Galarian</option>
+									<option value="10">is Legendary</option>
+									<option value="11">is Shiny</option>
 								</select>
 								<select onchange="UpdateFilters(${i}, ${j}, 'Operation', this.selectedIndex-1);" onload="this.selectedIndex=${current.Operation}+1" class="custom-select" style="width:120px; display:inline-block;" id="inputGroupSelect01">
 									<option>Choose...</option>
