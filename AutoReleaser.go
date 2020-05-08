@@ -124,6 +124,14 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Won't release it if it's a good pokémon (decided by every filter)
 	if filterPokemon(Infos) {
 		logCyanLn(logs, "You caught a good Pokémon !")
+		//Will alert the user if necessary
+		if config.Alerts && config.AlertChannelID != "" {
+			_, err = s.ChannelMessageSend(config.AlertChannelID, "You caught a "+Infos.Name+" !")
+			if err != nil {
+				logDebug("[ERROR]", err)
+				return
+			}
+		}
 		return
 	}
 

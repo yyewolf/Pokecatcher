@@ -46,6 +46,19 @@ function customfilterchange(){
 	};
 };
 
+function alertschange(){
+	alerts = document.getElementById("alerts").checked;
+	ws.send('{"action":"alerts","state":'+alerts+'}');
+	if(alerts){
+		NotifTitle = 'I will now alert if I can!';
+		notify('info', NotifTitle);
+	}else{
+		NotifTitle = 'I won\'t alert anymore!';
+		notify('info', NotifTitle);
+	};
+};
+
+
 function aliaschange(){
 	aliases = document.getElementById("aliases").checked;
 	ws.send('{"action":"aliases","state":'+aliases+'}');

@@ -20,6 +20,8 @@ type ConfigStruct struct {
 	Delay          int                  `json:"Delay_For_Autocatcher"`
 	Duplicate      bool                 `json:"Do_I_Ignore_Duplicate"`
 	Aliases        bool                 `json:"Do_I_Catch_With_Aliases"`
+	Alerts         bool                 `json:"Do_I_Alert_Someone"`
+	AlertChannelID string               `json:"Where_Do_I_Alert_ID"`
 	GoodFilter     bool                 `json:"Do_I_Release_Bad_Pokemons"`
 	EveryFilters   []customFilterStruct `json:"Custom_Filters"`
 	CustomFilters  bool                 `json:"Do_I_Use_Custom_Filters"`

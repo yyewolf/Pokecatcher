@@ -217,6 +217,19 @@ func customFilterOnOff(Request receiveRequest) {
 	logYellowLn(logs, "Custom filters active : "+strconv.FormatBool(config.CustomFilters))
 }
 
+func alertsOnOff(Request receiveRequest) {
+	// Active requests variables :
+	// Request.State
+
+	config.Alerts = Request.State
+	saveConfig()
+	logYellowLn(logs, "Alerts active : "+strconv.FormatBool(config.Alerts))
+	if config.Alerts && config.AlertChannelID == "" {
+		logRedLn(logs, "Type "+config.PrefixBot+"alerts to define an alert channel.")
+		logRedLn(logs, "It can be a DM channel.")
+	}
+}
+
 //////////////////////////////////////////////
 //////////Funcs related to Pokemons///////////
 //////////////////////////////////////////////
@@ -397,6 +410,7 @@ func websocketReceiveAllFunctions() {
 	websocketReceiveFunctions["queuelist"] = parsePriorityQueue
 	websocketReceiveFunctions["customfilters"] = customFilterOnOff
 	websocketReceiveFunctions["filterschange"] = updateFilters
+	websocketReceiveFunctions["alerts"] = alertsOnOff
 
 	websocketReceiveFunctions["refresh"] = refreshPokemonList
 	websocketReceiveFunctions["refreshmoves"] = refreshPokemonMovesList

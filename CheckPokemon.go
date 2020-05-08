@@ -291,6 +291,14 @@ func successfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	notifPokeCaught(PokemonName, GuildSpawn.Name, ChannelSpawn.Name)
 
 	if !config.GoodFilter && !config.CustomFilters {
+		//Will alert the user if necessary
+		if config.Alerts && config.AlertChannelID != "" {
+			_, err = s.ChannelMessageSend(config.AlertChannelID, "You caught a "+PokemonName+"!")
+			if err != nil {
+				logDebug("[ERROR]", err)
+				return
+			}
+		}
 		return
 	}
 
@@ -301,7 +309,7 @@ func successfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	infoMenu.Activated = true
 	infoMenu.AutoRelease = true
 	infoMenu.ChannelID = config.ChannelID
-	m, err := discordSession.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"info latest")
+	m, err := s.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"info latest")
 	if err != nil {
 		logDebug("[ERROR]", err)
 		return
