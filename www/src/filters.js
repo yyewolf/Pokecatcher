@@ -54,7 +54,7 @@ function FilterToHTML(filters) {
 						<input type="button" onclick="RemoveCondition(${i}, ${j});" class="btn btn-danger float-right" id="achecked" name="achecked" value="X" />
 						<br />
 						<p style="display:inline-block;">
-							<form id="form" style="padding: 8px;">
+							<form id="filter${i}${j}" style="padding: 8px;">
 								<select onchange="UpdateFilters(${i}, ${j}, 'Checking', this.selectedIndex-1);" onload="$(this).find('option[value=${current.Checking}]').attr('selected','selected');" class="custom-select" style="width:180px; display:inline-block;" id="inputGroupSelect01">
 									<option>Choose...</option>
 									<option value="0">Level</option>
@@ -65,6 +65,8 @@ function FilterToHTML(filters) {
 									<option value="5">SpDef (max 31)</option>
 									<option value="6">Speed (max 31)</option>
 									<option value="7">IV</option>
+									<option value="8">is Alolan</option>
+									<option value="9">is Galarian</option>
 								</select>
 								<select onchange="UpdateFilters(${i}, ${j}, 'Operation', this.selectedIndex-1);" onload="this.selectedIndex=${current.Operation}+1" class="custom-select" style="width:120px; display:inline-block;" id="inputGroupSelect01">
 									<option>Choose...</option>
@@ -72,7 +74,7 @@ function FilterToHTML(filters) {
 									<option value="1">is equal to</option>
 									<option value="2">is above</option>
 								</select>
-								<input style="width:100px; display:inline-block;" type="number" class="form-control" id="spaminterval" onkeyup="UpdateFilters(${i}, ${j}, 'Value', parseFloat(this.value));" value="${current.Value}">
+								<input style="width:100px; display:inline-block;" type="number" class="form-control" id="idk" onkeyup="UpdateFilters(${i}, ${j}, 'Value', parseFloat(this.value));" value="${current.Value}">
 							</form>
 						</p>
 						<br />
@@ -131,4 +133,13 @@ function RemoveCondition(i, j) {
 
 function UpdateFilters(i, j, c, v) {
 	filters[i].Conditions[j][c] = v
+	if(v >= 8) {
+		x = document.getElementById("filter"+i+j)
+		x.children[1].style= "width:120px; display:inline-block; visibility:hidden;"
+		x.children[2].style= "width:100px; display:inline-block; visibility:hidden;"
+	} else {
+		x = document.getElementById("filter"+i+j)
+		x.children[1].style= "width:120px; display:inline-block; visibility:content;"
+		x.children[2].style= "width:100px; display:inline-block; visibility:content;"
+	}
 }

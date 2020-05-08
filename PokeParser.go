@@ -22,6 +22,8 @@ type pokeInfoParsed struct {
 	IVs        []int
 	TotalIV    float64
 	isShiny    bool
+	isGalarian bool
+	isAlolan   bool
 }
 
 func parsePokemonInfo(msg *discordgo.MessageCreate) (pokeInfoParsed, error) {
@@ -141,5 +143,12 @@ func parsePokemonInfo(msg *discordgo.MessageCreate) (pokeInfoParsed, error) {
 	Total = reg.ReplaceAllString(Total, "")
 	Infos.TotalIV, _ = strconv.ParseFloat(Total, 8)
 
+	//Sets the galarian and alona field
+	if strings.Contains(Infos.Name, "Alolan") {
+		Infos.isAlolan = true
+	}
+	if strings.Contains(Infos.Name, "Galarian") {
+		Infos.isAlolan = true
+	}
 	return Infos, nil
 }

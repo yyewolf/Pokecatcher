@@ -15,6 +15,10 @@
 	color: #999;
 }
 
+.darkmode--activated h5{
+	color: #555;
+}
+
 .darkmode--activated input[type="checkbox"], input[type="radio"]{
 	position: absolute;
 	right: 9000px;
