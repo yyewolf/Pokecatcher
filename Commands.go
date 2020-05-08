@@ -47,20 +47,26 @@ func checkForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 
 	if strings.HasPrefix(msg.Content, config.PrefixBot+"register") {
-
 		config.ChannelID = msg.ChannelID
 		ChannelRegistered, err := s.Channel(msg.ChannelID)
 		if err != nil {
-			logDebug("[ERROR] ", err)
+			logDebug("[ERROR]", err)
 			return
 		}
 		logYellowLn(logs, "Successfully registered channel : #"+ChannelRegistered.Name)
+		saveConfig()
 	}
 
 	if strings.HasPrefix(msg.Content, config.PrefixBot+"list") {
 		s.ChannelMessageSend(msg.ChannelID, config.PrefixPokecord+"pokemon")
 		refreshingList = true
 		refreshingListChannelID = msg.ChannelID
+	}
+
+	if strings.HasPrefix(msg.Content, config.PrefixBot+"alerts") {
+		config.AlertChannelID = msg.ChannelID
+		logYellowLn(logs, "Successfully registered an alert channel")
+		saveConfig()
 	}
 
 	listLoader(s, msg)
