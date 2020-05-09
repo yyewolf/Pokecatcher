@@ -10,10 +10,12 @@ import (
 )
 
 type infoActivated struct {
-	ChannelID   string
-	Activated   bool
-	MessageID   string
-	AutoRelease bool
+	ChannelID        string
+	Activated        bool
+	MessageID        string
+	AutoRelease      bool
+	SelectedFromList bool
+	SelectedIndex    string
 }
 
 //SelectVerifier will verify the level of the selected pokemon
@@ -60,6 +62,12 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Level = reg.ReplaceAllString(Level, "")
 
 	if Level == "100" {
+		//Updates the level in the List
+		if infoMenu.SelectedFromList {
+			c := pokemonList[infoMenu.SelectedIndex]
+			c.Level = "100"
+			pokemonList[infoMenu.SelectedIndex] = c
+		}
 		logDebug("[DEBUG] AutoLeveler is searching for a new pokemon.")
 		time.Sleep(3 * time.Second)
 		//Will verify the next pokemon's level
@@ -129,6 +137,22 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		time.Sleep(2 * time.Second)
 		//Select the next pokemon
 		n := strconv.Itoa(Number)
+		//Tries to select a legendary if possible
+		for i := range pokemonList {
+			if pokemonList[i].Level == "100" {
+				continue
+			}
+			for j := range legendaries {
+				if pokemonList[i].Name == legendaries[j] {
+					n = pokemonList[i].NewNumber
+					infoMenu.SelectedFromList = true
+					infoMenu.SelectedIndex = i
+					break
+				}
+			}
+			break
+		}
+		//Sends the message
 		m, err := s.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"select "+n)
 		if err != nil {
 			logDebug("[ERROR]", err)
