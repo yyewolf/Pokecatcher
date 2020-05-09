@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"regexp"
 	"strconv"
 	"strings"
@@ -137,6 +138,19 @@ func updatePokemonWhitelist(Request receiveRequest) {
 	pokemonWhitelist[Request.Name] = Request.State
 	savePokemonWhitelist()
 	logYellowLn(logs, "Your Pokémon whitelist has been successfully updated.")
+}
+
+func updatePokemonWhitelistWithJSON(Request receiveRequest) {
+	// Active requests variables :
+	// Request.Change
+	err := json.Unmarshal([]byte(Request.Change), &pokemonWhitelist)
+	if err != nil {
+		logDebug("[ERROR]", err)
+		logRedLn(logs, "There has been a problem importing your pokemon whitelist.")
+		return
+	}
+	savePokemonWhitelist()
+	logYellowLn(logs, "Your Pokémon whitelist has been successfully imported.")
 }
 
 func changePrefixes(Request receiveRequest) {
@@ -416,6 +430,7 @@ func websocketReceiveAllFunctions() {
 	websocketReceiveFunctions["refreshmoves"] = refreshPokemonMovesList
 	websocketReceiveFunctions["whitelist"] = updateServerWhitelist
 	websocketReceiveFunctions["pokemonwhitelist"] = updatePokemonWhitelist
+	websocketReceiveFunctions["importwhitelist"] = updatePokemonWhitelistWithJSON
 	websocketReceiveFunctions["spam"] = updateSpammerSettings
 
 	websocketReceiveFunctions["release"] = release

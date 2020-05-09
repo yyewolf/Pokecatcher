@@ -206,6 +206,16 @@ function refreshpkmnwhitelist(name, checked){
 	ws.send('{"action":"pokemonwhitelist","name":"'+name+'","state":'+checked+'}');
 };
 
+function importpkmnwhitelist(){
+	obj = {
+		action:"importwhitelist",
+		change:JSON.stringify(pokewhitelist)
+	}
+	ws.send(JSON.stringify(obj));
+	NotifTitle = 'Imported a new whitelist !';
+	notify('info', NotifTitle);
+};
+
 function changeprefix(type,prefix){
 	NotifTitle = 'This prefix has been changed!';
 	notify('info', NotifTitle);

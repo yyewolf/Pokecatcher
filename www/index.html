@@ -127,6 +127,19 @@
 			<form id="form" style="float: left; padding: 8px;">
 				<input type="button" onclick="LegendCheck();" class="btn btn-validate" id="lchecked" name="lchecked" value="Check Legendaries" />
 			</form>
+			<form id="form" style="float: left; padding: 8px;">
+				<input type="button" onclick="whitelistdisplay = 1; LoadPokemons()" class="btn btn-validate" id="lchecked" name="lchecked" value="Show only checked pokemon" />
+			</form>
+			<form id="form" style="float: left; padding: 8px;">
+				<input type="button" onclick="whitelistdisplay = 0; LoadPokemons()" class="btn btn-validate" id="lchecked" name="lchecked" value="Show all" />
+			</form>
+			<form id="form" style="float: left; padding: 8px;">
+				<input type="button" onclick="download(JSON.stringify(pokewhitelist), 'Your whitelist.json', 'json')" class="btn btn-validate" id="lchecked" name="lchecked" value="Save This Whitelist" />
+			</form>
+			<form id="form" style="float: left; padding: 8px;">
+				<input id='imported' onchange="upload()" type='file' hidden/>
+				<input type="button" onclick="document.getElementById('imported').click();" class="btn btn-validate" id="lchecked" name="lchecked" value="Import a Whitelist" />
+			</form>
 		</p>
 		<br />
         <div class="col-lg pre-scrollable list_container" id="WLScroll" class="clusterize-scroll" style="border:1px solid #cecece; max-height: 400px;">
