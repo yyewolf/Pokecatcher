@@ -135,7 +135,7 @@ function RemoveCondition(i, j) {
 
 function UpdateFilters(i, j, c, v) {
 	filters[i].Conditions[j][c] = v
-	if(v >= 8) {
+	if(v >= 8 && c != "Value") {
 		x = document.getElementById("filter"+i+j)
 		x.children[1].style= "width:120px; display:inline-block; visibility:hidden;"
 		x.children[2].style= "width:100px; display:inline-block; visibility:hidden;"
