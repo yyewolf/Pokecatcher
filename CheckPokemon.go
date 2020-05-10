@@ -293,7 +293,18 @@ func successfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !config.GoodFilter && !config.CustomFilters {
 		//Will alert the user if necessary
 		if config.Alerts && config.AlertChannelID != "" {
-			_, err = s.ChannelMessageSend(config.AlertChannelID, "You caught a "+PokemonName+"!")
+			text := ""
+			//Pokemon is legendary
+			for i := range legendaries {
+				if PokemonName == legendaries[i] {
+					text += " legendary"
+				}
+			}
+			//Pokemon is shiny
+			if strings.Contains(msg.Content, ":star:") {
+				text += " shiny"
+			}
+			_, err = s.ChannelMessageSend(config.AlertChannelID, "You caught a"+text+" "+PokemonName+" !")
 			if err != nil {
 				logDebug("[ERROR]", err)
 				return

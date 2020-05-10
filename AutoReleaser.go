@@ -126,7 +126,18 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		logCyanLn(logs, "You caught a good Pokémon !")
 		//Will alert the user if necessary
 		if config.Alerts && config.AlertChannelID != "" {
-			_, err = s.ChannelMessageSend(config.AlertChannelID, "You caught a "+Infos.Name+" !")
+			text := ""
+			//Pokemon is legendary
+			for i := range legendaries {
+				if Infos.Name == legendaries[i] {
+					text += " legendary"
+				}
+			}
+			//Pokemon is shiny
+			if Infos.isShiny {
+				text += " shiny"
+			}
+			_, err = s.ChannelMessageSend(config.AlertChannelID, "You caught a"+text+" "+Infos.Name+" !")
 			if err != nil {
 				logDebug("[ERROR]", err)
 				return
