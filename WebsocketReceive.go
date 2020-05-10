@@ -174,7 +174,7 @@ func changeAutoLevelerMax(Request receiveRequest) {
 
 	config.AutoLevelMax = Request.Change
 	saveConfig()
-	logYellowLn(logs, "The prefix has been successfully updated.")
+	logYellowLn(logs, "Changed autoleveler max level to "+config.AutoLevelMax+".")
 }
 
 func changeDelay(Request receiveRequest) {
@@ -433,6 +433,7 @@ func websocketReceiveAllFunctions() {
 	websocketReceiveFunctions["queuelist"] = parsePriorityQueue
 	websocketReceiveFunctions["customfilters"] = customFilterOnOff
 	websocketReceiveFunctions["filterschange"] = updateFilters
+	websocketReceiveFunctions["alchange"] = changeAutoLevelerMax
 	websocketReceiveFunctions["alerts"] = alertsOnOff
 
 	websocketReceiveFunctions["refresh"] = refreshPokemonList

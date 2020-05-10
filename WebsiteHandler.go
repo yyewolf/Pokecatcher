@@ -89,6 +89,7 @@ func WebsiteHandler(w http.ResponseWriter, r *http.Request) {
 		add += "<script> var pokewhitelist = " + string(PokeWhitelist) + "</script>\n"
 		add += "<script> var queue = '" + Queue + "'</script>\n"
 		add += "<script> var filters = " + string(Filters) + "</script>\n"
+		add += "<script> var autolevelmax = '" + config.AutoLevelMax + "'</script>\n"
 
 		MaxPoke := strconv.Itoa(pokemonListInfo.Array)
 		if MaxPoke != "0" {

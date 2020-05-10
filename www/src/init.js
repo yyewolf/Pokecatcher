@@ -41,6 +41,9 @@ window.onload = function() {
 		document.getElementById("sbprefix").placeholder = prefixes["pokebot"];
 		document.getElementById("pcprefix").placeholder = prefixes["pokecord"];
 	};
+	if (autolevelmax !== '') {
+		document.getElementById("alm").placeholder = autolevelmax;
+	};
 	if (spamactive !== 'undefined') {
 		if (spamactive == true) {
 			document.getElementById("spammer").checked = spamactive;
