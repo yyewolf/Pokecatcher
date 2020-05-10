@@ -34,6 +34,8 @@ func spamFunc(Session *discordgo.Session, ChannelID string, interval int, messag
 			//If crash spam is now false.
 			spamState = false
 		}
-		time.Sleep(time.Duration(interval) * time.Millisecond)
+		rand.Seed(time.Now().UnixNano())
+		randomness := rand.Intn(354) - rand.Intn(124)
+		time.Sleep(time.Duration(interval+randomness) * time.Millisecond)
 	}
 }
