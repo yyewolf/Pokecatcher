@@ -61,11 +61,11 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Level := strings.Split(msg.Content, "N")[0]
 	Level = reg.ReplaceAllString(Level, "")
 
-	if Level == "100" {
+	if Level == config.AutoLevelMax {
 		//Updates the level in the List
 		if infoMenu.SelectedFromList {
 			c := pokemonList[infoMenu.SelectedIndex]
-			c.Level = "100"
+			c.Level = config.AutoLevelMax
 			pokemonList[infoMenu.SelectedIndex] = c
 		}
 		logDebug("[DEBUG] AutoLeveler is searching for a new pokemon.")
@@ -127,7 +127,7 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	infoMenu.Activated = false
 
-	if Infos.Level == "100" {
+	if Infos.Level == config.AutoLevelMax {
 		logDebug("[DEBUG] AutoLeveler sending p!select")
 		Number := 1
 		if !Infos.Last {
@@ -139,7 +139,7 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		n := strconv.Itoa(Number)
 		//Tries to select a legendary if possible
 		for i := range pokemonList {
-			if pokemonList[i].Level == "100" {
+			if pokemonList[i].Level == config.AutoLevelMax {
 				continue
 			}
 			for j := range legendaries {
@@ -193,7 +193,7 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 	NewLevel := reg.ReplaceAllString(msg.Embeds[0].Description, "")
 
-	if NewLevel == "100" {
+	if NewLevel == config.AutoLevelMax {
 		time.Sleep(2 * time.Second)
 		//Will prioritize priority queue over randomness
 		if len(priorityQueue) != 0 {

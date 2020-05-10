@@ -222,6 +222,12 @@ function changeprefix(type,prefix){
 	ws.send('{"action":"prefixchange","type":"'+type+'","prefix":"'+prefix+'"}');
 };
 
+function changeautoleveler(max){
+	NotifTitle = 'The AutoLeveler max level has been changed!';
+	notify('info', NotifTitle);
+	ws.send('{"action":"alchange","change":"'+max+'"}');
+};
+
 function SaveFilters(){
 	NotifTitle = 'Your custom filters have been changed!';
 	notify('info', NotifTitle);

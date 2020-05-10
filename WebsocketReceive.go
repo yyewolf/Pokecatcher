@@ -168,6 +168,15 @@ func changePrefixes(Request receiveRequest) {
 	logYellowLn(logs, "The prefix has been successfully updated.")
 }
 
+func changeAutoLevelerMax(Request receiveRequest) {
+	// Active requests variables :
+	// Request.Change
+
+	config.AutoLevelMax = Request.Change
+	saveConfig()
+	logYellowLn(logs, "The prefix has been successfully updated.")
+}
+
 func changeDelay(Request receiveRequest) {
 	// Active requests variables :
 	// Request.Delay
