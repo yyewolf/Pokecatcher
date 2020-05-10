@@ -38,6 +38,10 @@ func startUI() {
 	img, _ := loadImg(c)
 	lastPokemonImg = canvas.NewImageFromImage(img)
 	lastPokemonLabel = widget.NewLabelWithStyle("", fyne.TextAlignCenter, fyne.TextStyle{})
+	currentLabel := widget.NewLabel("Current Pokemon :")
+	currentPokemonImg = canvas.NewImageFromImage(img)
+	currentPokemonLevel = widget.NewLabelWithStyle("Level : Not set", fyne.TextAlignCenter, fyne.TextStyle{})
+	currentPokemonImg.FillMode = 2
 	lastPokemonImg.FillMode = 2
 
 	bottom1 := makeCell()
@@ -46,6 +50,9 @@ func startUI() {
 	bottom2 := makeCell()
 	left2 := makeCell()
 	right2 := makeCell()
+	bottom3 := makeCell()
+	left3 := makeCell()
+	right3 := makeCell()
 
 	w.SetContent(widget.NewHBox(
 		widget.NewHBox(
@@ -59,7 +66,17 @@ func startUI() {
 		),
 		widget.NewHBox(
 			fyne.NewContainerWithLayout(layout.NewGridLayout(1),
-				widget.NewVBox(widget.NewLabel("Refresh Pokemon List :"), progressBar),
+				widget.NewVBox(
+					widget.NewLabel("Refresh Pokemon List :"),
+					progressBar,
+					fyne.NewContainerWithLayout(layout.NewBorderLayout(currentLabel, bottom3, left3, right3),
+						currentLabel,
+						bottom3,
+						left3,
+						right3,
+						fyne.NewContainerWithLayout(layout.NewGridLayout(1),
+							widget.NewVBox(currentPokemonImg, currentPokemonLevel)),
+					)),
 				widget.NewVBox(
 					widget.NewButton("Clear logs", func() {
 						logs.Children = []fyne.CanvasObject{}

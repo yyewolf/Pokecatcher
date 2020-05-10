@@ -31,6 +31,8 @@ var logs *widget.Box
 var logScroll *widget.ScrollContainer
 var lastPokemonImg *canvas.Image
 var lastPokemonLabel *widget.Label
+var currentPokemonImg *canvas.Image
+var currentPokemonLevel *widget.Label
 var progressBar *widget.ProgressBar
 var appli fyne.App
 var windowIcon fyne.Resource

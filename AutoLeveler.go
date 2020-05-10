@@ -32,12 +32,12 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !infoMenu.Activated {
 		return
 	}
-	//Check that it is not in release mode
-	if infoMenu.AutoRelease {
-		return
-	}
 	//Verify that it's the right channel
 	if msg.ChannelID != infoMenu.ChannelID {
+		return
+	}
+	//Check that it is not in release mode
+	if infoMenu.AutoRelease {
 		return
 	}
 	//Verifies that it's the answer to the user's message
@@ -60,8 +60,28 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 	Level := strings.Split(msg.Content, "N")[0]
 	Level = reg.ReplaceAllString(Level, "")
+	Name := strings.Split(msg.Content, ".")[0]
+	max := len(strings.Split(Name, Level+" "))-1
+	Name = strings.Split(Name, Level+" ")[max]
+	
+	if Level == "" {
+		return
+	}
+	//Sets the current box
+	currentPokemonImg.Image = decodedImages[Name]
+	currentPokemonLevel.SetText("Level : " + Level)
+	currentPokemonImg.Refresh()
+	
+	lvl, err := strconv.Atoi(Level)
+	if err != nil {
+		return
+	}
+	maxlvl, err := strconv.Atoi(config.AutoLevelMax)
+	if err != nil {
+		return
+	}
 
-	if Level == config.AutoLevelMax {
+	if lvl >= maxlvl {
 		//Updates the level in the List
 		if infoMenu.SelectedFromList {
 			c := pokemonList[infoMenu.SelectedIndex]
@@ -119,15 +139,32 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !ok {
 		return
 	}
+	logDebug("1")
 	//Check if it's a p!info response
 	Infos, err := parsePokemonInfo(msg)
 	if err != nil {
+		logDebug("[ERROR]",err)
 		return
 	}
+	logDebug("2")
+	//Sets the current box
+	currentPokemonImg.Image = Infos.Image
+	currentPokemonLevel.SetText("Level : " + Infos.Level)
+	currentPokemonImg.Refresh()
 
 	infoMenu.Activated = false
-
-	if Infos.Level == config.AutoLevelMax {
+	infoMenu.MessageID = ""
+	
+	lvl, err := strconv.Atoi(Infos.Level)
+	if err != nil {
+		return
+	}
+	maxlvl, err := strconv.Atoi(config.AutoLevelMax)
+	if err != nil {
+		return
+	}
+	
+	if lvl >= maxlvl {
 		logDebug("[DEBUG] AutoLeveler sending p!select")
 		Number := 1
 		if !Infos.Last {
@@ -183,6 +220,18 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !strings.Contains(msg.Embeds[0].Title, "Congratulations") {
 		return
 	}
+	//Verifies that it's the answer to the user's message
+	msgs, _ := s.ChannelMessages(msg.ChannelID, 5, msg.ID, "", "")
+	ok := false
+	for i := range msgs {
+		if msgs[i].Author.ID == s.State.User.ID {
+			ok = true
+			break
+		}
+	}
+	if !ok {
+		return
+	}
 
 	//Gets the level from the embed's content : "Your *Pokemon* is now level 40!"
 	//Steps :
@@ -192,9 +241,19 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	NewLevel := reg.ReplaceAllString(msg.Embeds[0].Description, "")
+	currentPokemonLevel.SetText("Level : " + NewLevel)
 
-	if NewLevel == config.AutoLevelMax {
+	lvl, err := strconv.Atoi(NewLevel)
+	if err != nil {
+		return
+	}
+	maxlvl, err := strconv.Atoi(config.AutoLevelMax)
+	if err != nil {
+		return
+	}
+	if lvl >= maxlvl {
 		time.Sleep(2 * time.Second)
+		currentPokemonLevel.SetText("Level : Switching..")
 		//Will prioritize priority queue over randomness
 		if len(priorityQueue) != 0 {
 			logDebug("[DEBUG] AutoLeveler sending p!select")

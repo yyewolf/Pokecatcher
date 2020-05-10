@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"image"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/nfnt/resize"
@@ -13,6 +14,7 @@ import (
 
 type pokeInfoParsed struct {
 	Name       string
+	Image	   image.Image
 	Level      string
 	Number     string
 	LastNumber string
@@ -103,16 +105,24 @@ func parsePokemonInfo(msg *discordgo.MessageCreate) (pokeInfoParsed, error) {
 	}
 	ImageResized := resize.Resize(64, 64, ImageDecoded, resize.Bicubic)
 	Buffer := &buf{}
-	_ = png.Encode(Buffer, ImageResized)
-	ImageResized, _ = png.Decode(Buffer)
+	err = png.Encode(Buffer, ImageResized)
+	if err != nil {
+		return Infos, err
+	}
+	ImageResized, err = png.Decode(Buffer)
+	if err != nil {
+		return Infos, err
+	}
 	List := box.List()
-
+	
+	logDebug("1")
 	for i := range List {
 		if strings.Contains(List[i], "img") {
 			//Gets rid of the path debris
 			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\", ""), ".png", "")
 
 			ScanImage := decodedImages[Name]
+			Infos.Image = ScanImage
 			Accuracy := compareIMG(ScanImage, ImageResized)
 			if Accuracy < 0.35 {
 				Infos.Name = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
@@ -120,7 +130,7 @@ func parsePokemonInfo(msg *discordgo.MessageCreate) (pokeInfoParsed, error) {
 			}
 		}
 	}
-
+	logDebug("2")
 	//Gets every IV and stores them
 	if !strings.Contains(msg.Embeds[0].Description, "IV") {
 		err := errors.New("infoparser : iv not enabled")
