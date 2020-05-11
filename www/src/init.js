@@ -10,7 +10,7 @@ window.onload = function() {
 	};
 	if (typeof autoleveling !== 'undefined') {
 		if (autoleveling) {
-			document.getElementById("catcher").checked = true;
+			document.getElementById("al").checked = true;
 		};
 	};
 	if (typeof duplicate !== 'undefined') {
