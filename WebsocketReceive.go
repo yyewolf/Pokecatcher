@@ -191,7 +191,17 @@ func autoCatcherOnOff(Request receiveRequest) {
 	// Request.State
 
 	config.AutoCatching = Request.State
+	saveConfig()
 	logYellowLn(logs, "Autocatching : "+strconv.FormatBool(config.AutoCatching))
+}
+
+func autoLevelerOnOff(Request receiveRequest) {
+	// Active requests variables :
+	// Request.State
+
+	config.AutoLeveling = Request.State
+	saveConfig()
+	logYellowLn(logs, "Auto leveling : "+strconv.FormatBool(config.AutoLeveling))
 }
 
 func duplicatesOnOff(Request receiveRequest) {
@@ -435,6 +445,7 @@ func websocketReceiveAllFunctions() {
 	websocketReceiveFunctions["filterschange"] = updateFilters
 	websocketReceiveFunctions["alchange"] = changeAutoLevelerMax
 	websocketReceiveFunctions["alerts"] = alertsOnOff
+	websocketReceiveFunctions["al"] = autoLevelerOnOff
 
 	websocketReceiveFunctions["refresh"] = refreshPokemonList
 	websocketReceiveFunctions["refreshmoves"] = refreshPokemonMovesList

@@ -2,10 +2,22 @@ function autochange(){
 	autocatcher = document.getElementById("catcher").checked;
 	ws.send('{"action":"aca","state":'+autocatcher+'}');
 	if(autocatcher){
-		NotifTitle = 'I will now auto catch pokemons !';
+		NotifTitle = 'I will now auto catch Pokémon !';
 		notify('info', NotifTitle);
 	}else{
-		NotifTitle = 'I won\'t auto catch pokemons !';
+		NotifTitle = 'I won\'t auto catch Pokémon !';
+		notify('info', NotifTitle);
+	};
+};
+
+function alchange(){
+	autoleveling = document.getElementById("al").checked;
+	ws.send('{"action":"al","state":'+autoleveling+'}');
+	if(autoleveling){
+		NotifTitle = 'I will now auto level your Pokémon !';
+		notify('info', NotifTitle);
+	}else{
+		NotifTitle = 'I won\'t auto level your Pokémon !';
 		notify('info', NotifTitle);
 	};
 };
@@ -14,10 +26,10 @@ function duplichange(){
 	duplicate = document.getElementById("duplicate").checked;
 	ws.send('{"action":"duplicate","state":'+duplicate+'}');
 	if(duplicate){
-		NotifTitle = 'I will now ignore duplicate pokémon!';
+		NotifTitle = 'I will now ignore duplicate Pokémon!';
 		notify('info', NotifTitle);
 	}else{
-		NotifTitle = 'I woill now catch every pokémon !';
+		NotifTitle = 'I woill now catch every Pokémon !';
 		notify('info', NotifTitle);
 	};
 };
@@ -26,10 +38,10 @@ function filterchange(){
 	filter = document.getElementById("filter").checked;
 	ws.send('{"action":"filter","state":'+filter+'}');
 	if(filter){
-		NotifTitle = 'I will now filter every pokemons (using pre-made filter)!';
+		NotifTitle = 'I will now filter every Pokémon (using pre-made filter)!';
 		notify('info', NotifTitle);
 	}else{
-		NotifTitle = 'I won\'t filter every pokemons (using pre-made filter)!';
+		NotifTitle = 'I won\'t filter every Pokémon (using pre-made filter)!';
 		notify('info', NotifTitle);
 	};
 };
@@ -38,10 +50,10 @@ function customfilterchange(){
 	customfilters = document.getElementById("customfilter").checked;
 	ws.send('{"action":"customfilters","state":'+customfilters+'}');
 	if(customfilters){
-		NotifTitle = 'I will now filter every pokemons (using custom filters)!';
+		NotifTitle = 'I will now filter every Pokémon (using custom filters)!';
 		notify('info', NotifTitle);
 	}else{
-		NotifTitle = 'I won\'t filter every pokemons (using custom filters)!';
+		NotifTitle = 'I won\'t filter every Pokémon (using custom filters)!';
 		notify('info', NotifTitle);
 	};
 };
@@ -63,10 +75,10 @@ function aliaschange(){
 	aliases = document.getElementById("aliases").checked;
 	ws.send('{"action":"aliases","state":'+aliases+'}');
 	if(aliases){
-		NotifTitle = 'I will now catch every pokemons with aliases !';
+		NotifTitle = 'I will now catch every Pokémon with aliases !';
 		notify('info', NotifTitle);
 	}else{
-		NotifTitle = 'I won\'t catch pokemons with aliases !';
+		NotifTitle = 'I won\'t catch Pokémon with aliases !';
 		notify('info', NotifTitle);
 	};
 };

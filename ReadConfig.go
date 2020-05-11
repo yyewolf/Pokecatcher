@@ -26,7 +26,8 @@ type ConfigStruct struct {
 	EveryFilters   []customFilterStruct `json:"Custom_Filters"`
 	CustomFilters  bool                 `json:"Do_I_Use_Custom_Filters"`
 	AutoLevelMax   string               `json:"What_Is_The_Max_Level_AutoLeveler"`
-	AutoCatching   bool                 `json:"-"`
+	AutoCatching   bool                 `json:"Do_I_Autocatch_Pokemon"`
+	AutoLeveling   bool                 `json:"Do_I_Autolevel_Pokemon"`
 	WebPort        int                  `json:"Port_For_Webserver"`
 	PrefixPokecord string               `json:"Pokecord_Prefix_On_Your_Server"`
 	PrefixBot      string               `json:"Prefix_For_This_Bot"`
@@ -49,6 +50,7 @@ func noConfig() {
 		PrefixBot:      "p^",
 		AutoLevelMax:   "100",
 		Debug:          false,
+		AutoLeveling:	true,
 	}
 	_, err := os.Stat("saves")
 	if os.IsNotExist(err) {

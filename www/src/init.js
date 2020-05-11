@@ -4,27 +4,32 @@ var wlvalue;
 window.onload = function() {
 	wlvalue = ""
 	if (typeof autocatcher !== 'undefined') {
-		if (autocatcher == true) {
+		if (autocatcher) {
+			document.getElementById("catcher").checked = true;
+		};
+	};
+	if (typeof autoleveling !== 'undefined') {
+		if (autoleveling) {
 			document.getElementById("catcher").checked = true;
 		};
 	};
 	if (typeof duplicate !== 'undefined') {
-		if (duplicate == true) {
+		if (duplicate) {
 			document.getElementById("duplicate").checked = true;
 		};
 	};
 	if (typeof aliases !== 'undefined') {
-		if (aliases == true) {
+		if (aliases) {
 			document.getElementById("aliases").checked = true;
 		};
 	};
 	if (typeof filter !== 'undefined') {
-		if (filter == true) {
+		if (filter) {
 			document.getElementById("filter").checked = true;
 		};
 	};
 	if (typeof customfilters !== 'undefined') {
-		if (customfilters == true) {
+		if (customfilters) {
 			document.getElementById("customfilter").checked = true;
 		};
 	};
@@ -34,25 +39,25 @@ window.onload = function() {
 	if (queue !== '') {
 		document.getElementById("alt").placeholder = queue;
 	};
-	if (autocatchdelay !== 'undefined') {
+	if (autocatchdelay !== '') {
 		document.getElementById("delayms").placeholder = autocatchdelay;
 	};
-	if (prefixes !== 'undefined') {
+	if (prefixes !== '') {
 		document.getElementById("sbprefix").placeholder = prefixes["pokebot"];
 		document.getElementById("pcprefix").placeholder = prefixes["pokecord"];
 	};
 	if (autolevelmax !== '') {
 		document.getElementById("alm").placeholder = autolevelmax;
 	};
-	if (spamactive !== 'undefined') {
-		if (spamactive == true) {
+	if (spamactive !== '') {
+		if (spamactive) {
 			document.getElementById("spammer").checked = spamactive;
 		};
 	};
-	if (ClearAll(selected['name']) !== '') {
+	if (ClearAll(selected['name']) !== 'Put a channel ID here') {
 		document.getElementById("img").innerHTML = '<img src="./img/' + ClearAll(selected['name']) + '.png" class="img-circle" width="50" height="50">';
 	};
-	if (textchannel == 'undefined') {
+	if (textchannel == '') {
 		document.getElementById("alertbox").classList.add("alert");
 		document.getElementById("alertbox").classList.add("alert-danger");
 		document.getElementById("alertbox").innerHTML += '<p><label><span>You haven\'t registered a text channel where I can talk ! (p^register)</span></label></p>';
@@ -66,7 +71,7 @@ window.onload = function() {
 		LoadList(undefined);
 	}
 	
-	if (servernames !== 'undefined') {
+	if (servernames !== '') {
 		serverarray = servernames.split(';');
 		serveridarray = serverid.split(';');
 		var html = '';

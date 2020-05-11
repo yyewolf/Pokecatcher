@@ -28,6 +28,10 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if msg.Author.ID != "365975655608745985" {
 		return
 	}
+	//Check if the person wants to autolevel
+	if !config.AutoLeveling {
+		return
+	}
 	//Check that the leveler is activated
 	if !infoMenu.Activated {
 		return
@@ -113,6 +117,10 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 	//Check if the author is pokecord
 	if msg.Author.ID != "365975655608745985" {
+		return
+	}
+	//Check if the person wants to autolevel
+	if !config.AutoLeveling {
 		return
 	}
 	//Check that the leveler is activated
@@ -210,6 +218,10 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 	//Check if the author is pokecord
 	if msg.Author.ID != "365975655608745985" {
+		return
+	}
+	//Check if the person wants to autolevel
+	if !config.AutoLeveling {
 		return
 	}
 	//Check if there is an embed
