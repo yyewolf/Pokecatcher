@@ -287,6 +287,40 @@ func release(Request receiveRequest) {
 	}
 }
 
+func addFavorite(Request receiveRequest) {
+	// Active requests variables :
+	// Request.PokemonNumber
+
+	//Check if the person is allowed
+	if !config.IsAllowedToUse {
+		return
+	}
+
+	_, err := discordSession.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"addfav "+strconv.Itoa(Request.PokemonNumber))
+	if err != nil {
+		logDebug("[ERROR]", err)
+		return
+	}
+	logYellowLn(logs, "Added your Pokémon to favorites.")
+}
+
+func removeFavorite(Request receiveRequest) {
+	// Active requests variables :
+	// Request.PokemonNumber
+
+	//Check if the person is allowed
+	if !config.IsAllowedToUse {
+		return
+	}
+
+	_, err := discordSession.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"removefav "+strconv.Itoa(Request.PokemonNumber))
+	if err != nil {
+		logDebug("[ERROR]", err)
+		return
+	}
+	logYellowLn(logs, "Added your Pokémon to favorites.")
+}
+
 func learnNewMove(Request receiveRequest) {
 	// Active requests variables :
 	// Request.PokemonName
@@ -457,6 +491,8 @@ func websocketReceiveAllFunctions() {
 	websocketReceiveFunctions["release"] = release
 	websocketReceiveFunctions["select"] = selectPokemon
 	websocketReceiveFunctions["remove"] = removePokemonFromList
+	websocketReceiveFunctions["addfav"] = addFavorite
+	websocketReceiveFunctions["remfav"] = removeFavorite
 	websocketReceiveFunctions["nickname"] = renamePokemon
 	websocketReceiveFunctions["catch"] = catchAPokemon
 	websocketReceiveFunctions["learn"] = learnNewMove

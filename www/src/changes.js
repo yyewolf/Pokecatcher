@@ -137,7 +137,6 @@ function spamchange(){
 };
 
 function dothis(action,number,name){
-	
 	switch(action) {
 		case 'release' :
 			NotifTitle = 'Releasing :';
@@ -159,6 +158,20 @@ function dothis(action,number,name){
 			NotifMessage = name;
 			notify('info', NotifTitle, NotifIcon, NotifMessage);
 			ws.send('{"action":"select","number":'+number+',"name":"'+name+'"}');
+			break;
+		case 'addfav' :
+			NotifTitle = 'Adding Favorite :';
+			NotifIcon = './img/' + name + '.png';
+			NotifMessage = name;
+			notify('info', NotifTitle, NotifIcon, NotifMessage);
+			ws.send('{"action":"addfav","number":'+number+'}');
+			break;
+		case 'remfav' :
+			NotifTitle = 'Removing Favorite :';
+			NotifIcon = './img/' + name + '.png';
+			NotifMessage = name;
+			notify('info', NotifTitle, NotifIcon, NotifMessage);
+			ws.send('{"action":"remfav","number":'+number+'}');
 			break;
 		case 'nickname' :
 			var nickname = document.getElementById("nicknametext").value;
