@@ -87,11 +87,6 @@ func updateSpammerSettings(Request receiveRequest) {
 	// Request.Message
 	// Request.SpamInterval
 
-	//Check if the person is allowed
-	if !config.IsAllowedToUse {
-		return
-	}
-
 	spamState = Request.State
 	if spamState {
 		if config.ChannelID != "" {
@@ -271,11 +266,6 @@ func release(Request receiveRequest) {
 	// Active requests variables :
 	// Request.PokemonNumber
 
-	//Check if the person is allowed
-	if !config.IsAllowedToUse {
-		return
-	}
-
 	_, err := discordSession.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"release "+strconv.Itoa(Request.PokemonNumber))
 	if err == nil {
 		time.Sleep(3 * time.Second)
@@ -291,11 +281,6 @@ func addFavorite(Request receiveRequest) {
 	// Active requests variables :
 	// Request.PokemonNumber
 
-	//Check if the person is allowed
-	if !config.IsAllowedToUse {
-		return
-	}
-
 	_, err := discordSession.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"addfav "+strconv.Itoa(Request.PokemonNumber))
 	if err != nil {
 		logDebug("[ERROR]", err)
@@ -307,11 +292,6 @@ func addFavorite(Request receiveRequest) {
 func removeFavorite(Request receiveRequest) {
 	// Active requests variables :
 	// Request.PokemonNumber
-
-	//Check if the person is allowed
-	if !config.IsAllowedToUse {
-		return
-	}
 
 	_, err := discordSession.ChannelMessageSend(config.ChannelID, config.PrefixPokecord+"removefav "+strconv.Itoa(Request.PokemonNumber))
 	if err != nil {
@@ -343,11 +323,6 @@ func catchAPokemon(Request receiveRequest) {
 	// Request.ChannelID
 	// Request.Command
 	// Request.Name
-
-	//Check if the person is allowed
-	if !config.IsAllowedToUse {
-		return
-	}
 
 	ChannelSpawn, err := discordSession.Channel(Request.ChannelID)
 	check(err)
@@ -410,11 +385,6 @@ func selectPokemon(Request receiveRequest) {
 	// Request.Name
 	// Request.Number
 	// Request.Name
-
-	//Check if the person is allowed
-	if !config.IsAllowedToUse {
-		return
-	}
 
 	PokemonNumberOnWebsite := strconv.Itoa(Request.PokemonNumber)
 	PokemonNumber := pokemonList[PokemonNumberOnWebsite].NewNumber
