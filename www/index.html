@@ -9,8 +9,8 @@
 	<link rel="stylesheet" href="./css/styledark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-	<link href="https://cdn.jsdelivr.net/clusterize.js/0.16.1/clusterize.css" rel="stylesheet" type="text/css">
-	<script src="https://cdn.jsdelivr.net/clusterize.js/0.16.1/clusterize.min.js"></script>
+	<link href="https://cdn.bootcdn.net/ajax/libs/clusterize.js/0.18.0/clusterize.css" rel="stylesheet" type="text/css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/clusterize.js/0.17.1/clusterize.js"></script>
 	
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -65,7 +65,7 @@
     <div class="container" id="Pkmn">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12 pre-scrollable list_container" id="PokeScroll" class="clusterize-scroll" style="border:1px solid #cecece; max-height: 400px;">
+                <div class="col-lg-12 pre-scrollable list_container" id="PokeScroll" class="clusterize-scroll" style="border:1px solid #cecece; min-height: 80vmin;">
                     <h2 style="direction:ltr;">Pokemon list : <button onclick="refresh();" style="font-size:24px; border:none; background:none;"><i class="fa fa-refresh"></i></button></h2>
 					<div id="PokeContent" class="clusterize-content">
 						<div class="clusterize-no-data">Loading…</div>
@@ -73,7 +73,7 @@
                 </div>
             </div>
         </div>
-        <div class="container" id="learnmoves" style="margin-top: 25px; text-align: center; border:1px solid #cecece;">
+        <div class="container" id="learnmoves" style="position:relative; width:100%; top: 25px; text-align: center; border:1px solid #cecece;">
             <h2 style="direction:ltr;">Learn moves : <button onclick="refreshmoves();" style="font-size:24px; border:none; background:none;"><i class="fa fa-refresh"></i></button></h2>
             <div id="moveslist">
             </div>

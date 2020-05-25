@@ -8,7 +8,8 @@ function LoadList(list){
 					var pokemonname = list[k + 1]['name']
 					var pokemonlevel = list[k + 1]['level']
 					var pokemoniv = list[k + 1]['iv']
-					var ThisPkmn = new Pokemon(pokemonnumber, pokemonname, pokemonlevel, pokemoniv);
+					var pokemonnumber = list[k + 1]['newnumber']
+					var ThisPkmn = new Pokemon(pokemonnumber, pokemonname, pokemonlevel, pokemoniv, pokemonnumber);
 					html.push(ThisPkmn.ListHTML)
 				} catch (e) {};
 			};
@@ -16,7 +17,7 @@ function LoadList(list){
 		clusterize = new Clusterize({
 			rows: html,
 			scrollId: 'PokeScroll',
-            rows_in_block: 5,
+            rows_in_block: 3,
 			contentId: 'PokeContent'
 		});
 	}else{
@@ -33,15 +34,17 @@ function ClearAll(str) {
 	str = str.replace(/è/g, 'e');
 	str = str.replace('♂', '');
 	str = str.replace('♀', '');
+	str = str.replace('⭐', '');
 	return str
 }
 
 class Pokemon {
-  constructor(id, name, level, iv) {
+  constructor(id, name, level, iv, number) {
     this._id = id;
-    this._name = name;
+    this._name = ClearAll(name);
     this._level = level;
     this._iv = iv;
+	this._number = number;
 	
 	this._color = 'background-color: transparent';
 	if (legendaries.includes(this._name)) {
@@ -62,7 +65,7 @@ class Pokemon {
 			<input onclick="dothis(\'addfav\',${this._id},\'${this._name}\');" class="btn btn-primary" type="button" value="Add Fav" id="addfpokemon${this._id}"/>
 			<input onclick="dothis(\'remfav\',${this._id},\'${this._name}\');" class="btn btn-primary" type="button" value="Rem Fav" id="remfpokemon${this._id}"/>
 		</form>
-		<span class="label-text">Level ${this._level} <img src="./img/${this._name}.png" class="img-circle" width="50" height="50"> ${this._name} (${this._iv})</span>
+		<span class="label-text">Level ${this._level} <img src="./img/${this._name}.png" class="img-circle" width="50" height="50"> ${this._name} n°${this._number} (${this._iv})</span>
 		</p>
 	</div>`
   }
