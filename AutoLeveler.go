@@ -25,7 +25,7 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the author is pokecord
-	if msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != botID {
 		return
 	}
 	//Check if the person wants to autolevel
@@ -65,9 +65,9 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Level := strings.Split(msg.Content, "N")[0]
 	Level = reg.ReplaceAllString(Level, "")
 	Name := strings.Split(msg.Content, ".")[0]
-	max := len(strings.Split(Name, Level+" "))-1
+	max := len(strings.Split(Name, Level+" ")) - 1
 	Name = strings.Split(Name, Level+" ")[max]
-	
+
 	if Level == "" {
 		return
 	}
@@ -75,7 +75,7 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	currentPokemonImg.Image = decodedImages[Name]
 	currentPokemonLevel.SetText("Level : " + Level)
 	currentPokemonImg.Refresh()
-	
+
 	lvl, err := strconv.Atoi(Level)
 	if err != nil {
 		return
@@ -116,7 +116,7 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the author is pokecord
-	if msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != botID {
 		return
 	}
 	//Check if the person wants to autolevel
@@ -151,7 +151,7 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if it's a p!info response
 	Infos, err := parsePokemonInfo(msg)
 	if err != nil {
-		logDebug("[ERROR]",err)
+		logDebug("[ERROR]", err)
 		return
 	}
 	logDebug("2")
@@ -162,7 +162,7 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	infoMenu.Activated = false
 	infoMenu.MessageID = ""
-	
+
 	lvl, err := strconv.Atoi(Infos.Level)
 	if err != nil {
 		return
@@ -171,7 +171,7 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if err != nil {
 		return
 	}
-	
+
 	if lvl >= maxlvl {
 		logDebug("[DEBUG] AutoLeveler sending p!select")
 		Number := 1
@@ -217,7 +217,7 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the author is pokecord
-	if msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != botID {
 		return
 	}
 	//Check if the person wants to autolevel

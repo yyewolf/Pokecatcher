@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"image/png"
 	"io/ioutil"
-	"log"
 	"math/rand"
 	"net/http"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -79,7 +77,7 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the author is pokecord
-	if msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != botID {
 		return
 	}
 	discordSession = s
@@ -153,31 +151,17 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 	//Logs info into the console and sends a notification to the website.
 	OriginalName := SpawnedPokemonName
-	CatchName := SpawnedPokemonName
-	if hasAliases(SpawnedPokemonName) {
-		Names := aliases[OriginalName]
-		CatchName = Names[0]
-		if config.Aliases {
-			if len(Names) == 1 {
-				CatchName = Names[0]
-			} else {
-				CatchName = Names[rand.Intn(len(Names)-1)]
-			}
-		}
-	}
 
-	logPokemonSpawn(OriginalName, GuildSpawn.Name, ChannelSpawn.Name, Accuracy, CatchName)
-	//Gets the command from the message : "Guess the pokemon and type p!catch <pokémon> to catch it !"
-	CommandToCatch := strings.Split(strings.Split(msg.Embeds[0].Description, "type ")[1], " <po")[0]
-	CommandToCatch = strings.ReplaceAll(CommandToCatch, "а", "a")
-	//Pokécord patched this
+	CommandToCatch := ""
+
+	logPokemonSpawn(OriginalName, GuildSpawn.Name, ChannelSpawn.Name, Accuracy, OriginalName)
 
 	notifPokeSpawn(OriginalName, GuildSpawn.Name, CommandToCatch, ChannelSpawn.Name, ChannelSpawn.ID)
-	logCyanLn(logs, "Command : "+CommandToCatch+" "+OriginalName)
+	logCyanLn(logs, "Command : "+OriginalName)
 
 	latestPokemon = latestPokemonType{
 		ChannelID: msg.ChannelID,
-		Command:   CommandToCatch + " " + strings.ToLower(CatchName),
+		Command:   strings.ToLower(OriginalName),
 	}
 
 	if config.AutoCatching && isInWhitelist {
@@ -191,7 +175,7 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		if spamState {
 			spamChannel <- 1
 		}
-		fakeTalk(s, msg.ChannelID, len(CommandToCatch+" "+strings.ToLower(CatchName)))
+		fakeTalk(s, msg.ChannelID, len(CommandToCatch+" "+strings.ToLower(OriginalName)))
 
 		rand.Seed(time.Now().UnixNano())
 		RandomNess := rand.Intn(422) - rand.Intn(221)
@@ -201,7 +185,7 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		time.Sleep(time.Duration(config.Delay+RandomNess) * time.Millisecond)
 		logBlueLn(logs, "Tried to catch your : "+OriginalName)
 
-		_, err := s.ChannelMessageSend(msg.ChannelID, CommandToCatch+" "+strings.ToLower(CatchName))
+		_, err := s.ChannelMessageSend(msg.ChannelID, CommandToCatch+" "+strings.ToLower(OriginalName))
 
 		logDebug("[DEBUG]", "Sent message to catch a", OriginalName)
 		if err != nil {
@@ -216,47 +200,48 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 }
 
+func successfulCatchUpdate(s *discordgo.Session, msg *discordgo.MessageUpdate) {
+	defer func() {
+		if r := recover(); r != nil {
+			//
+		}
+	}()
+	m := discordgo.MessageCreate{}
+
+	m.Embeds = msg.Embeds
+	m.Author = msg.Author
+	successfulCatch(s, &m)
+}
+
 func successfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if the person is allowed
 	if !config.IsAllowedToUse {
 		return
 	}
 	//Check if the author is pokecord
-	if msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != botID {
+		return
+	}
+	//Check if there is an embed
+	if len(msg.Embeds) == 0 {
 		return
 	}
 	//Check if it's a pokemon catch
-	if !strings.Contains(msg.Content, "Congratulations") {
+	if !strings.Contains(msg.Embeds[0].Description, "Congratulations") {
 		return
 	}
 	//Check if the author is mentioned
-	hasMention := false
-	for i := range msg.Mentions {
-		if msg.Mentions[i].ID == s.State.User.ID {
-			hasMention = true
-			break
-		}
-	}
-	if !hasMention {
+	if !strings.Contains(msg.Embeds[0].Description, s.State.User.ID) {
 		return
 	}
-	reg, err := regexp.Compile("[0-9]+")
-	if err != nil {
-		log.Fatal(err)
-	}
-	//Gets the command from the message : "Congratulations @User! You caught a level 99 Pokemon! Added to Pokédex."
+	//Gets the command from the message : "Congratulations @User, you have caught a Foongus!"
 	//Steps :
 	//99 Pokemon! Added to Pokédex."
 	//99 Pokemon
 	//99Pokemon
 	//Pokemon
-	PokemonName := strings.Split(msg.Content, "level ")[1]
+	PokemonName := strings.Split(msg.Embeds[0].Description, "a ")[1]
 	PokemonName = strings.Split(PokemonName, "!")[0]
-	PokemonName = strings.ReplaceAll(PokemonName, " ", "")
-	PokemonName = reg.ReplaceAllString(PokemonName, "")
-	//Do the same to detect its level
-	PokemonLevel := strings.Split(msg.Content, "level ")[1]
-	PokemonLevel = strings.Split(PokemonLevel, " "+PokemonName)[0]
 	//Sends Debug infos
 	logDebug("[DEBUG] Caught a ", PokemonName)
 	//Adds the pokemon to the list
@@ -269,7 +254,7 @@ func successfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	pokemonList[PokemonNumber] = pokemon{
 		Name:      PokemonName,
-		Level:     PokemonLevel,
+		Level:     "-",
 		IV:        "-",
 		NewNumber: PokemonNumber,
 	}
@@ -326,5 +311,4 @@ func successfulCatch(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	infoMenu.MessageID = m.ID
-
 }

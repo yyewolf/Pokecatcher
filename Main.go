@@ -78,6 +78,8 @@ var stdoutKeeped *os.File
 var infoMenu infoActivated
 var priorityQueue []string
 
+var botID = "519850436899897346"
+
 func check(e error) {
 	if e != nil {
 		logDebug("[ERROR] ", e)
@@ -152,6 +154,8 @@ func discordLogin() {
 
 	//Adds pokemon to list
 	dg.AddHandler(successfulCatch)
+	dg.AddHandler(successfulCatchUpdate)
+	dg.AddHandler(listLoader)
 
 	//Recognize commands
 	dg.AddHandler(checkForCommand)
