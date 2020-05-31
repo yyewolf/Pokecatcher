@@ -46,11 +46,11 @@ func noConfig() {
 		CustomFilters:  false,
 		EveryFilters:   []customFilterStruct{},
 		WebPort:        3000,
-		PrefixPokecord: ";",
-		PrefixBot:      ";;",
+		PrefixPokecord: "p!",
+		PrefixBot:      "p^",
 		AutoLevelMax:   "100",
 		Debug:          false,
-		AutoLeveling:   true,
+		AutoLeveling:	true,
 	}
 	_, err := os.Stat("saves")
 	if os.IsNotExist(err) {

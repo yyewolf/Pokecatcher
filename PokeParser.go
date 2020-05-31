@@ -2,11 +2,11 @@ package main
 
 import (
 	"errors"
-	"image"
 	"image/png"
 	"regexp"
 	"strconv"
 	"strings"
+	"image"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/nfnt/resize"
@@ -14,7 +14,7 @@ import (
 
 type pokeInfoParsed struct {
 	Name       string
-	Image      image.Image
+	Image	   image.Image
 	Level      string
 	Number     string
 	LastNumber string
@@ -38,6 +38,16 @@ func parsePokemonInfo(msg *discordgo.MessageCreate) (pokeInfoParsed, error) {
 	//Check if there is a title in the embed
 	if msg.Embeds[0].Title == "" {
 		err := errors.New("infoparser : embed doesn't contain any title")
+		return Infos, err
+	}
+	//Check if there is a title in the embed
+	if msg.Embeds[0].Author == nil {
+		err := errors.New("infoparser : embed doesn't contain any title")
+		return Infos, err
+	}
+	//Check if there it is a right title
+	if msg.Embeds[0].Author.Name != "Professor Oak" {
+		err := errors.New("infoparser : embed doesn't contain the right author name (" + msg.Embeds[0].Author.Name + ")")
 		return Infos, err
 	}
 	//Check if there is a footer in the embed
@@ -104,7 +114,8 @@ func parsePokemonInfo(msg *discordgo.MessageCreate) (pokeInfoParsed, error) {
 		return Infos, err
 	}
 	List := box.List()
-
+	
+	logDebug("1")
 	for i := range List {
 		if strings.Contains(List[i], "img") {
 			//Gets rid of the path debris
@@ -119,6 +130,7 @@ func parsePokemonInfo(msg *discordgo.MessageCreate) (pokeInfoParsed, error) {
 			}
 		}
 	}
+	logDebug("2")
 	//Gets every IV and stores them
 	if !strings.Contains(msg.Embeds[0].Description, "IV") {
 		err := errors.New("infoparser : iv not enabled")
@@ -129,8 +141,9 @@ func parsePokemonInfo(msg *discordgo.MessageCreate) (pokeInfoParsed, error) {
 		return Infos, err
 	}
 	content := strings.Split(msg.Embeds[0].Description, "\n")
-	for i := 5; i < len(content)-1; i++ {
-		iv := strings.Split(content[i], "|")[1]
+	for i := 3; i < len(content)-1; i++ {
+		iv := strings.Split(content[i], "-")[1]
+		iv = strings.Split(iv, "/")[0]
 		iv = reg.ReplaceAllString(iv, "")
 		save, _ := strconv.Atoi(iv)
 		Infos.IVs = append(Infos.IVs, save)
@@ -145,7 +158,7 @@ func parsePokemonInfo(msg *discordgo.MessageCreate) (pokeInfoParsed, error) {
 		Infos.isAlolan = true
 	}
 	if strings.Contains(Infos.Name, "Galarian") {
-		Infos.isGalarian = true
+		Infos.isAlolan = true
 	}
 	return Infos, nil
 }

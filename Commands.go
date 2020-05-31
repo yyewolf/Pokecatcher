@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -40,7 +42,7 @@ func checkForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the user is the one sending the command
-	if msg.Author.ID != s.State.User.ID && msg.Author.ID != botID {
+	if msg.Author.ID != s.State.User.ID && msg.Author.ID != "365975655608745985" {
 		return
 	}
 
@@ -57,9 +59,6 @@ func checkForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	if strings.HasPrefix(msg.Content, config.PrefixBot+"list") {
 		s.ChannelMessageSend(msg.ChannelID, config.PrefixPokecord+"pokemon")
-		//Values for the list
-		pokemonListInfo.Array = 0
-		pokemonListInfo.Realmax = 0
 		refreshingList = true
 		refreshingListChannelID = msg.ChannelID
 	}
@@ -70,12 +69,13 @@ func checkForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		saveConfig()
 	}
 
+	listLoader(s, msg)
 	movesLoader(s, msg)
 }
 
 func movesLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if the user is the one sending the command
-	if msg.Author.ID != botID {
+	if msg.Author.ID != "365975655608745985" {
 		return
 	}
 	//Verifies that there's an embed
@@ -106,7 +106,7 @@ func movesLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	}
 }
 
-func listLoader(s *discordgo.Session, msg *discordgo.MessageUpdate) {
+func listLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Verifies that there's an embed
 	if len(msg.Embeds) == 0 {
 		return
@@ -119,31 +119,29 @@ func listLoader(s *discordgo.Session, msg *discordgo.MessageUpdate) {
 	if refreshingListChannelID != msg.ChannelID {
 		return
 	}
-	if !strings.Contains(msg.Embeds[0].Description, "male") {
-		return
-	}
 	// Looking for the right message
-	if strings.Contains(msg.Embeds[0].Title, "Your Pokemon") {
-		MaxPage, _ := strconv.Atoi(strings.Split(msg.Embeds[0].Footer.Text, "/")[1])
-		CurrentPage, _ := strconv.Atoi(strings.Split(msg.Embeds[0].Footer.Text, "/")[0])
+	if strings.Contains(msg.Embeds[0].Title, "Your ") {
+		MaxPokemon, _ := strconv.Atoi(strings.Split(strings.Split(msg.Embeds[0].Footer.Text, "of ")[1], " pok")[0])
+		CurrentPokemon, _ := strconv.Atoi(strings.Split(strings.Split(msg.Embeds[0].Footer.Text, " of")[0], "-")[1])
+		MaxPage := math.Ceil(float64(MaxPokemon) / 20)
+		CurrentPage := math.Ceil(float64(CurrentPokemon) / 20)
 		FullMessage := strings.Split(msg.Embeds[0].Description, "\n")
+		//Values for the list
+		pokemonListInfo.Array = MaxPokemon
+		pokemonListInfo.Realmax = MaxPokemon
 		//Will go through each pokés
 		for i := range FullMessage {
-			CurrentInfos := strings.ReplaceAll(FullMessage[i], "*", "")
-			CurrentInfos = strings.ReplaceAll(CurrentInfos, "_", "")
-			CurrentInfos = strings.ReplaceAll(CurrentInfos, " No. - ", "")
-			CurrentInfos = strings.ReplaceAll(CurrentInfos, " Level ", "")
-			CurrentInfos = strings.ReplaceAll(CurrentInfos, " IV% ", "")
-			CurrentInfos = strings.ReplaceAll(CurrentInfos, "%", "")
-			CurrentInfos = strings.ReplaceAll(CurrentInfos, ">", "|")
-			CurrentInfos = strings.ReplaceAll(CurrentInfos, " ", "")
-			InfosSlice := strings.Split(CurrentInfos, "|")
+			CurrentInfos := strings.Replace(FullMessage[i], "Level: ", "", 1)
+			CurrentInfos = strings.Replace(CurrentInfos, "Number: ", "", 1)
+			InfosSlice := strings.Split(CurrentInfos, " | ")
 			//Gets all infos
-			//CurrentGenre := strconv.Contains(InfosSlice[0], "female")
-			CurrentPokemonName := InfosSlice[1]
+			CurrentPokemonName := strings.ReplaceAll(InfosSlice[0], "*", "")
+			CurrentPokemonLevel := InfosSlice[1]
 			CurrentPokemonNumber := InfosSlice[2]
-			CurrentPokemonLevel := InfosSlice[3]
-			CurrentPokemonIV := InfosSlice[4]
+			CurrentPokemonIV := ""
+			if len(InfosSlice) >= 4 {
+				CurrentPokemonIV = InfosSlice[3]
+			}
 
 			pokemonList[CurrentPokemonNumber] = pokemon{
 				Name:      CurrentPokemonName,
@@ -152,21 +150,16 @@ func listLoader(s *discordgo.Session, msg *discordgo.MessageUpdate) {
 				NewNumber: CurrentPokemonNumber,
 			}
 
-			//Values for the list
-			pokemonListInfo.Array++
-			pokemonListInfo.Realmax++
-
 			pokemonListInfo.Names = pokemonListInfo.Names + CurrentPokemonName + ","
 		}
 
-		progressBar.Min, progressBar.Max = 0, float64(MaxPage)
-		progressBar.SetValue(float64(CurrentPage))
+		progressBar.Min, progressBar.Max = 0, MaxPage
+		progressBar.SetValue(CurrentPage)
 		progressBar.Refresh()
 		if CurrentPage != MaxPage {
 			//Goes to the next page
 			time.Sleep(4500 * time.Millisecond)
-
-			s.MessageReactionAdd(msg.ChannelID, msg.ID, "▶️")
+			s.ChannelMessageSend(msg.ChannelID, config.PrefixPokecord+"pokemon "+fmt.Sprintf("%.0f", (CurrentPage+1)))
 		} else {
 			refreshingList = false
 			logYellowLn(logs, "Your pokemon list has been loaded !")

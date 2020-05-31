@@ -62,6 +62,8 @@ class Pokemon {
 		</form>
 		<form style="float: left; padding: 5px;" id="formselectpokemon${this._id}">
 			<input onclick="dothis(\'select\',${this._id},\'${this._name}\');" class="btn btn-primary" type="button" value="Select" id="selectpokemon${this._id}"/>
+			<input onclick="dothis(\'addfav\',${this._id},\'${this._name}\');" class="btn btn-primary" type="button" value="Add Fav" id="addfpokemon${this._id}"/>
+			<input onclick="dothis(\'remfav\',${this._id},\'${this._name}\');" class="btn btn-primary" type="button" value="Rem Fav" id="remfpokemon${this._id}"/>
 		</form>
 		<span class="label-text">Level ${this._level} <img src="./img/${this._name}.png" class="img-circle" width="50" height="50"> ${this._name} n°${this._number} (${this._iv})</span>
 		</p>
