@@ -68,7 +68,7 @@ func AutoRelease(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the author is pokecord
-	if msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != "665301904791699476" {
 		return
 	}
 	//Check that the function is activated

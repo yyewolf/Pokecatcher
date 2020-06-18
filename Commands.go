@@ -42,7 +42,7 @@ func checkForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the user is the one sending the command
-	if msg.Author.ID != s.State.User.ID && msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != s.State.User.ID && msg.Author.ID != "665301904791699476" {
 		return
 	}
 
@@ -75,7 +75,7 @@ func checkForCommand(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 func movesLoader(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if the user is the one sending the command
-	if msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != "665301904791699476" {
 		return
 	}
 	//Verifies that there's an embed

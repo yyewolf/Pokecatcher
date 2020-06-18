@@ -79,7 +79,7 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the author is pokecord
-	if msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != "665301904791699476" {
 		return
 	}
 	discordSession = s
@@ -119,11 +119,12 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 			ScanImage := decodedImages[Name]
 			Accuracy = compareIMG(ScanImage, ImageResized)
+			fmt.Println(Name+" :", Accuracy)
 			if Accuracy < 0.35 {
 				//Check if the Pokémon is in whitelist (now because of Nidoran)
-				if pokemonWhitelist[Name] {
-					isInWhitelist = true
-				}
+				//if pokemonWhitelist[Name] {
+				isInWhitelist = true
+				//}
 				SpawnedPokemonName = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
 
 				lastPokemonImg.Image = ScanImage

@@ -25,7 +25,7 @@ func SelectVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the author is pokecord
-	if msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != "665301904791699476" {
 		return
 	}
 	//Check if the person wants to autolevel
@@ -116,7 +116,7 @@ func InfoVerifier(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the author is pokecord
-	if msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != "665301904791699476" {
 		return
 	}
 	//Check if the person wants to autolevel
@@ -217,7 +217,7 @@ func AutoLeveler(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the author is pokecord
-	if msg.Author.ID != "365975655608745985" {
+	if msg.Author.ID != "665301904791699476" {
 		return
 	}
 	//Check if the person wants to autolevel
