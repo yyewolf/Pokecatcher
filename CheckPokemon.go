@@ -112,15 +112,20 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Accuracy := 0.0
 	isInWhitelist := false
 
+	var smallestAccuracy float64
+	var smallestAccuracyIndex int
+
 	for i := range List {
 		if strings.Contains(List[i], "img") {
 			//Gets rid of the path debris
 			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\", ""), ".png", "")
-
 			ScanImage := decodedImages[Name]
 			Accuracy = compareIMG(ScanImage, ImageResized)
-			fmt.Println(Name+" :", Accuracy)
-			if Accuracy < 0.35 {
+			if Accuracy < smallestAccuracy {
+				smallestAccuracy = Accuracy
+				smallestAccuracyIndex = i
+			}
+			if Accuracy < 5 {
 				//Check if the Pokémon is in whitelist (now because of Nidoran)
 				//if pokemonWhitelist[Name] {
 				isInWhitelist = true
@@ -140,6 +145,12 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Accuracy = 100.0 - Accuracy
 
 	if SpawnedPokemonName == "" {
+		Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[smallestAccuracyIndex], "img/", ""), "img\\", ""), ".png", "")
+		SpawnedPokemonName = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
+		ScanImage := decodedImages[Name]
+		lastPokemonImg.Image = ScanImage
+		lastPokemonLabel.SetText(SpawnedPokemonName)
+		lastPokemonImg.Refresh()
 		return
 	}
 	GuildSpawn, err := s.Guild(msg.GuildID)
