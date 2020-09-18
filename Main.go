@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -78,6 +79,9 @@ var stdoutKeeped *os.File
 var infoMenu infoActivated
 var priorityQueue []string
 
+//Hashes
+var hashes map[string]string
+
 func check(e error) {
 	if e != nil {
 		logDebug("[ERROR] ", e)
@@ -114,6 +118,9 @@ func guildCreate(s *discordgo.Session, event *discordgo.GuildUpdate) {
 }
 
 func usefulVariables() {
+	hashes = make(map[string]string)
+	c, _ := box.Find("h.json")
+	json.Unmarshal(c, &hashes)
 	loadConfig()  // Will load config.json file into the program.
 	startLogger() //Will log crashes if it happens.
 	loadAliases() // Will load aliases.json file.

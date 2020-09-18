@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image/png"
 	"io/ioutil"
 	"log"
@@ -16,6 +15,7 @@ import (
 
 	"fyne.io/fyne/widget"
 	"github.com/bwmarrin/discordgo"
+	"github.com/corona10/goimagehash"
 	"github.com/nfnt/resize"
 )
 
@@ -33,7 +33,7 @@ func imageToString(URL string) string {
 	return string(image)
 }
 
-func logPokemonSpawn(PokemonName string, GuildName string, ChannelName string, Accuracy float64, AliasUsed string) {
+func logPokemonSpawn(PokemonName string, GuildName string, ChannelName string, AliasUsed string) {
 	wgPokeSpawn.Wait()
 	wgPokeSpawn.Add(1)
 
@@ -45,10 +45,8 @@ func logPokemonSpawn(PokemonName string, GuildName string, ChannelName string, A
 
 	logGreenLn(logs, "-------------------------------------------------------")
 	logs.Append(widget.NewHBox(greenTXT("A"), blueTXT(PokemonName), greenTXT("has spawned on :")))
-	f := fmt.Sprintf("%f", Accuracy)
 	logGreenLn(logs, "Guild Name : "+GuildName)
 	logGreenLn(logs, "Channel Name : #"+ChannelName)
-	logGreenLn(logs, "Accuracy : "+f+"%")
 	logGreenLn(logs, "Alias used : "+AliasUsed)
 
 	wgPokeSpawn.Done()
@@ -108,51 +106,41 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	Buffer := &buf{}
 	_ = png.Encode(Buffer, ImageResized)
 	ImageResized, _ = png.Decode(Buffer)
-	List := box.List()
-	Accuracy := 0.0
 	isInWhitelist := false
 
-	var smallestAccuracy float64
-	var smallestAccuracyIndex int
-
-	for i := range List {
-		if strings.Contains(List[i], "img") {
-			//Gets rid of the path debris
-			Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[i], "img/", ""), "img\\", ""), ".png", "")
-			ScanImage := decodedImages[Name]
-			Accuracy = compareIMG(ScanImage, ImageResized)
-			if Accuracy < smallestAccuracy {
-				smallestAccuracy = Accuracy
-				smallestAccuracyIndex = i
-			}
-			if Accuracy < 5 {
-				//Check if the Pokémon is in whitelist (now because of Nidoran)
-				//if pokemonWhitelist[Name] {
-				isInWhitelist = true
-				//}
-				SpawnedPokemonName = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
-
-				lastPokemonImg.Image = ScanImage
-				lastPokemonLabel.SetText(SpawnedPokemonName)
-				lastPokemonImg.Refresh()
-				break
-			}
-		}
-	}
-
-	//STOPS DETECTING HERE
-
-	Accuracy = 100.0 - Accuracy
-
-	if SpawnedPokemonName == "" {
-		Name := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(List[smallestAccuracyIndex], "img/", ""), "img\\", ""), ".png", "")
-		SpawnedPokemonName = strings.ReplaceAll(strings.ReplaceAll(Name, "♀", ""), "♂", "")
-		ScanImage := decodedImages[Name]
-		lastPokemonImg.Image = ScanImage
-		lastPokemonLabel.SetText(SpawnedPokemonName)
-		lastPokemonImg.Refresh()
+	var currentlow = 10000
+	var lowest string
+	hash, e := goimagehash.PerceptionHash(ImageDecoded)
+	if e != nil {
+		logDebug("[ERROR]", e)
 		return
 	}
+
+	for i, name := range hashes {
+		h2, e1 := goimagehash.ImageHashFromString(i)
+		if e1 != nil {
+			logDebug("[ERROR]", e1)
+			return
+		}
+		dist, e2 := hash.Distance(h2)
+		if e2 != nil {
+			logDebug("[ERROR]", e2)
+			return
+		}
+		if currentlow > dist {
+			currentlow = dist
+			lowest = name
+		}
+	}
+	SpawnedPokemonName = lowest
+	//Check if the Pokémon is in whitelist (now because of Nidoran)
+	if pokemonWhitelist[SpawnedPokemonName] {
+		isInWhitelist = true
+	}
+	SpawnedPokemonName = strings.ReplaceAll(strings.ReplaceAll(SpawnedPokemonName, "♀", ""), "♂", "")
+	lastPokemonImg.Image = ImageResized
+	lastPokemonLabel.SetText(SpawnedPokemonName)
+	lastPokemonImg.Refresh()
 	GuildSpawn, err := s.Guild(msg.GuildID)
 	if err != nil {
 		logDebug("[ERROR]", err)
@@ -178,7 +166,7 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		}
 	}
 
-	logPokemonSpawn(OriginalName, GuildSpawn.Name, ChannelSpawn.Name, Accuracy, CatchName)
+	logPokemonSpawn(OriginalName, GuildSpawn.Name, ChannelSpawn.Name, CatchName)
 	//Gets the command from the message : "Guess the pokemon and type p!catch <pokémon> to catch it !"
 	CommandToCatch := strings.Split(strings.Split(msg.Embeds[0].Description, "type ")[1], " <po")[0]
 	CommandToCatch = strings.ReplaceAll(CommandToCatch, "а", "a")
