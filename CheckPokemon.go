@@ -116,20 +116,22 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 
-	for i, name := range hashes {
-		h2, e1 := goimagehash.ImageHashFromString(i)
-		if e1 != nil {
-			logDebug("[ERROR]", e1)
-			return
-		}
-		dist, e2 := hash.Distance(h2)
-		if e2 != nil {
-			logDebug("[ERROR]", e2)
-			return
-		}
-		if currentlow > dist {
-			currentlow = dist
-			lowest = name
+	for name, hs := range hashes {
+		for _, hstring := range hs {
+			h2, e1 := goimagehash.ImageHashFromString(hstring)
+			if e1 != nil {
+				logDebug("[ERROR]", e1)
+				return
+			}
+			dist, e2 := hash.Distance(h2)
+			if e2 != nil {
+				logDebug("[ERROR]", e2)
+				return
+			}
+			if currentlow > dist {
+				currentlow = dist
+				lowest = name
+			}
 		}
 	}
 	SpawnedPokemonName = lowest

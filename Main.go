@@ -80,7 +80,7 @@ var infoMenu infoActivated
 var priorityQueue []string
 
 //Hashes
-var hashes map[string]string
+var hashes map[string][]string
 
 func check(e error) {
 	if e != nil {
@@ -118,7 +118,7 @@ func guildCreate(s *discordgo.Session, event *discordgo.GuildUpdate) {
 }
 
 func usefulVariables() {
-	hashes = make(map[string]string)
+	hashes = make(map[string][]string)
 	c, _ := box.Find("h.json")
 	json.Unmarshal(c, &hashes)
 	loadConfig()  // Will load config.json file into the program.
