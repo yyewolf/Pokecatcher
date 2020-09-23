@@ -1,6 +1,7 @@
 package main
 
 import (
+	"image/color"
 	"image/png"
 	"io/ioutil"
 	"log"
@@ -16,6 +17,7 @@ import (
 	"fyne.io/fyne/widget"
 	"github.com/bwmarrin/discordgo"
 	"github.com/corona10/goimagehash"
+	"github.com/disintegration/imaging"
 	"github.com/nfnt/resize"
 )
 
@@ -115,6 +117,12 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		logDebug("[ERROR]", e)
 		return
 	}
+	ImageDecoded = imaging.Rotate(ImageDecoded, 90, color.RGBA{0, 0, 0, 0})
+	hashr, e := goimagehash.PerceptionHash(ImageDecoded)
+	if e != nil {
+		logDebug("[ERROR]", e)
+		return
+	}
 
 	for name, hs := range hashes {
 		for _, hstring := range hs {
@@ -123,13 +131,22 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 				logDebug("[ERROR]", e1)
 				return
 			}
-			dist, e2 := hash.Distance(h2)
+			dist1, e2 := hash.Distance(h2)
 			if e2 != nil {
 				logDebug("[ERROR]", e2)
 				return
 			}
-			if currentlow > dist {
-				currentlow = dist
+			if currentlow > dist1 {
+				currentlow = dist1
+				lowest = name
+			}
+			dist2, e3 := hashr.Distance(h2)
+			if e2 != nil {
+				logDebug("[ERROR]", e3)
+				return
+			}
+			if currentlow > dist2 {
+				currentlow = dist2
 				lowest = name
 			}
 		}
