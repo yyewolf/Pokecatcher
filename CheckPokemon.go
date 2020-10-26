@@ -1,7 +1,6 @@
 package main
 
 import (
-	"image/color"
 	"image/png"
 	"io/ioutil"
 	"log"
@@ -104,51 +103,49 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		logDebug("[ERROR]", err)
 		return
 	}
-	ImageResized := resize.Resize(64, 64, ImageDecoded, resize.Bicubic)
+	ImageResized := resize.Resize(128, 128, ImageDecoded, resize.Bicubic)
 	Buffer := &buf{}
 	_ = png.Encode(Buffer, ImageResized)
 	ImageResized, _ = png.Decode(Buffer)
+	ImageResized = imaging.FlipH(ImageResized)
 	isInWhitelist := false
 
 	var currentlow = 10000
 	var lowest string
-	hash, e := goimagehash.PerceptionHash(ImageDecoded)
+	hash, e := goimagehash.PerceptionHash(ImageResized)
 	if e != nil {
 		logDebug("[ERROR]", e)
 		return
 	}
-	ImageDecoded = imaging.Rotate(ImageDecoded, 90, color.RGBA{0, 0, 0, 0})
-	hashr, e := goimagehash.PerceptionHash(ImageDecoded)
+	hashr, e := goimagehash.PerceptionHash(ImageResized)
 	if e != nil {
 		logDebug("[ERROR]", e)
 		return
 	}
 
 	for name, hs := range hashes {
-		for _, hstring := range hs {
-			h2, e1 := goimagehash.ImageHashFromString(hstring)
-			if e1 != nil {
-				logDebug("[ERROR]", e1)
-				return
-			}
-			dist1, e2 := hash.Distance(h2)
-			if e2 != nil {
-				logDebug("[ERROR]", e2)
-				return
-			}
-			if currentlow > dist1 {
-				currentlow = dist1
-				lowest = name
-			}
-			dist2, e3 := hashr.Distance(h2)
-			if e2 != nil {
-				logDebug("[ERROR]", e3)
-				return
-			}
-			if currentlow > dist2 {
-				currentlow = dist2
-				lowest = name
-			}
+		h2, e1 := goimagehash.ImageHashFromString(hs)
+		if e1 != nil {
+			logDebug("[ERROR]", e1)
+			return
+		}
+		dist1, e2 := hash.Distance(h2)
+		if e2 != nil {
+			logDebug("[ERROR]", e2)
+			return
+		}
+		if currentlow > dist1 {
+			currentlow = dist1
+			lowest = name
+		}
+		dist2, e3 := hashr.Distance(h2)
+		if e2 != nil {
+			logDebug("[ERROR]", e3)
+			return
+		}
+		if currentlow > dist2 {
+			currentlow = dist2
+			lowest = name
 		}
 	}
 	SpawnedPokemonName = lowest
