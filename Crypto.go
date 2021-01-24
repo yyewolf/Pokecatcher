@@ -39,6 +39,7 @@ func decrypt(data []byte, passphrase string) []byte {
 }
 
 func checkLicences(s *discordgo.Session) {
+	config.IsAllowedToUse = true
 	directory, _ := filepath.Abs("./licences")
 
 	d, err := os.Open(directory)
