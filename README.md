@@ -1,7 +1,18 @@
 # Pokecatcher
- Pokécord autocatcher source code
+##### Pokécord Autocatcher Repo
 
-# History
+Check the release tab to download the x64 version of it.
 
- This used to be a paid auto catcher, though I do not which to continue on developing it.
- Have fun with it.
+# Information
+
+Discord modified its API around April 2020, if you want to modify the code of this auto catcher, you will need to modify DiscordGo's way of sending the identify packet.
+
+# Dependencies
+
+This program requires you to have OpenGL support.
+
+# Usage
+
+The program will ask you for your Discord Token when you launch it for the first time, then it will work.
+
+However, it will not recognize every pokémon that spawns because it uses [AIPokedex](aipokedex.com). You can find your [AIPokedex](aipokedex.com) token by logging on the website and copying it there. If you pay for premium, your token will be able to request for more pokémons.

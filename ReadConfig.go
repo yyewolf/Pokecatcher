@@ -16,6 +16,7 @@ type SelectedPoke struct {
 //ConfigStruct = JSON file where the config will be saved
 type ConfigStruct struct {
 	Token          string               `json:"Token"`
+	AIToken        string               `json:"AIToken"`
 	ChannelID      string               `json:"Channel_Registered_ID"`
 	Delay          int                  `json:"Delay_For_Autocatcher"`
 	Duplicate      bool                 `json:"Do_I_Ignore_Duplicate"`
@@ -50,7 +51,7 @@ func noConfig() {
 		PrefixBot:      "p^",
 		AutoLevelMax:   "100",
 		Debug:          false,
-		AutoLeveling:	true,
+		AutoLeveling:   true,
 	}
 	_, err := os.Stat("saves")
 	if os.IsNotExist(err) {

@@ -19,7 +19,7 @@ func makeCell() fyne.CanvasObject {
 func startUI() {
 
 	appli = app.New()
-	w := appli.NewWindow("Pokecatcher v2.5.4")
+	w := appli.NewWindow("Pokecatcher v3.0.0")
 	v, _ := box.Find("icon\\icons.png")
 	windowIcon = fyne.NewStaticResource("pokecatcher.png", v)
 	w.SetIcon(windowIcon)
@@ -78,6 +78,9 @@ func startUI() {
 							widget.NewVBox(currentPokemonImg, currentPokemonLevel)),
 					)),
 				widget.NewVBox(
+					widget.NewButton("Change AI Token", func() {
+						askUserForAIToken()
+					}),
 					widget.NewButton("Clear logs", func() {
 						logs.Children = []fyne.CanvasObject{}
 						logs.Refresh()
@@ -99,5 +102,4 @@ func startUI() {
 	w.SetFixedSize(true)
 	go usefulVariables()
 	w.ShowAndRun()
-
 }

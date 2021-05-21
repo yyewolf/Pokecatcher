@@ -1,22 +1,27 @@
 package main
 
 import (
+	"encoding/json"
 	"image/png"
+	"io"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"fyne.io/fyne"
+	"golang.org/x/text/runes"
+	"golang.org/x/text/transform"
+	"golang.org/x/text/unicode/norm"
 
 	"fyne.io/fyne/widget"
 	"github.com/bwmarrin/discordgo"
-	"github.com/corona10/goimagehash"
-	"github.com/disintegration/imaging"
 	"github.com/nfnt/resize"
 )
 
@@ -68,6 +73,39 @@ func hasAliases(Pokemon string) bool {
 	return false
 }
 
+type responsePred struct {
+	Name       string `json:"name"`
+	ID         string `json:"id"`
+	Confidence string `json:"confidence"`
+}
+
+type responseAPI struct {
+	Predictions []responsePred `json:"predictions"`
+	URL         string         `json:"image url"`
+}
+
+func removeAccents(s string) string {
+	t := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
+	output, _, e := transform.String(t, s)
+	if e != nil {
+		panic(e)
+	}
+	return output
+}
+
+func checkAPI(imageURL string, model string) responseAPI {
+	resp, err := http.PostForm("https://aipokedex.com/getPoke", url.Values{"url": {imageURL}, "token": {config.AIToken}, "model": {model}})
+	var response responseAPI
+	if err != nil {
+		return response
+	}
+	defer resp.Body.Close()
+	logDebug("[REQ]", resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	json.Unmarshal(body, &response)
+	return response
+}
+
 func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	//Check if the person is allowed
 	if !config.IsAllowedToUse {
@@ -77,20 +115,24 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if !serverWhitelist[msg.GuildID] {
 		return
 	}
-	//Check if the author is pokecord
-	if msg.Author.ID != "665301904791699476" {
+	//Check if the author is a bot
+	if !msg.Author.Bot {
 		return
 	}
-	discordSession = s
 	//Check if there is an embed
 	if len(msg.Embeds) == 0 {
 		return
 	}
+	//Check if the author name has poke
+	if !strings.Contains(removeAccents(strings.ToLower(msg.Author.String())), "poke") {
+		return
+	}
+	discordSession = s
 	if msg.Embeds[0].Image == nil {
 		return
 	}
 	//Check if it's a pokemon spawn
-	if !strings.Contains(msg.Embeds[0].Title, "A wild") {
+	if !strings.Contains(msg.Embeds[0].Title, "wild") {
 		return
 	}
 	//STARTS DETECTING HERE
@@ -103,52 +145,23 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		logDebug("[ERROR]", err)
 		return
 	}
-	ImageResized := resize.Resize(128, 128, ImageDecoded, resize.Bicubic)
+	ImageResized := resize.Resize(uint(128.0*float64(ImageDecoded.Bounds().Dx())/float64(ImageDecoded.Bounds().Dy())), 128, ImageDecoded, resize.Bicubic)
 	Buffer := &buf{}
 	_ = png.Encode(Buffer, ImageResized)
 	ImageResized, _ = png.Decode(Buffer)
-	ImageResized = imaging.FlipH(ImageResized)
 	isInWhitelist := false
 
-	var currentlow = 10000
-	var lowest string
-	hash, e := goimagehash.PerceptionHash(ImageResized)
-	if e != nil {
-		logDebug("[ERROR]", e)
-		return
-	}
-	hashr, e := goimagehash.PerceptionHash(ImageResized)
-	if e != nil {
-		logDebug("[ERROR]", e)
-		return
+	model := "classic"
+	//For Pokedi and Poketwo
+	if msg.Author.ID == "716293342740348948" || msg.Author.ID == "716390085896962058" {
+		model = "background"
 	}
 
-	for name, hs := range hashes {
-		h2, e1 := goimagehash.ImageHashFromString(hs)
-		if e1 != nil {
-			logDebug("[ERROR]", e1)
-			return
-		}
-		dist1, e2 := hash.Distance(h2)
-		if e2 != nil {
-			logDebug("[ERROR]", e2)
-			return
-		}
-		if currentlow > dist1 {
-			currentlow = dist1
-			lowest = name
-		}
-		dist2, e3 := hashr.Distance(h2)
-		if e2 != nil {
-			logDebug("[ERROR]", e3)
-			return
-		}
-		if currentlow > dist2 {
-			currentlow = dist2
-			lowest = name
-		}
+	APIResp := checkAPI(ImageURL, model)
+	if len(APIResp.Predictions) == 0 {
+		return
 	}
-	SpawnedPokemonName = lowest
+	SpawnedPokemonName = APIResp.Predictions[0].Name
 	//Check if the Pokémon is in whitelist (now because of Nidoran)
 	if pokemonWhitelist[SpawnedPokemonName] {
 		isInWhitelist = true
@@ -172,7 +185,11 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	CatchName := SpawnedPokemonName
 	if hasAliases(SpawnedPokemonName) {
 		Names := aliases[OriginalName]
-		CatchName = Names[0]
+		if len(Names) == 0 {
+			CatchName = SpawnedPokemonName
+		} else {
+			CatchName = Names[0]
+		}
 		if config.Aliases {
 			if len(Names) == 1 {
 				CatchName = Names[0]
@@ -184,8 +201,16 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	logPokemonSpawn(OriginalName, GuildSpawn.Name, ChannelSpawn.Name, CatchName)
 	//Gets the command from the message : "Guess the pokemon and type p!catch <pokémon> to catch it !"
-	CommandToCatch := strings.Split(strings.Split(msg.Embeds[0].Description, "type ")[1], " <po")[0]
+	CommandToCatch := ""
+	Split1 := strings.Split(msg.Embeds[0].Description, "type ")
+	Split2 := strings.Split(msg.Embeds[0].Description, "Do ")
+	if len(Split1) > 1 {
+		CommandToCatch = strings.Split(Split1[1], " ")[0]
+	} else if len(Split2) > 1 {
+		CommandToCatch = strings.Split(Split2[1], " ")[0]
+	}
 	CommandToCatch = strings.ReplaceAll(CommandToCatch, "а", "a")
+	CommandToCatch = strings.ReplaceAll(CommandToCatch, "`", "")
 	//Pokécord patched this
 
 	notifPokeSpawn(OriginalName, GuildSpawn.Name, CommandToCatch, ChannelSpawn.Name, ChannelSpawn.ID)
@@ -195,6 +220,7 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		ChannelID: msg.ChannelID,
 		Command:   CommandToCatch + " " + strings.ToLower(CatchName),
 	}
+	fakeTalk(s, msg.ChannelID, len(CommandToCatch+" "+strings.ToLower(CatchName)))
 
 	if config.AutoCatching && isInWhitelist {
 		//Verifies that it isn't a duplicate if it's ON
@@ -207,7 +233,6 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		if spamState {
 			spamChannel <- 1
 		}
-		fakeTalk(s, msg.ChannelID, len(CommandToCatch+" "+strings.ToLower(CatchName)))
 
 		rand.Seed(time.Now().UnixNano())
 		RandomNess := rand.Intn(422) - rand.Intn(221)
