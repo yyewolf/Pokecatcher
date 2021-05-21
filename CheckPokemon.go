@@ -220,7 +220,6 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		ChannelID: msg.ChannelID,
 		Command:   CommandToCatch + " " + strings.ToLower(CatchName),
 	}
-	fakeTalk(s, msg.ChannelID, len(CommandToCatch+" "+strings.ToLower(CatchName)))
 
 	if config.AutoCatching && isInWhitelist {
 		//Verifies that it isn't a duplicate if it's ON
