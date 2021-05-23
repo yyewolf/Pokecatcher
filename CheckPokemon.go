@@ -124,7 +124,7 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	//Check if the author name has poke
-	if !strings.Contains(removeAccents(strings.ToLower(msg.Author.String())), "poke") {
+	if !strings.Contains(removeAccents(strings.ToLower(msg.Author.String())), "poke") || msg.Author.ID == "519850436899897346" {
 		return
 	}
 	discordSession = s
