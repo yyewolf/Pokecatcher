@@ -223,6 +223,7 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 	if config.AutoCatching && isInWhitelist {
 		//Verifies that it isn't a duplicate if it's ON
+		OriginalName = strings.Split(OriginalName, " (")[0]
 		if config.Duplicate {
 			if !strings.Contains(pokemonListInfo.Names, OriginalName) {
 				return
