@@ -19,7 +19,7 @@ func makeCell() fyne.CanvasObject {
 func startUI() {
 
 	appli = app.New()
-	w := appli.NewWindow("Pokecatcher v3.0.2")
+	w := appli.NewWindow("Pokecatcher v3.0.3")
 	v, _ := box.Find("icon\\icons.png")
 	windowIcon = fyne.NewStaticResource("pokecatcher.png", v)
 	w.SetIcon(windowIcon)
