@@ -162,6 +162,7 @@ func checkForPokemon(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 	SpawnedPokemonName = APIResp.Predictions[0].Name
+	SpawnedPokemonName = strings.Split(SpawnedPokemonName, " (")[0]
 	//Check if the Pokémon is in whitelist (now because of Nidoran)
 	if pokemonWhitelist[SpawnedPokemonName] {
 		isInWhitelist = true
